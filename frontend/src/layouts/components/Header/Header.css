@@ -3,6 +3,9 @@ header {
 	min-height: 70px;
 	display: flex;
 	background-color: #0d0521;
+	z-index: 1000;
+	position: fixed;
+	top: 0;
 }
 
 header h1 {

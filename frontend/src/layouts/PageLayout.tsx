@@ -31,7 +31,6 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 				<Menu />
 				{children}
 			</main>
-			{/* <Footer/> */}
 		</>
 	);
 };

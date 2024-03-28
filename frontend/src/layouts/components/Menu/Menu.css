@@ -1,6 +1,7 @@
 aside {
-	background-color: #370651;
-	position: absolute;
+	background-color: #0d0521;
+	position: fixed;
+	height: 100%;
 	top: 70px;
 	right: 0;
 }
