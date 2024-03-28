@@ -8,6 +8,7 @@ import {
 	Marketplace,
 	Trending,
 	Wallet,
+	Error,
 } from './pages';
 import './index.css';
 
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
 	{
 		path: '/trending',
 		element: <Trending />,
+	},
+	{
+		path: '*',
+		element: <Error />,
 	},
 ]);
 
