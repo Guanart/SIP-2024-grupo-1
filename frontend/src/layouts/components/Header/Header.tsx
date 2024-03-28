@@ -14,6 +14,9 @@ export const Header = () => {
 						<Link to='/about'>About</Link>
 					</li>
 					<li className='nav-item'>
+						<Link to='/account'>Account</Link>
+					</li>
+					<li className='nav-item'>
 						<button className='auth-button'>Log in</button>
 					</li>
 				</ul>
