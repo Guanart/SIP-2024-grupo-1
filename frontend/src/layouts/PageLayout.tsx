@@ -1,6 +1,7 @@
 import { FunctionComponent, useEffect } from 'react';
 import { Header, Menu } from './components/';
 import { useLocation } from 'react-router-dom';
+import './PageLayout.css';
 
 type PageLayoutProps = {
 	children: React.ReactNode;
