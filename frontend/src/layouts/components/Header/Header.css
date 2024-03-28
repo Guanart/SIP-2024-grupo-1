@@ -1,0 +1,53 @@
+header {
+	width: 100%;
+	min-height: 70px;
+	display: flex;
+	background-color: #0d0521;
+}
+
+header h1 {
+	margin: 0;
+	padding: 8px;
+	display: inline-block;
+	width: 20%;
+	color: white;
+}
+
+.header-nav {
+	width: 80%;
+}
+
+.header-nav ul {
+	list-style-type: none;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	padding-right: 16px;
+	gap: 24px;
+}
+
+.nav-item {
+	font-weight: bold;
+}
+
+.nav-item a {
+	text-decoration: none;
+	color: white;
+}
+
+.nav-item a:hover {
+	text-decoration: underline;
+}
+
+.nav-item .auth-button {
+	background-color: white;
+	font-weight: normal;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 4px 12px;
+	color: #0d0521;
+}
