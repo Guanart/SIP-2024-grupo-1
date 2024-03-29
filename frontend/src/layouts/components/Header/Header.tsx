@@ -16,9 +16,11 @@ export const Header = () => {
 					<li className='nav-item'>
 						<Link to='/about'>About</Link>
 					</li>
-					<li className='nav-item'>
-						<Link to='/account'>Account</Link>
-					</li>
+					{isAuthenticated && (
+						<li className='nav-item'>
+							<Link to='/account'>Account</Link>
+						</li>
+					)}
 					<li className='nav-item'>
 						{isAuthenticated ? <LogoutButton /> : <LoginButton />}
 					</li>

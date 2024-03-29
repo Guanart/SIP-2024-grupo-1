@@ -2,9 +2,12 @@ import { Link } from 'react-router-dom';
 import './Menu.css';
 import { useState } from 'react';
 import { CaretDoubleLeft, CaretDoubleRight } from '@phosphor-icons/react';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export const Menu = () => {
 	const [isOpen, setIsOpen] = useState(false);
+	const { isAuthenticated } = useAuth0();
+
 	return (
 		<aside>
 			<nav>
@@ -30,9 +33,11 @@ export const Menu = () => {
 					<li className='menu-item'>
 						<Link to='/trending'>Trending</Link>
 					</li>
-					<li className='menu-item'>
-						<Link to='/wallet'>My wallet</Link>
-					</li>
+					{isAuthenticated && (
+						<li className='menu-item'>
+							<Link to='/wallet'>My wallet</Link>
+						</li>
+					)}
 				</ul>
 			</nav>
 		</aside>
