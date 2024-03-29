@@ -10,25 +10,23 @@ import {
 	Trending,
 	Wallet,
 	Error,
+	Login,
 	Account,
 } from './pages';
 import './index.css';
+import Protected from './utils/Protected';
 
 const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
 const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
 
-const routes = [
-	{
-		path: '/',
-		element: <Home />,
-	},
-	{
-		path: '/about',
-		element: <About />,
-	},
+const privateRoutes = [
 	{
 		path: '/account',
 		element: <Account />,
+	},
+	{
+		path: '/wallet',
+		element: <Wallet />,
 	},
 	{
 		path: '/marketplace',
@@ -38,13 +36,24 @@ const routes = [
 		path: '/fundraising',
 		element: <Fundraising />,
 	},
+];
+
+const publicRoutes = [
 	{
-		path: '/wallet',
-		element: <Wallet />,
+		path: '/',
+		element: <Home />,
+	},
+	{
+		path: '/about',
+		element: <About />,
 	},
 	{
 		path: '/trending',
 		element: <Trending />,
+	},
+	{
+		path: '/login',
+		element: <Login />,
 	},
 	{
 		path: '*',
@@ -63,7 +72,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				}}
 			>
 				<Routes>
-					{routes.map(({ path, element }) => (
+					<Route element={<Protected />}>
+						{privateRoutes.map(({ path, element }) => (
+							<Route key={path} path={path} element={element} />
+						))}
+					</Route>
+					{publicRoutes.map(({ path, element }) => (
 						<Route key={path} path={path} element={element} />
 					))}
 				</Routes>

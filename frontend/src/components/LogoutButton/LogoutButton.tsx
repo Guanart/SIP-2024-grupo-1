@@ -6,7 +6,7 @@ export const LogoutButton = () => {
 
 	return (
 		<button className='logout-button' onClick={() => logout()}>
-			Logout
+			Log out
 		</button>
 	);
 };

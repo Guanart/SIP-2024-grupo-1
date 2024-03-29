@@ -1,7 +1,7 @@
 .login-button {
 	background-color: white;
 	font-weight: normal;
-	border: none;
+	border: 1px solid #0d0521;
 	border-radius: 5px;
 	cursor: pointer;
 	padding: 4px 12px;
