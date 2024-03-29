@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import './Header.css';
+import { useAuth0 } from '@auth0/auth0-react';
+import { LoginButton, LogoutButton } from '../';
 
 export const Header = () => {
+	const { isAuthenticated } = useAuth0();
 	return (
 		<header>
 			<h1>LOT</h1>
@@ -17,7 +20,7 @@ export const Header = () => {
 						<Link to='/account'>Account</Link>
 					</li>
 					<li className='nav-item'>
-						<button className='auth-button'>Log in</button>
+						{isAuthenticated ? <LogoutButton /> : <LoginButton />}
 					</li>
 				</ul>
 			</nav>

@@ -44,13 +44,3 @@ header h1 {
 .nav-item a:hover {
 	text-decoration: underline;
 }
-
-.nav-item .auth-button {
-	background-color: white;
-	font-weight: normal;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	padding: 4px 12px;
-	color: #0d0521;
-}
