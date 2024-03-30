@@ -12,11 +12,11 @@
 1. Install the dependencies
 
 ```
-pnpm install
+npm install
 ```
 
 2. Run the application
 
 ```
-pnpm run dev
+npm run dev
 ```
