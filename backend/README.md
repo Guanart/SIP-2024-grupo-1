@@ -30,7 +30,9 @@
 $ pnpm install
 ```
 
-2. Run the application
+2. Set environment variables. Copy `.env.example` and rename it to `.env`
+
+3. Run the application
 
 ```bash
 # development
