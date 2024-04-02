@@ -18,7 +18,6 @@ import Protected from './utils/Protected';
 
 const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
 const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
-
 const privateRoutes = [
 	{
 		path: '/account',
@@ -69,6 +68,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				clientId={AUTH0_CLIENT_ID}
 				authorizationParams={{
 					redirect_uri: window.location.origin,
+					audience: 'http://my-secure-api.com',
+					scope: 'read:current_user update:current_user_metadata',
 				}}
 			>
 				<Routes>
