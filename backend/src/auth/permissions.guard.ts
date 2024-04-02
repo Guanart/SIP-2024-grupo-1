@@ -24,12 +24,6 @@ export class PermissionsGuard implements CanActivate {
       userPermissions.includes(permission),
     );
 
-    console.log(
-      userPermissions,
-      requiredPermissions,
-      hasAllRequiredPermissions,
-    );
-
     if (requiredPermissions.length === 0 || hasAllRequiredPermissions) {
       return true;
     }
