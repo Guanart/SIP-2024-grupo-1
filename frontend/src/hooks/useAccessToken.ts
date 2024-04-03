@@ -2,16 +2,19 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
 
-type Token = {
+interface TokenPayload extends JwtPayload {
+	permissions?: string[];
+}
+interface Token {
 	accessToken: string;
-	payload: JwtPayload;
-	permissions: string[];
-};
+	payload: TokenPayload;
+	permissions?: string[];
+}
 
 export function useAccessToken(): Token {
 	const { getAccessTokenSilently } = useAuth0();
 	const [accessToken, setAcessToken] = useState('');
-	const [payload, setPayload] = useState<JwtPayload>({});
+	const [payload, setPayload] = useState<TokenPayload>({});
 
 	useEffect(() => {
 		const getAccessToken = async () => {
