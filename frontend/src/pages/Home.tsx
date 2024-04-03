@@ -7,7 +7,7 @@ export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
 	const [message, setMessage] = useState<string>('');
 	const [role, setRole] = useState<string>('/');
-	const { accessToken } = useAccessToken();
+	const { accessToken, permissions } = useAccessToken();
 
 	async function makeRequest() {
 		if (isAuthenticated) {
@@ -45,6 +45,8 @@ export const Home = () => {
 				<div>
 					<p>Logged user data: </p>
 					<pre> {JSON.stringify(user, null, 2)}</pre>
+					<p>User permissions: </p>
+					<pre> {JSON.stringify(permissions, null, 2)}</pre>
 				</div>
 			)}
 

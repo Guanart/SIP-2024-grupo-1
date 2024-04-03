@@ -5,6 +5,7 @@ import { JwtPayload, jwtDecode } from 'jwt-decode';
 type Token = {
 	accessToken: string;
 	payload: JwtPayload;
+	permissions: string[];
 };
 
 export function useAccessToken(): Token {
@@ -25,11 +26,11 @@ export function useAccessToken(): Token {
 
 		getAccessToken().then((accessToken) => {
 			setAcessToken(accessToken);
-			const decoded = jwtDecode(accessToken);
+			const decoded = jwtDecode(accessToken, {});
 
 			setPayload(decoded);
 		});
 	}, [getAccessTokenSilently]);
 
-	return { accessToken, payload };
+	return { accessToken, payload, permissions: payload.permissions };
 }
