@@ -14,7 +14,7 @@ interface Token {
 }
 
 export function useAccessToken(): Token {
-	const { getAccessTokenSilently } = useAuth0();
+	const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 	const [accessToken, setAccessToken] = useState<string>('');
 	const [payload, setPayload] = useState<TokenPayload>({});
 	const [permissions, setPermissions] = useState<string[]>([]);
@@ -22,6 +22,8 @@ export function useAccessToken(): Token {
 
 	useEffect(() => {
 		const getAccessToken = async () => {
+			if (!isAuthenticated) return;
+
 			try {
 				const token = await getAccessTokenSilently({
 					authorizationParams: {
@@ -51,7 +53,7 @@ export function useAccessToken(): Token {
 		};
 
 		getAccessToken();
-	}, [getAccessTokenSilently]);
+	}, [getAccessTokenSilently, isAuthenticated]);
 
 	return {
 		accessToken,
