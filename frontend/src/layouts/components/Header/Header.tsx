@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import './Header.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import { LoginButton, LogoutButton } from '../../../components';
+import { LoginButton, LogoutButton, SignupButton } from '../../../components';
 
 export const Header = () => {
 	const { isAuthenticated } = useAuth0();
@@ -22,7 +22,14 @@ export const Header = () => {
 						</li>
 					)}
 					<li className='nav-item'>
-						{isAuthenticated ? <LogoutButton /> : <LoginButton />}
+						{isAuthenticated ? (
+							<LogoutButton />
+						) : (
+							<>
+								<LoginButton />
+								<SignupButton />
+							</>
+						)}
 					</li>
 				</ul>
 			</nav>
