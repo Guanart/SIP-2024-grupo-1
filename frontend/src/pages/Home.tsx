@@ -2,19 +2,16 @@ import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../layouts/PageLayout';
 import { useAccessToken } from '../hooks';
-// import { useToken } from '../hooks';
 
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
 	const [message, setMessage] = useState<string>('');
 	const [role, setRole] = useState<string>('/');
-	const getAccessToken = useAccessToken();
+	const { accessToken } = useAccessToken();
 
 	async function makeRequest() {
 		if (isAuthenticated) {
 			try {
-				const accessToken = await getAccessToken();
-
 				const url = `http://localhost:3000${role}`;
 
 				const response = await fetch(url, {
