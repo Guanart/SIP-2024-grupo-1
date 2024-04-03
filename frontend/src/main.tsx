@@ -50,10 +50,6 @@ const publicRoutes = [
 		element: <Trending />,
 	},
 	{
-		path: '/login',
-		element: <Login />,
-	},
-	{
 		path: '*',
 		element: <Error />,
 	},
