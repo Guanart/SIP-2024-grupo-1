@@ -1,23 +1,19 @@
 import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../layouts/PageLayout';
+import { useAccessToken } from '../hooks';
 // import { useToken } from '../hooks';
 
 export const Home = () => {
-	const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } =
-		useAuth0();
+	const { user, isAuthenticated, isLoading, error } = useAuth0();
 	const [message, setMessage] = useState<string>('');
 	const [role, setRole] = useState<string>('/');
+	const getAccessToken = useAccessToken();
 
 	async function makeRequest() {
 		if (isAuthenticated) {
 			try {
-				const accessToken = await getAccessTokenSilently({
-					authorizationParams: {
-						audience: `http://my-secure-api.com`,
-						scope: 'read:current_user',
-					},
-				});
+				const accessToken = await getAccessToken();
 
 				const url = `http://localhost:3000${role}`;
 
@@ -50,7 +46,7 @@ export const Home = () => {
 
 			{isAuthenticated && (
 				<div>
-					<p>User data: </p>
+					<p>Logged user data: </p>
 					<pre> {JSON.stringify(user, null, 2)}</pre>
 				</div>
 			)}

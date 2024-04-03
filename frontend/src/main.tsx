@@ -69,7 +69,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				authorizationParams={{
 					redirect_uri: window.location.origin,
 					audience: 'http://my-secure-api.com',
-					scope: 'read:current_user update:current_user_metadata',
+					// scope: 'read:current_user update:current_user_metadata',
 				}}
 			>
 				<Routes>

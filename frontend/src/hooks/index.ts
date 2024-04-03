@@ -1,1 +1,1 @@
-export * from './useToken';
+export * from './useAccessToken';
