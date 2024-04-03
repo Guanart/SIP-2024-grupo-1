@@ -6,13 +6,13 @@ import { useAccessToken } from '../hooks';
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
 	const [message, setMessage] = useState<string>('');
-	const [role, setRole] = useState<string>('/');
-	const { accessToken, permissions } = useAccessToken();
+	const [path, setPath] = useState<string>('/');
+	const { accessToken, permissions, role } = useAccessToken();
 
 	async function makeRequest() {
 		if (isAuthenticated) {
 			try {
-				const url = `http://localhost:3000${role}`;
+				const url = `http://localhost:3000${path}`;
 
 				const response = await fetch(url, {
 					method: 'GET',
@@ -43,10 +43,15 @@ export const Home = () => {
 
 			{isAuthenticated && (
 				<div>
-					<p>Logged user data: </p>
-					<pre> {JSON.stringify(user, null, 2)}</pre>
-					<p>User permissions: </p>
-					<pre> {JSON.stringify(permissions, null, 2)}</pre>
+					<pre>
+						Logged user data: <br />
+						{JSON.stringify(user, null, 2)}
+					</pre>
+					<pre>
+						User account permissions:{' '}
+						{JSON.stringify(permissions, null, 2)}
+					</pre>
+					<pre>User account role: {role}</pre>
 				</div>
 			)}
 
@@ -61,10 +66,10 @@ export const Home = () => {
 								id='/'
 								type='radio'
 								value='/'
-								name='role'
-								checked={role === '/'}
+								name='path'
+								checked={path === '/'}
 								onChange={(e) => {
-									setRole(e.target.value);
+									setPath(e.target.value);
 								}}
 							/>
 							<label htmlFor='/'>/</label>
@@ -74,10 +79,10 @@ export const Home = () => {
 								id='/user'
 								type='radio'
 								value='/user'
-								name='role'
-								checked={role === '/user'}
+								name='path'
+								checked={path === '/user'}
 								onChange={(e) => {
-									setRole(e.target.value);
+									setPath(e.target.value);
 								}}
 							/>
 							<label htmlFor='/user'>/user</label>
@@ -87,10 +92,10 @@ export const Home = () => {
 								id='/player'
 								type='radio'
 								value='/player'
-								name='role'
-								checked={role === '/player'}
+								name='path'
+								checked={path === '/player'}
 								onChange={(e) => {
-									setRole(e.target.value);
+									setPath(e.target.value);
 								}}
 							/>
 							<label htmlFor='/player'>/player</label>
@@ -100,10 +105,10 @@ export const Home = () => {
 								id='/admin'
 								type='radio'
 								value='/admin'
-								name='role'
-								checked={role === '/admin'}
+								name='path'
+								checked={path === '/admin'}
 								onChange={(e) => {
-									setRole(e.target.value);
+									setPath(e.target.value);
 								}}
 							/>
 							<label htmlFor='/admin'>/admin</label>
@@ -113,7 +118,7 @@ export const Home = () => {
 								makeRequest();
 							}}
 						>
-							Make request to {role}
+							Make request to {path}
 						</button>
 
 						{message && (
