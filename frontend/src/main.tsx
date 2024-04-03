@@ -9,6 +9,7 @@ import {
 	Marketplace,
 	Trending,
 	Wallet,
+	Login,
 	Error,
 	Account,
 } from './pages';
@@ -45,6 +46,11 @@ const publicRoutes = [
 		path: '/about',
 		element: <About />,
 	},
+	{
+		path: '/login',
+		element: <Login />,
+	},
+
 	{
 		path: '/trending',
 		element: <Trending />,
