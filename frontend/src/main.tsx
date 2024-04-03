@@ -10,7 +10,6 @@ import {
 	Trending,
 	Wallet,
 	Error,
-	Login,
 	Account,
 } from './pages';
 import './index.css';
