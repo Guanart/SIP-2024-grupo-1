@@ -18,7 +18,7 @@ export function useAccessToken(): Token {
 	const [accessToken, setAccessToken] = useState<string>('');
 	const [payload, setPayload] = useState<TokenPayload>({});
 	const [permissions, setPermissions] = useState<string[]>([]);
-	const [role, setRole] = useState<string>('user');
+	const [role, setRole] = useState<string>('');
 
 	useEffect(() => {
 		const getAccessToken = async () => {
@@ -40,13 +40,20 @@ export function useAccessToken(): Token {
 				const permissions = decoded.permissions || [];
 				setPermissions(permissions);
 
-				if (permissions) {
-					if (permissions.includes('validate:users')) {
-						setRole('admin');
-					} else if (permissions.includes('create:fundraisings')) {
-						setRole('player');
-					}
+				if (!permissions || permissions.length === 0) {
+					return;
 				}
+
+				if (permissions.includes('validate:users')) {
+					setRole('admin');
+					return;
+				}
+				if (permissions.includes('create:fundraisings')) {
+					setRole('player');
+					return;
+				}
+
+				setRole('user');
 			} catch (error) {
 				console.error('Error fetching access token:', error);
 			}
