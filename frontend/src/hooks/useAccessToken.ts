@@ -33,27 +33,6 @@ export function useAccessToken(): Token {
 				});
 
 				setAccessToken(token);
-
-				const decoded: Token = jwtDecode(token);
-				setPayload(decoded);
-
-				const permissions = decoded.permissions || [];
-				setPermissions(permissions);
-
-				if (!permissions || permissions.length === 0) {
-					return;
-				}
-
-				if (permissions.includes('validate:users')) {
-					setRole('admin');
-					return;
-				}
-				if (permissions.includes('create:fundraisings')) {
-					setRole('player');
-					return;
-				}
-
-				setRole('user');
 			} catch (error) {
 				console.error('Error fetching access token:', error);
 			}
@@ -61,6 +40,34 @@ export function useAccessToken(): Token {
 
 		getAccessToken();
 	}, [getAccessTokenSilently, isAuthenticated, isLoading]);
+
+	useEffect(() => {
+		if (!accessToken) return;
+		try {
+			const decoded: Token = jwtDecode(accessToken);
+			setPayload(decoded);
+
+			const permissions = decoded.permissions || [];
+			setPermissions(permissions);
+
+			if (!permissions || permissions.length === 0) {
+				return;
+			}
+
+			if (permissions.includes('validate:users')) {
+				setRole('admin');
+				return;
+			}
+			if (permissions.includes('create:fundraisings')) {
+				setRole('player');
+				return;
+			}
+
+			setRole('user');
+		} catch (error) {
+			console.error('Error parsing access token:', error);
+		}
+	}, [accessToken]);
 
 	return {
 		accessToken,
