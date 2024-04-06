@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import './Menu.css';
 import { useState } from 'react';
-import { CaretDoubleLeft, CaretDoubleRight } from '@phosphor-icons/react';
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import { useAuth0 } from '@auth0/auth0-react';
 
 export const Menu = () => {
@@ -18,9 +19,9 @@ export const Menu = () => {
 					}}
 				>
 					{isOpen ? (
-						<CaretDoubleRight size={18} weight='bold' />
+						<KeyboardDoubleArrowRightIcon />
 					) : (
-						<CaretDoubleLeft size={18} weight='bold' />
+						<KeyboardDoubleArrowLeftIcon />
 					)}
 				</button>
 				<ul className={`menu ${!isOpen ? 'hidden' : ''}`}>
