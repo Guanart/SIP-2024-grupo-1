@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../layouts/PageLayout';
 import { useAccessToken } from '../hooks';
@@ -6,34 +5,7 @@ import Button from '@mui/material/Button';
 
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
-	const [message, setMessage] = useState<string>('');
-	const [path, setPath] = useState<string>('/');
-	const { accessToken, permissions, role } = useAccessToken();
-
-	async function makeRequest() {
-		if (isAuthenticated) {
-			try {
-				const url = `http://localhost:3000${path}`;
-
-				const response = await fetch(url, {
-					method: 'GET',
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-					},
-				});
-
-				const data = await response.json();
-
-				if (data.message) {
-					setMessage(data.message);
-				} else {
-					setMessage(`${data.status}: ${data.inner.message}`);
-				}
-			} catch (error) {
-				console.error(error);
-			}
-		}
-	}
+	const { permissions, role } = useAccessToken();
 
 	return (
 		<PageLayout>
@@ -55,7 +27,6 @@ export const Home = () => {
 					<pre>User account role: {role}</pre>
 				</div>
 			)}
-
 			{isAuthenticated && (
 				<>
 					<br />
@@ -125,6 +96,7 @@ export const Home = () => {
 					</div>
 				</>
 			)}
+			<Button variant='contained'>Hello world MaterialUI</Button>
 		</PageLayout>
 	);
 };
