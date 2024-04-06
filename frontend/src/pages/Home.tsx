@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../layouts/PageLayout';
 import { useAccessToken } from '../hooks';
+import Button from '@mui/material/Button';
 
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
@@ -113,14 +114,9 @@ export const Home = () => {
 							/>
 							<label htmlFor='/admin'>/admin</label>
 						</p>
-						<button
-							onClick={() => {
-								makeRequest();
-							}}
-						>
-							Make request to {path}
-						</button>
-
+						<Button variant="contained" onClick={() => {
+							makeRequest();
+						}}>Make request to {path}</Button>
 						{message && (
 							<div>
 								<p>Message from the server: {message}</p>

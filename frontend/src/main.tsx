@@ -16,6 +16,11 @@ import {
 import './index.css';
 import Protected from './utils/Protected';
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
 const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
 const privateRoutes = [
