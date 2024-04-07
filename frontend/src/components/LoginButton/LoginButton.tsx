@@ -10,6 +10,9 @@ export const LoginButton = () => {
 			variant='contained'
 			className='login-button'
 			color='secondary'
+			sx={{
+				fontWeight: 'bold',
+			}}
 			onClick={() => loginWithRedirect()}
 		>
 			Log in
