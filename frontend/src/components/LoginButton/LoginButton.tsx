@@ -9,6 +9,7 @@ export const LoginButton = () => {
 		<Button
 			variant='contained'
 			className='login-button'
+			color='secondary'
 			onClick={() => loginWithRedirect()}
 		>
 			Log in

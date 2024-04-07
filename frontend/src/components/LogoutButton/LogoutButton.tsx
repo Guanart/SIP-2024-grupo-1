@@ -8,6 +8,7 @@ export const LogoutButton = () => {
 	return (
 		<Button
 			variant='contained'
+			color='secondary'
 			className='logout-button'
 			onClick={() => logout()}
 		>

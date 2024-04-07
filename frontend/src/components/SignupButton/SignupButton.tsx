@@ -7,8 +7,9 @@ export const SignupButton = () => {
 
 	return (
 		<Button
-			variant='contained'
-			className='login-button'
+			variant='outlined'
+			color='secondary'
+			className='signup-button'
 			onClick={() =>
 				loginWithRedirect({
 					authorizationParams: {
