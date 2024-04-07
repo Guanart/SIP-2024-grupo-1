@@ -26,6 +26,22 @@ export const Menu = () => {
 				</button>
 				<ul className={`menu ${!isOpen ? 'hidden' : ''}`}>
 					<li className='menu-item'>
+						<Link to='/'>Home</Link>
+					</li>
+					<li className='menu-item'>
+						<Link to='/about'>About</Link>
+					</li>
+					{isAuthenticated && (
+						<li className='menu-item'>
+							<Link to='/account'>Account</Link>
+						</li>
+					)}
+					{isAuthenticated && (
+						<li className='menu-item'>
+							<Link to='/wallet'>My wallet</Link>
+						</li>
+					)}
+					<li className='menu-item'>
 						<Link to='/marketplace'>Marketplace</Link>
 					</li>
 					<li className='menu-item'>
@@ -34,11 +50,6 @@ export const Menu = () => {
 					<li className='menu-item'>
 						<Link to='/trending'>Trending</Link>
 					</li>
-					{isAuthenticated && (
-						<li className='menu-item'>
-							<Link to='/wallet'>My wallet</Link>
-						</li>
-					)}
 				</ul>
 			</nav>
 		</aside>

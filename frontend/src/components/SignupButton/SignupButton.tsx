@@ -1,12 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react';
+import Button from '@mui/material/Button';
 import './SignupButton.css';
 
 export const SignupButton = () => {
 	const { loginWithRedirect } = useAuth0();
 
 	return (
-		<button
-			className='signup-button'
+		<Button
+			variant='contained'
+			className='login-button'
 			onClick={() =>
 				loginWithRedirect({
 					authorizationParams: {
@@ -17,6 +19,6 @@ export const SignupButton = () => {
 			}
 		>
 			Sign up
-		</button>
+		</Button>
 	);
 };

@@ -1,38 +1,42 @@
-import { Link } from 'react-router-dom';
-import './Header.css';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
+import {
+	LoginButton,
+	LogoutButton,
+	SignupButton,
+	ImageAvatar,
+	MenuButton,
+} from '../../../components';
 import { useAuth0 } from '@auth0/auth0-react';
-import { LoginButton, LogoutButton, SignupButton } from '../../../components';
+import './Header.css';
 
-export const Header = () => {
+export function Header() {
 	const { isAuthenticated } = useAuth0();
+
 	return (
-		<header>
-			<h1>LOT</h1>
-			<nav className='header-nav'>
-				<ul>
-					<li className='nav-item'>
-						<Link to='/'>Home</Link>
-					</li>
-					<li className='nav-item'>
-						<Link to='/about'>About</Link>
-					</li>
-					{isAuthenticated && (
-						<li className='nav-item'>
-							<Link to='/account'>Account</Link>
-						</li>
-					)}
-					<li className='nav-item'>
-						{isAuthenticated ? (
+		<AppBar position='fixed'>
+			<Toolbar>
+				<MenuButton />
+				{/* Acá debería ir el logo de LOT */}
+				<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+					LOT
+				</Typography>
+				<Stack direction='row' spacing={2}>
+					{isAuthenticated ? (
+						<>
+							<ImageAvatar />
 							<LogoutButton />
-						) : (
-							<>
-								<LoginButton />
-								<SignupButton />
-							</>
-						)}
-					</li>
-				</ul>
-			</nav>
-		</header>
+						</>
+					) : (
+						<>
+							<LoginButton />
+							<SignupButton />
+						</>
+					)}
+				</Stack>
+			</Toolbar>
+		</AppBar>
 	);
-};
+}
