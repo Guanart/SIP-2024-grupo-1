@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
-
+import './global/index.css';
 import {
 	About,
 	Fundraising,
@@ -14,10 +14,9 @@ import {
 	Error,
 	Account,
 } from './pages';
-import './index.css';
+import { theme } from './global/theme.ts';
 import Protected from './utils/Protected';
 import { ThemeProvider } from '@mui/material';
-import { theme } from './theme/';
 
 const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
 const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
