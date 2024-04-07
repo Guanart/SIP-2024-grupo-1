@@ -1,7 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../layouts/PageLayout';
 import { useAccessToken } from '../hooks';
-import Button from '@mui/material/Button';
 
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
@@ -27,7 +26,6 @@ export const Home = () => {
 					<pre>User account role: {role}</pre>
 				</div>
 			)}
-			<Button variant='contained'>Hello world MaterialUI</Button>
 		</PageLayout>
 	);
 };
