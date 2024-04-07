@@ -5,10 +5,19 @@ export const theme: ThemeOptions = createTheme({
 	palette: {
 		mode: 'light',
 		primary: {
-			main: '#40128B',
+			main: '#211951',
 		},
 		secondary: {
-			main: '#9336B4',
+			main: '#45FFCA',
+		},
+	},
+	components: {
+		MuiButton: {
+			styleOverrides: {
+				outlined: {
+					borderWidth: '2px',
+				},
+			},
 		},
 	},
 });
