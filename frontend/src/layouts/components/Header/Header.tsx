@@ -19,11 +19,11 @@ export function Header() {
 		<AppBar position='fixed'>
 			<Toolbar>
 				<MenuButton />
-				{/* Acá debería ir el logo de LOT */}
-				<Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-					LOT
+				<Typography variant='h1' component='h1' sx={{ flexGrow: 1 }}>
+					<img src='logo.png' alt='LOT' className='logo' />
 				</Typography>
-				<Stack direction='row' spacing={2}>
+
+				<Stack direction='row' spacing={1}>
 					{isAuthenticated ? (
 						<>
 							<ImageAvatar />
