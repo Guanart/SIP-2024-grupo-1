@@ -20,7 +20,7 @@ export function Header() {
 			<Toolbar>
 				<MenuButton />
 				<Typography variant='h1' component='h1' sx={{ flexGrow: 1 }}>
-					<img src='logo.png' alt='LOT' className='logo' />
+					<img src='assets/logo.png' alt='LOT' className='logo' />
 				</Typography>
 
 				<Stack direction='row' spacing={1.5}>
