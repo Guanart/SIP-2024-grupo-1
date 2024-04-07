@@ -23,7 +23,7 @@ export function Header() {
 					<img src='logo.png' alt='LOT' className='logo' />
 				</Typography>
 
-				<Stack direction='row' spacing={1}>
+				<Stack direction='row' spacing={1.5}>
 					{isAuthenticated ? (
 						<>
 							<ImageAvatar />
