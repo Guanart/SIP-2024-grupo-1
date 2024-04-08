@@ -71,7 +71,7 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 
 	return (
 		<Drawer anchor='left' open={isOpen} onClose={toggleMenu}>
-			<Box sx={{ width: 300 }} role='presentation' onClick={toggleMenu}>
+			<Box sx={{ width: 250 }} role='presentation' onClick={toggleMenu}>
 				<List>
 					{items.map(({ text, href, icon, isProtected }) => {
 						return !isProtected ? (
