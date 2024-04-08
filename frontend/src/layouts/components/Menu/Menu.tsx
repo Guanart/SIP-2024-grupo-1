@@ -81,8 +81,9 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 									textDecoration: 'none',
 									color: 'inherit',
 								}}
+								key={text}
 							>
-								<ListItem key={text} disablePadding>
+								<ListItem disablePadding>
 									<ListItemButton>
 										<ListItemIcon>{icon}</ListItemIcon>
 										<ListItemText primary={text} />
@@ -97,6 +98,7 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 										textDecoration: 'none',
 										color: 'inherit',
 									}}
+									key={text}
 								>
 									<ListItem key={text} disablePadding>
 										<ListItemButton>
