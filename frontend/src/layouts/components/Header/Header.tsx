@@ -17,7 +17,6 @@ export function Header() {
 
 	function toggleMenu() {
 		setIsMenuOpen(!isMenuOpen);
-		console.log(!isMenuOpen);
 	}
 
 	return (
