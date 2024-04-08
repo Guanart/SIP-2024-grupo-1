@@ -1,9 +1,17 @@
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+import { MenuIcon } from '../../global/icons';
+import { FunctionComponent } from 'react';
 
-export const MenuButton = () => {
+type MenuButtonProps = {
+	toggleMenu: () => void;
+};
+
+export const MenuButton: FunctionComponent<MenuButtonProps> = ({
+	toggleMenu,
+}) => {
 	return (
 		<IconButton
+			onClick={toggleMenu}
 			size='large'
 			edge='start'
 			color='inherit'

@@ -1,57 +1,115 @@
-import { Link } from 'react-router-dom';
-import './Menu.css';
-import { useState } from 'react';
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import { FunctionComponent } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import './Menu.css';
+import {
+	Drawer,
+	Box,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+} from '@mui/material';
+import {
+	InfoIcon,
+	AccountCircleIcon,
+	WalletIcon,
+	TokenIcon,
+	EmojiEventsIcon,
+	HomeIcon,
+	TrendingUpIcon,
+} from '../../../global/icons';
+import { Link } from 'react-router-dom';
 
-export const Menu = () => {
-	const [isOpen, setIsOpen] = useState(false);
+const items = [
+	{ text: 'Home', href: '/', icon: <HomeIcon />, isProtected: false },
+	{
+		text: 'About',
+		href: '/about',
+		icon: <InfoIcon />,
+		isProtected: false,
+	},
+	{
+		text: 'Account',
+		href: '/account',
+		icon: <AccountCircleIcon />,
+		isProtected: true,
+	},
+	{
+		text: 'Wallet',
+		href: '/wallet',
+		icon: <WalletIcon />,
+		isProtected: true,
+	},
+	{
+		text: 'Marketplace',
+		href: '/marketplace',
+		icon: <TokenIcon />,
+		isProtected: false,
+	},
+	{
+		text: 'Fundraising',
+		href: '/fundraising',
+		icon: <EmojiEventsIcon />,
+		isProtected: false,
+	},
+	{
+		text: 'Trending',
+		href: '/trending',
+		icon: <TrendingUpIcon />,
+		isProtected: false,
+	},
+];
+
+type MenuProps = {
+	isOpen: boolean;
+	toggleMenu: () => void;
+};
+
+export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 	const { isAuthenticated } = useAuth0();
 
 	return (
-		<aside>
-			<nav>
-				<button
-					className='menu-button'
-					onClick={() => {
-						setIsOpen(!isOpen);
-					}}
-				>
-					{isOpen ? (
-						<KeyboardDoubleArrowRightIcon />
-					) : (
-						<KeyboardDoubleArrowLeftIcon />
-					)}
-				</button>
-				<ul className={`menu ${!isOpen ? 'hidden' : ''}`}>
-					<li className='menu-item'>
-						<Link to='/'>Home</Link>
-					</li>
-					<li className='menu-item'>
-						<Link to='/about'>About</Link>
-					</li>
-					{isAuthenticated && (
-						<li className='menu-item'>
-							<Link to='/account'>Account</Link>
-						</li>
-					)}
-					{isAuthenticated && (
-						<li className='menu-item'>
-							<Link to='/wallet'>My wallet</Link>
-						</li>
-					)}
-					<li className='menu-item'>
-						<Link to='/marketplace'>Marketplace</Link>
-					</li>
-					<li className='menu-item'>
-						<Link to='/fundraising'>Fundraising</Link>
-					</li>
-					<li className='menu-item'>
-						<Link to='/trending'>Trending</Link>
-					</li>
-				</ul>
-			</nav>
-		</aside>
+		<Drawer anchor='left' open={isOpen} onClose={toggleMenu}>
+			<Box sx={{ width: 300 }} role='presentation' onClick={toggleMenu}>
+				<List>
+					{items.map(({ text, href, icon, isProtected }) => {
+						return !isProtected ? (
+							<Link
+								to={href}
+								style={{
+									textDecoration: 'none',
+									color: 'inherit',
+								}}
+							>
+								<ListItem key={text} disablePadding>
+									<ListItemButton>
+										<ListItemIcon>{icon}</ListItemIcon>
+										<ListItemText primary={text} />
+									</ListItemButton>
+								</ListItem>
+							</Link>
+						) : (
+							isAuthenticated && (
+								<Link
+									to={href}
+									style={{
+										textDecoration: 'none',
+										color: 'inherit',
+									}}
+								>
+									<ListItem key={text} disablePadding>
+										<ListItemButton>
+											<ListItemIcon>{icon}</ListItemIcon>
+											<ListItemText primary={text} />
+										</ListItemButton>
+									</ListItem>
+								</Link>
+							)
+						);
+					})}
+				</List>
+			</Box>
+		</Drawer>
 	);
 };

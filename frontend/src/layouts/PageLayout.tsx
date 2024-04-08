@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from 'react';
-import { Header, Menu } from './components';
+import { Header } from './components';
 import { useLocation } from 'react-router-dom';
 import './PageLayout.css';
 
@@ -27,10 +27,7 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 	return (
 		<>
 			<Header />
-			<main>
-				<Menu />
-				{children}
-			</main>
+			<main>{children}</main>
 		</>
 	);
 };

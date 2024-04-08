@@ -1,7 +1,5 @@
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
+import { useState } from 'react';
+import { AppBar, Toolbar, Typography, Stack } from '@mui/material';
 import {
 	LoginButton,
 	LogoutButton,
@@ -11,14 +9,22 @@ import {
 } from '../../../components';
 import { useAuth0 } from '@auth0/auth0-react';
 import './Header.css';
+import { Menu } from '../Menu/Menu';
 
 export function Header() {
 	const { isAuthenticated } = useAuth0();
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+	function toggleMenu() {
+		setIsMenuOpen(!isMenuOpen);
+		console.log(!isMenuOpen);
+	}
 
 	return (
 		<AppBar position='fixed'>
+			<Menu isOpen={isMenuOpen} toggleMenu={toggleMenu} />
 			<Toolbar>
-				<MenuButton />
+				<MenuButton toggleMenu={toggleMenu} />
 				<Typography variant='h1' component='h1' sx={{ flexGrow: 1 }}>
 					<img src='assets/logo.png' alt='LOT' className='logo' />
 				</Typography>
