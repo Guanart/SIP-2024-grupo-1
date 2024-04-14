@@ -29,7 +29,7 @@ export class AccountController {
   // @SetMetadata('permissions', ['read:accounts'])
   @Get('/:auth0_id')
   async findOne(@Param('auth0_id') auth0_id: string): Promise<Account> {
-    const account: Account = this.accountService.findOne(auth0_id);
+    const account: Account = await this.accountService.findOne(auth0_id);
 
     if (!account) {
       throw new NotFoundException();

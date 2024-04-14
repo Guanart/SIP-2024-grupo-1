@@ -10,7 +10,7 @@ datasource db {
 model Account {
   account_id Int    @id @default(autoincrement())
   email      String
-  auth0_id   String
+  auth0_id   String @unique
   username   String @db.VarChar(255)
   User       User[]
 }

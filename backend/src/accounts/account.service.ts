@@ -1,37 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { Account } from './account.entity';
+import { PrismaService } from '../database/prisma.service';
 
 @Injectable()
 export class AccountService {
-  private accounts: Account[] = [
-    {
-      account_id: 1,
-      email: 'testing@home.com',
-      auth0_id: 'auth0|123456',
-      username: 'test-user',
-    },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  create({ auth0_id, email, username }) {
-    const account: Account = {
-      auth0_id,
-      email,
-      username,
-    };
-
-    this.accounts.push(account);
-  }
-
-  findOne(id: string): Account | null {
-    const account = this.accounts.filter((account) => {
-      return account.auth0_id === id;
+  async create({ auth0_id, email, username }) {
+    const createdAccount = await this.prisma.account.create({
+      data: {
+        auth0_id,
+        email,
+        username,
+      },
     });
 
-    if (account.length === 0) {
-      return null;
-    }
+    const createdUser = await this.prisma.user.create({
+      data: {
+        account_id: createdAccount.account_id,
+        biography: '',
+      },
+    });
 
-    return account[0];
+    console.log(createdUser);
+
+    return createdAccount;
+  }
+
+  async findOne(auth0_id: string): Promise<Account | null> {
+    const account: Account = await this.prisma.account.findUnique({
+      where: {
+        auth0_id,
+      },
+    });
+
+    return account;
   }
 
   // update() {}
