@@ -36,8 +36,4 @@ export class AccountService {
 
     return account;
   }
-
-  // update() {}
-
-  // delete() {}
 }
