@@ -7,6 +7,7 @@ export class CreateAccountDto {
   @IsNotEmpty()
   username: string;
 
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 }
