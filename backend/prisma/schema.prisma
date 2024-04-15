@@ -8,19 +8,19 @@ datasource db {
 }
 
 model Account {
-  account_id Int    @id @default(autoincrement())
+  account_id Int      @id @default(autoincrement())
   email      String
-  auth0_id   String @unique
-  username   String @db.VarChar(255)
+  auth0_id   String   @unique
+  username   String   @db.VarChar(255)
   avatar     String
   User       User[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model User {
   user_id    Int     @id @default(autoincrement())
   biography  String  @default("") @db.VarChar(255)
-  author     Account @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
-  account_id Int
+  account    Account @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
+  account_id Int     @unique
 }
