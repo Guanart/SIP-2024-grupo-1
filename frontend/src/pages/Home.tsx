@@ -22,6 +22,7 @@ export const Home = () => {
 					username: user.nickname,
 					email: user.email,
 					auth0_id: user.sub,
+					avatar: user.picture,
 				};
 
 				await fetchWithAuth({

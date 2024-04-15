@@ -12,12 +12,13 @@ model Account {
   email      String
   auth0_id   String @unique
   username   String @db.VarChar(255)
+  avatar     String
   User       User[]
 }
 
 model User {
   user_id    Int     @id @default(autoincrement())
   biography  String  @default("") @db.VarChar(255)
-  author     Account @relation(fields: [account_id], references: [account_id])
+  author     Account @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
   account_id Int
 }

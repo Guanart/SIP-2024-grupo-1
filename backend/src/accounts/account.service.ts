@@ -6,12 +6,13 @@ import { PrismaService } from '../database/prisma.service';
 export class AccountService {
   constructor(private prisma: PrismaService) {}
 
-  async create({ auth0_id, email, username }): Promise<Account | null> {
+  async create({ auth0_id, email, username, avatar }): Promise<Account | null> {
     const createdAccount = await this.prisma.account.create({
       data: {
         auth0_id,
         email,
         username,
+        avatar,
       },
     });
 
