@@ -15,7 +15,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/account/${user.sub}`,
+					url: `http://localhost:3000/user/${user.sub}`,
 				});
 			} catch (error) {
 				const account = {
@@ -28,7 +28,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/account/`,
+					url: `http://localhost:3000/user/`,
 					method: 'POST',
 					data: account,
 				});
