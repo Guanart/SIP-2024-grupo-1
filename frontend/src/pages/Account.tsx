@@ -17,7 +17,7 @@ import { Loader } from '../components';
 export const Account = () => {
 	const { accessToken } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
-	const [account, setAccount] = useState<User | null>(null);
+	const [userData, setUserData] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useEffect(() => {
@@ -26,7 +26,7 @@ export const Account = () => {
 		fetchWithAuth({
 			isAuthenticated,
 			accessToken,
-			url: `http://localhost:3000/account/${user?.sub}`,
+			url: `http://localhost:3000/user/${user?.sub}`,
 			method: 'GET',
 		})
 			.then((response) => {
@@ -35,12 +35,12 @@ export const Account = () => {
 				return response.json();
 			})
 			.then((data) => {
-				const { account } = data;
+				const { user } = data;
 
-				if (!account) return;
+				if (!user) return;
 
 				setIsLoading(false);
-				setAccount(account);
+				setUserData(user);
 			});
 	}, [user, isAuthenticated, accessToken]);
 
@@ -51,7 +51,7 @@ export const Account = () => {
 					My profile
 				</Typography>
 				{isLoading && <Loader />}
-				{!isLoading && account && (
+				{!isLoading && userData && (
 					<Container sx={{ mt: '16px' }}>
 						<Stack
 							spacing={2}
@@ -62,13 +62,13 @@ export const Account = () => {
 							<Stack spacing={2}>
 								<Stack spacing={2} direction='row'>
 									<Avatar
-										alt={account.username}
-										src={account.avatar}
+										alt={userData.username}
+										src={userData.avatar}
 										sx={{ width: 56, height: 56 }}
 									/>
 									<Box>
 										<Typography variant='h6' component='h3'>
-											{account.username}
+											{userData.username}
 											<Typography
 												variant='subtitle1'
 												component='span'
@@ -78,7 +78,7 @@ export const Account = () => {
 													color: 'grey',
 												}}
 											>
-												{account.email}
+												{userData.email}
 											</Typography>
 										</Typography>
 										<Typography
@@ -94,17 +94,6 @@ export const Account = () => {
 									</Box>
 								</Stack>
 
-								<Typography
-									maxWidth='750px'
-									variant='body1'
-									component='p'
-								>
-									Lorem Ipsum es simplemente el texto de
-									relleno de las imprentas y archivos de
-									texto. Lorem Ipsum ha sido el texto de
-									relleno estándar de las industrias desde el
-									año 1500, cuando un impresor. 200 Chars
-								</Typography>
 								<Button
 									variant='contained'
 									color='secondary'
@@ -122,16 +111,28 @@ export const Account = () => {
 				)}
 			</Container>
 
-			<Container sx={{ mt: '24px' }}>
-				<Typography variant='h6' component='h2' color='primary'>
-					Tokens
-				</Typography>
-			</Container>
-			<Container sx={{ mt: '24px' }}>
-				<Typography variant='h6' component='h2' color='primary'>
-					Marketplace
-				</Typography>
-			</Container>
+			{!isLoading && (
+				<>
+					<Container sx={{ mt: '24px' }}>
+						<Typography variant='h6' component='h2' color='primary'>
+							Tokens
+						</Typography>
+						<p>
+							Acá pensaba mostrar los 5 tokens más valiosos o algo
+							por el estilo
+						</p>
+					</Container>
+					<Container sx={{ mt: '24px' }}>
+						<Typography variant='h6' component='h2' color='primary'>
+							Marketplace
+						</Typography>
+						<p>
+							Acá pensaba mostrar las últimas 5 publicaciones del
+							Marketplace
+						</p>
+					</Container>
+				</>
+			)}
 		</PageLayout>
 	);
 };
