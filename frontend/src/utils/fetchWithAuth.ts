@@ -12,7 +12,7 @@ export async function fetchWithAuth({
 	url,
 	method = 'GET',
 	data,
-}: fetchOptions): Promise<unknown> {
+}: fetchOptions): Promise<globalThis.Response> {
 	if (!isAuthenticated || !accessToken) {
 		throw new Error('User not authenticated or access token not provided');
 	}
@@ -32,9 +32,8 @@ export async function fetchWithAuth({
 		if (!response.ok) {
 			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
-		console.log(response);
 
-		return await response.json();
+		return response;
 	} catch (error) {
 		console.error('Error fetching data:', error);
 		throw error;
