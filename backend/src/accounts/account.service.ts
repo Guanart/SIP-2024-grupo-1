@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Account } from './account.entity';
+import { Account, User } from './account.entity';
 import { PrismaService } from '../database/prisma.service';
 import { CreateAccountDto } from './dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
@@ -25,14 +25,20 @@ export class AccountService {
     return createdAccount;
   }
 
-  async findOne(auth0_id: string): Promise<Account> {
+  async findOne(auth0_id: string): Promise<Account & User> {
     const account: Account = await this.prisma.account.findUnique({
       where: {
         auth0_id,
       },
     });
 
-    return account;
+    const user: User = await this.prisma.user.findUnique({
+      where: {
+        account_id: account.account_id,
+      },
+    });
+
+    return { ...account, ...user };
   }
 
   async update({
