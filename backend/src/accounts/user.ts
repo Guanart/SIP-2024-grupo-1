@@ -12,32 +12,32 @@ import {
   Delete,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AccountService } from './account.service';
-import { Account } from './account.entity';
-import { CreateAccountDto } from './dto';
+import { UserService } from './user.service';
+import { User } from './user.entity';
+import { CreateUserDto } from './dto';
 // import { PermissionsGuard } from '../auth/permissions.guard';
 // import { AuthGuard } from '../auth/auth.guard';
-import { UpdateAccountDto } from './dto/update-account.dto';
-import { DeleteAccountDto } from './dto/delete-account-dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { DeleteUserDto } from './dto/delete-user-dto';
 
-@Controller('account')
-export class AccountController {
-  constructor(private accountService: AccountService) {}
+@Controller('User')
+export class UserController {
+  constructor(private userService: UserService) {}
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['create:accounts'])
+  // @SetMetadata('permissions', ['create:Users'])
   @Post()
-  async create(@Body() newAccount: CreateAccountDto): Promise<string> {
+  async create(@Body() newUser: CreateUserDto): Promise<string> {
     try {
-      const account: Account = await this.accountService.create(newAccount);
+      const user: User = await this.userService.create(newUser);
 
-      if (!account) {
+      if (!user) {
         throw new BadRequestException();
       }
 
       return JSON.stringify({
-        message: `Account ${newAccount.auth0_id} created`,
+        message: `User ${newUser.auth0_id} created`,
       });
     } catch (exception) {
       if (exception instanceof BadRequestException) {
@@ -50,19 +50,19 @@ export class AccountController {
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['read:accounts'])
+  // @SetMetadata('permissions', ['read:users'])
   @Get('/:auth0_id')
   async findOne(@Param('auth0_id') auth0_id: string): Promise<string> {
     try {
-      const account: Account = await this.accountService.findOne(auth0_id);
+      const user: User = await this.userService.findOne(auth0_id);
 
-      if (!account) {
-        throw new NotFoundException(`Account ${auth0_id} not found`);
+      if (!user) {
+        throw new NotFoundException(`User ${auth0_id} not found`);
       }
 
       return JSON.stringify({
-        message: 'Account found',
-        account,
+        message: 'User found',
+        user,
       });
     } catch (exception) {
       if (exception instanceof NotFoundException) {
@@ -75,28 +75,28 @@ export class AccountController {
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['update:accounts'])
+  // @SetMetadata('permissions', ['update:users'])
   @Put('/')
-  async update(@Body() updatedAccount: UpdateAccountDto): Promise<string> {
+  async update(@Body() updatedUser: UpdateUserDto): Promise<string> {
     try {
-      let account: Account = await this.accountService.findOne(
-        updatedAccount.auth0_id,
+      let user: User = await this.userService.findOne(
+        updatedUser.auth0_id,
       );
 
-      if (!account) {
+      if (!user) {
         throw new NotFoundException(
-          `Account ${updatedAccount.auth0_id} not found`,
+          `User ${updatedUser.auth0_id} not found`,
         );
       }
 
-      account = await this.accountService.update(updatedAccount);
+      user = await this.userService.update(updatedUser);
 
-      if (!account) {
+      if (!user) {
         throw new BadRequestException();
       }
 
       return JSON.stringify({
-        message: `Account ${updatedAccount.auth0_id} updated`,
+        message: `User ${updatedUser.auth0_id} updated`,
       });
     } catch (exception) {
       if (
@@ -112,26 +112,26 @@ export class AccountController {
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['delete:accounts'])
+  // @SetMetadata('permissions', ['delete:users'])
   @Delete('/')
-  async delete(@Body() deletedAccount: DeleteAccountDto): Promise<string> {
+  async delete(@Body() deletedUser: DeleteUserDto): Promise<string> {
     try {
-      let account: Account = await this.accountService.findOne(
-        deletedAccount.auth0_id,
+      let user: User = await this.userService.findOne(
+        deletedUser.auth0_id,
       );
 
-      if (!account) {
+      if (!user) {
         throw new NotFoundException();
       }
 
-      account = await this.accountService.delete(deletedAccount);
+      user = await this.userService.delete(deletedUser);
 
-      if (!account) {
+      if (!user) {
         throw new BadRequestException();
       }
 
       return JSON.stringify({
-        message: `Account ${deletedAccount.auth0_id} deleted`,
+        message: `User ${deletedUser.auth0_id} deleted`,
       });
     } catch (exception) {
       if (

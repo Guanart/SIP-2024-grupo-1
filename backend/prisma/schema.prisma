@@ -7,20 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  account_id Int      @id @default(autoincrement())
-  email      String
+model User {
+  id         Int      @id @default(autoincrement())
   auth0_id   String   @unique
+  email      String
   username   String   @db.VarChar(255)
   avatar     String
-  User       User[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-}
-
-model User {
-  user_id    Int     @id @default(autoincrement())
-  biography  String  @default("") @db.VarChar(255)
-  account    Account @relation(fields: [account_id], references: [account_id], onDelete: Cascade)
-  account_id Int     @unique
 }

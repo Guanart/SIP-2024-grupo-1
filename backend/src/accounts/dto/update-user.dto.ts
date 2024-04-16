@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class UpdateAccountDto {
+export class UpdateUserDto {
   @IsNotEmpty()
   auth0_id: string;
 
@@ -10,5 +10,4 @@ export class UpdateAccountDto {
 
   country: string;
 
-  biography: string;
 }
