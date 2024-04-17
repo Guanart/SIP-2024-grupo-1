@@ -5,5 +5,5 @@ export * from './Fundraising';
 export * from './Wallet';
 export * from './Error';
 export * from './Marketplace';
-export * from './Account';
+export * from './Account/Account';
 export * from './Login/Login';

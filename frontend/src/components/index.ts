@@ -5,6 +5,7 @@ import { ImageAvatar } from './ImageAvatar/ImageAvatar';
 import { MenuButton } from './MenuButton/MenuButton';
 import { Protected } from './Protected/Protected';
 import { Loader } from './Loader/Loader';
+import { BasicModal } from './BasicModal/BasicModal';
 
 export {
 	LogoutButton,
@@ -14,4 +15,5 @@ export {
 	MenuButton,
 	Protected,
 	Loader,
+	BasicModal,
 };
