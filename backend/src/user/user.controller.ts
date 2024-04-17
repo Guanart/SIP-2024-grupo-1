@@ -20,7 +20,7 @@ import { CreateUserDto } from './dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user-dto';
 
-@Controller('User')
+@Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -79,14 +79,10 @@ export class UserController {
   @Put('/')
   async update(@Body() updatedUser: UpdateUserDto): Promise<string> {
     try {
-      let user: User = await this.userService.findOne(
-        updatedUser.auth0_id,
-      );
+      let user: User = await this.userService.findOne(updatedUser.auth0_id);
 
       if (!user) {
-        throw new NotFoundException(
-          `User ${updatedUser.auth0_id} not found`,
-        );
+        throw new NotFoundException(`User ${updatedUser.auth0_id} not found`);
       }
 
       user = await this.userService.update(updatedUser);
@@ -116,9 +112,7 @@ export class UserController {
   @Delete('/')
   async delete(@Body() deletedUser: DeleteUserDto): Promise<string> {
     try {
-      let user: User = await this.userService.findOne(
-        deletedUser.auth0_id,
-      );
+      let user: User = await this.userService.findOne(deletedUser.auth0_id);
 
       if (!user) {
         throw new NotFoundException();
