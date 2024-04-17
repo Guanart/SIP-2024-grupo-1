@@ -53,7 +53,6 @@ export const Account = () => {
 
 	function handleSubmit(event: FormEvent) {
 		event.preventDefault();
-		console.log('submit');
 		// TODO: Enviar formulario al backend para actualizar data del usuario
 	}
 
