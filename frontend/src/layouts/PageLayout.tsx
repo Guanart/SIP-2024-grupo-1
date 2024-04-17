@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from 'react';
-import { Header } from './components';
+import { Header } from '../components';
 import { useLocation } from 'react-router-dom';
 import './PageLayout.css';
 

@@ -6,7 +6,7 @@ import {
 	SignupButton,
 	ImageAvatar,
 	MenuButton,
-} from '../../../components';
+} from '../..';
 import { useAuth0 } from '@auth0/auth0-react';
 import './Header.css';
 import { Menu } from '../Menu/Menu';

@@ -3,7 +3,7 @@ import { useAccessToken } from '../../hooks';
 import { PageLayout } from '../../layouts/PageLayout';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { FormEvent, useEffect, useState } from 'react';
-import { User } from '../../types';
+import { UpdatedUser, User } from '../../types';
 import './Account.css';
 import {
 	Avatar,
@@ -17,15 +17,12 @@ import {
 import { BasicModal, Loader } from '../../components';
 
 export const Account = () => {
-	const { accessToken } = useAccessToken();
+	const { accessToken, role } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
-	const [userData, setUserData] = useState<User | null>(null);
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-
-	const [username, setUsername] = useState<string>('');
-	const [avatar, setAvatar] = useState<string>('');
-	const [biography, setBiography] = useState<string>('');
+	const [updatedUser, setUpdatedUser] = useState<UpdatedUser | null>(null);
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
@@ -47,13 +44,47 @@ export const Account = () => {
 				if (!user) return;
 
 				setIsLoading(false);
-				setUserData(user);
-			});
-	}, [user, isAuthenticated, accessToken]);
+				setCurrentUser(user);
 
-	function handleSubmit(event: FormEvent) {
+				if (!updatedUser) {
+					if (role === 'player') {
+						setUpdatedUser({
+							auth0_id: user.auth0_id,
+							username: user.username,
+							avatar: user.avatar,
+							biography: user.biography,
+						});
+					} else {
+						setUpdatedUser({
+							auth0_id: user.auth0_id,
+							username: user.username,
+							avatar: user.avatar,
+						});
+					}
+				}
+			});
+	}, [user, isAuthenticated, accessToken, updatedUser, role]);
+
+	async function handleSubmit(event: FormEvent) {
 		event.preventDefault();
-		// TODO: Enviar formulario al backend para actualizar data del usuario
+
+		setIsLoading(true);
+
+		const response = await fetchWithAuth({
+			isAuthenticated,
+			accessToken,
+			url: `http://localhost:3000/user`,
+			method: 'PUT',
+			data: updatedUser,
+		});
+
+		setUpdatedUser(null);
+
+		if (!response.ok) {
+			throw Error('Error updating user profile');
+		}
+
+		setIsOpen(false);
 	}
 
 	return (
@@ -63,7 +94,7 @@ export const Account = () => {
 					My profile
 				</Typography>
 				{isLoading && <Loader />}
-				{!isLoading && userData && (
+				{!isLoading && currentUser && (
 					<Container sx={{ mt: '16px' }}>
 						<Stack
 							spacing={2}
@@ -74,13 +105,13 @@ export const Account = () => {
 							<Stack spacing={2}>
 								<Stack spacing={2} direction='row'>
 									<Avatar
-										alt={userData.username}
-										src={userData.avatar}
+										alt={currentUser.username}
+										src={currentUser.avatar}
 										sx={{ width: 56, height: 56 }}
 									/>
 									<Box>
 										<Typography variant='h6' component='h3'>
-											{userData.username}
+											{currentUser.username}
 											<Typography
 												variant='subtitle1'
 												component='span'
@@ -90,7 +121,7 @@ export const Account = () => {
 													color: 'grey',
 												}}
 											>
-												{userData.email}
+												{currentUser.email}
 											</Typography>
 										</Typography>
 										<Typography
@@ -104,24 +135,25 @@ export const Account = () => {
 											Argentina
 										</Typography>
 									</Box>
+									<Button
+										variant='contained'
+										color='secondary'
+										sx={{
+											maxHeight: '40px',
+											minWidth: '125px',
+											maxWidth: '160px',
+										}}
+										onClick={() => setIsOpen(true)}
+									>
+										Edit profile
+									</Button>
 								</Stack>
 							</Stack>
 						</Stack>
 					</Container>
 				)}
 			</Container>
-			<Button
-				variant='contained'
-				color='secondary'
-				sx={{
-					maxHeight: '40px',
-					minWidth: '125px',
-					maxWidth: '160px',
-				}}
-				onClick={() => setIsOpen(true)}
-			>
-				Edit profile
-			</Button>
+
 			<BasicModal
 				title='Edit profile'
 				isOpen={isOpen}
@@ -132,36 +164,59 @@ export const Account = () => {
 						disabled
 						id='outlined-disabled'
 						label='Email'
-						defaultValue={userData?.email}
+						value={currentUser?.email}
+						inputProps={{ maxLength: 80 }}
 					/>
 					<TextField
 						id='outlined-basic'
 						label='Username'
 						variant='outlined'
-						value={username}
-						onChange={(e) => setUsername(e.target.value.trim())}
-						defaultValue={userData?.username}
+						value={updatedUser?.username}
+						onChange={(event) => {
+							const username =
+								event.target.value.trim() ??
+								currentUser?.username;
+							setUpdatedUser({
+								...updatedUser,
+								['username']: username,
+							});
+						}}
+						inputProps={{ maxLength: 80 }}
 					/>
 					<TextField
 						id='outlined-basic'
 						label='Avatar'
 						variant='outlined'
-						value={avatar}
-						onChange={(e) => setAvatar(e.target.value.trim())}
-						defaultValue={userData?.avatar}
+						value={updatedUser?.avatar}
+						onChange={(event) => {
+							const avatar =
+								event.target.value.trim() ??
+								currentUser?.avatar;
+							setUpdatedUser({
+								...updatedUser,
+								['avatar']: avatar,
+							});
+						}}
+						inputProps={{ maxLength: 120 }}
 					/>
-					{user?.role == 'player' && (
+					{role === 'player' && (
 						<TextField
 							id='outlined-basic'
 							label='Biography'
 							variant='outlined'
 							multiline
 							maxRows={4}
-							onChange={(e) =>
-								setBiography(e.target.value.trim())
-							}
-							// defaultValue={userData?.biography}
-							value={biography}
+							onChange={(event) => {
+								const biography =
+									event.target.value.trim() ??
+									currentUser?.biography;
+								setUpdatedUser({
+									...updatedUser,
+									['biography']: biography,
+								});
+							}}
+							value={updatedUser?.biography}
+							inputProps={{ maxLength: 200 }}
 						/>
 					)}
 					<Box>

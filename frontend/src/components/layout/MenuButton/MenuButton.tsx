@@ -1,5 +1,5 @@
 import IconButton from '@mui/material/IconButton';
-import { MenuIcon } from '../../global/icons';
+import { MenuIcon } from '../../../global/icons';
 import { FunctionComponent } from 'react';
 
 type MenuButtonProps = {
