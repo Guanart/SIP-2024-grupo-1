@@ -11,6 +11,5 @@ export class UpdateUserDto {
   @IsUrl()
   avatar?: string;
 
-  @IsNotEmpty()
   country?: string;
 }
