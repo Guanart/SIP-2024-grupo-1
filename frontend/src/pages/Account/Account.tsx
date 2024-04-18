@@ -4,7 +4,7 @@ import { PageLayout } from '../../layouts/PageLayout';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { FormEvent, useEffect, useState } from 'react';
 import { UpdatedUser, User } from '../../types';
-import './Account.css';
+import { useParams } from 'react-router-dom';
 import {
 	Avatar,
 	Container,
@@ -15,8 +15,11 @@ import {
 	TextField,
 } from '@mui/material';
 import { BasicModal, Loader } from '../../components';
+import './Account.css';
 
 export const Account = () => {
+	const { auth0_id } = useParams();
+
 	const { accessToken, role } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -30,7 +33,7 @@ export const Account = () => {
 		fetchWithAuth({
 			isAuthenticated,
 			accessToken,
-			url: `http://localhost:3000/user/${user?.sub}`,
+			url: `http://localhost:3000/user/${auth0_id}`,
 			method: 'GET',
 		})
 			.then((response) => {
@@ -63,7 +66,7 @@ export const Account = () => {
 					}
 				}
 			});
-	}, [user, isAuthenticated, accessToken, updatedUser, role]);
+	}, [user, isAuthenticated, accessToken, updatedUser, role, auth0_id]);
 
 	async function handleSubmit(event: FormEvent) {
 		event.preventDefault();
@@ -135,18 +138,20 @@ export const Account = () => {
 											Argentina
 										</Typography>
 									</Box>
-									<Button
-										variant='contained'
-										color='secondary'
-										sx={{
-											maxHeight: '40px',
-											minWidth: '125px',
-											maxWidth: '160px',
-										}}
-										onClick={() => setIsOpen(true)}
-									>
-										Edit profile
-									</Button>
+									{user?.sub === auth0_id && (
+										<Button
+											variant='contained'
+											color='secondary'
+											sx={{
+												maxHeight: '40px',
+												minWidth: '125px',
+												maxWidth: '160px',
+											}}
+											onClick={() => setIsOpen(true)}
+										>
+											Edit profile
+										</Button>
+									)}
 								</Stack>
 							</Stack>
 						</Stack>

@@ -21,53 +21,53 @@ import {
 } from '../../../global/icons';
 import { Link } from 'react-router-dom';
 
-const items = [
-	{ text: 'Home', href: '/', icon: <HomeIcon />, isProtected: false },
-	{
-		text: 'About',
-		href: '/about',
-		icon: <InfoIcon />,
-		isProtected: false,
-	},
-	{
-		text: 'Account',
-		href: '/account',
-		icon: <AccountCircleIcon />,
-		isProtected: true,
-	},
-	{
-		text: 'Wallet',
-		href: '/wallet',
-		icon: <WalletIcon />,
-		isProtected: true,
-	},
-	{
-		text: 'Marketplace',
-		href: '/marketplace',
-		icon: <TokenIcon />,
-		isProtected: false,
-	},
-	{
-		text: 'Fundraising',
-		href: '/fundraising',
-		icon: <EmojiEventsIcon />,
-		isProtected: false,
-	},
-	{
-		text: 'Trending',
-		href: '/trending',
-		icon: <TrendingUpIcon />,
-		isProtected: false,
-	},
-];
-
 type MenuProps = {
 	isOpen: boolean;
 	toggleMenu: () => void;
 };
 
 export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
-	const { isAuthenticated } = useAuth0();
+	const { isAuthenticated, user } = useAuth0();
+
+	const items = [
+		{ text: 'Home', href: '/', icon: <HomeIcon />, isProtected: false },
+		{
+			text: 'About',
+			href: '/about',
+			icon: <InfoIcon />,
+			isProtected: false,
+		},
+		{
+			text: 'Account',
+			href: `/account/${user?.sub}`,
+			icon: <AccountCircleIcon />,
+			isProtected: true,
+		},
+		{
+			text: 'Wallet',
+			href: '/wallet',
+			icon: <WalletIcon />,
+			isProtected: true,
+		},
+		{
+			text: 'Marketplace',
+			href: '/marketplace',
+			icon: <TokenIcon />,
+			isProtected: false,
+		},
+		{
+			text: 'Fundraising',
+			href: '/fundraising',
+			icon: <EmojiEventsIcon />,
+			isProtected: false,
+		},
+		{
+			text: 'Trending',
+			href: '/trending',
+			icon: <TrendingUpIcon />,
+			isProtected: false,
+		},
+	];
 
 	return (
 		<Drawer anchor='left' open={isOpen} onClose={toggleMenu}>

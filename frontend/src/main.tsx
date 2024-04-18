@@ -20,9 +20,10 @@ import { ThemeProvider } from '@mui/material';
 
 const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
 const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
+
 const privateRoutes = [
 	{
-		path: '/account',
+		path: `/account/:auth0_id`,
 		element: <Account />,
 	},
 	{
