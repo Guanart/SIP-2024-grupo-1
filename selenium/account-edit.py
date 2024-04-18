@@ -43,7 +43,7 @@ username_input.send_keys(Keys.DELETE)
 username_input.send_keys("matias")
 save_changes_button = driver.find_element(By.XPATH, '/html/body/div[2]/div[3]/form/div[4]/button[1]').click()
 
-time.sleep(2) # Esto es para asegurarme que los cambios carguen correctamente
+time.sleep(1) # Esto es para asegurarme que los cambios carguen correctamente
 
 username_element = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[1]/div/div/div/div/div[2]/h3')
 
@@ -51,6 +51,9 @@ username_element = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[1]/di
 updated_username = username_element.text.split("user@example.com")[0]
 expected_username = "matias"
 assert updated_username == expected_username, f"El texto obtenido '{updated_username}' no coincide con el valor esperado '{expected_username}'"
+
+message = "Usuario actualizado con éxito"
+driver.execute_script("alert(arguments[0]);", message)
 
 # Esperar un momento para ver los resultados
 input("Presiona Enter para cerrar el navegador...")
