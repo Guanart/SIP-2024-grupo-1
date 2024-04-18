@@ -29,7 +29,7 @@ export class UserService {
 
   async update({
     username,
-    country,
+    // country,
     avatar,
     auth0_id,
   }: UpdateUserDto): Promise<User> {
@@ -41,7 +41,7 @@ export class UserService {
     });
 
     // TODO: actualizar relación USER_COUNTRY
-    console.log(country);
+    // console.log(country);
 
     return updatedUser;
   }
