@@ -16,6 +16,9 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 
 		if (location.pathname === '/') {
 			title = 'Home';
+		}
+		if (location.pathname.includes('account')) {
+			title = 'Account';
 		} else {
 			title = location.pathname.slice(1);
 			title = title.charAt(0).toUpperCase() + title.slice(1);
