@@ -15,9 +15,9 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 		let title = '';
 
 		if (location.pathname === '/') {
+			console.log(location.pathname);
 			title = 'Home';
-		}
-		if (location.pathname.includes('account')) {
+		} else if (location.pathname.includes('account')) {
 			title = 'Account';
 		} else {
 			title = location.pathname.slice(1);
