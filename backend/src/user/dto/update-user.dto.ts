@@ -4,10 +4,12 @@ export class UpdateUserDto {
   @IsNotEmpty()
   auth0_id: string;
 
-  username: string;
+  @IsNotEmpty()
+  username?: string;
 
+  @IsNotEmpty()
   @IsUrl()
-  avatar: string;
+  avatar?: string;
 
-  country: string;
+  country?: string;
 }

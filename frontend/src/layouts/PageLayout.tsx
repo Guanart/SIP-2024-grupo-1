@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from 'react';
-import { Header } from './components';
+import { Header } from '../components';
 import { useLocation } from 'react-router-dom';
 import './PageLayout.css';
 
@@ -15,7 +15,10 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 		let title = '';
 
 		if (location.pathname === '/') {
+			console.log(location.pathname);
 			title = 'Home';
+		} else if (location.pathname.includes('account')) {
+			title = 'Account';
 		} else {
 			title = location.pathname.slice(1);
 			title = title.charAt(0).toUpperCase() + title.slice(1);

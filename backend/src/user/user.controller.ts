@@ -61,7 +61,7 @@ export class UserController {
       }
 
       return JSON.stringify({
-        message: 'User found',
+        message: `User ${auth0_id} found`,
         user,
       });
     } catch (exception) {
