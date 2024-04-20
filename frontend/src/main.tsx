@@ -71,10 +71,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 				<Auth0Provider
 					domain={AUTH0_DOMAIN}
 					clientId={AUTH0_CLIENT_ID}
-					useRefreshTokens={true}		// FIX FIREFOX useAccessToken()
+					useRefreshTokens={true}
 					authorizationParams={{
 						redirect_uri: window.location.origin,
 						audience: 'http://my-secure-api.com',
+						scope: 'read:current_user profile email offline_access ',
 					}}
 				>
 					<Routes>
