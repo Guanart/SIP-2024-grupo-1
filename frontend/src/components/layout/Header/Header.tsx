@@ -25,7 +25,7 @@ export function Header() {
 				<Stack direction='row' spacing={1.5}>
 					{isAuthenticated ? (
 						<>
-							<Avatar alt={user?.name} src={user?.picture} />;
+							<Avatar alt={user?.name} src={user?.picture} />
 							<LogoutButton />
 						</>
 					) : (
