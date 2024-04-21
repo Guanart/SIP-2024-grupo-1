@@ -5,6 +5,7 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { FormEvent, useEffect, useState } from 'react';
 import { UpdatedUser, User } from '../../types';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
 	Avatar,
 	Container,
@@ -21,6 +22,7 @@ export const Account = () => {
 	const { auth0_id } = useParams();
 
 	const { accessToken, role } = useAccessToken();
+	const navigate = useNavigate();
 	const { user, isAuthenticated } = useAuth0();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -90,6 +92,24 @@ export const Account = () => {
 		setIsOpen(false);
 	}
 
+	async function handleClick() {
+		const response = await fetchWithAuth({
+			isAuthenticated,
+			accessToken,
+			url: `http://localhost:3000/user`,
+			method: 'DELETE',
+			data: {
+				auth0_id: user?.sub,
+			},
+		});
+
+		if (!response.ok) {
+			throw Error('Error deleting user account');
+		}
+
+		navigate('/login');
+	}
+
 	return (
 		<PageLayout>
 			<Container>
@@ -98,7 +118,7 @@ export const Account = () => {
 				</Typography>
 				{isLoading && <Loader />}
 				{!isLoading && currentUser && (
-					<Container sx={{ mt: '16px' }}>
+					<Container sx={{ mt: '16px', pl: '0px' }}>
 						<Stack
 							spacing={2}
 							direction='column'
@@ -106,13 +126,20 @@ export const Account = () => {
 							alignItems='left'
 						>
 							<Stack spacing={2}>
-								<Stack spacing={2} direction='row'>
+								<Stack
+									spacing={2}
+									direction='row'
+									sx={{
+										flexWrap: 'wrap',
+										gap: '12px',
+									}}
+								>
 									<Avatar
 										alt={currentUser.username}
 										src={currentUser.avatar}
-										sx={{ width: 56, height: 56 }}
+										sx={{ width: 60, height: 60 }}
 									/>
-									<Box>
+									<Box className='remove-margin'>
 										<Typography variant='h6' component='h3'>
 											{currentUser.username}
 											<Typography
@@ -139,18 +166,37 @@ export const Account = () => {
 										</Typography>
 									</Box>
 									{user?.sub === auth0_id && (
-										<Button
-											variant='contained'
-											color='secondary'
+										<Stack
 											sx={{
-												maxHeight: '40px',
-												minWidth: '125px',
-												maxWidth: '160px',
+												flexDirection: 'row',
+												gap: '8px',
 											}}
-											onClick={() => setIsOpen(true)}
 										>
-											Edit profile
-										</Button>
+											<Button
+												variant='contained'
+												color='secondary'
+												sx={{
+													maxHeight: '40px',
+													minWidth: '125px',
+													maxWidth: '160px',
+												}}
+												onClick={() => setIsOpen(true)}
+											>
+												Edit profile
+											</Button>
+											<Button
+												variant='contained'
+												color='error'
+												sx={{
+													maxHeight: '40px',
+													minWidth: '145px',
+													maxWidth: '160px',
+												}}
+												onClick={() => handleClick()}
+											>
+												Delete account
+											</Button>
+										</Stack>
 									)}
 								</Stack>
 							</Stack>
