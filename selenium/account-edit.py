@@ -1,15 +1,12 @@
 import time
-from selenium import webdriver
+import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
-# Inicializar el driver de Chrome
-driver = webdriver.Chrome()
 
-# Navegar a la página de LOT
-driver.get("http://localhost:5173/")
+driver = webdriver.get()
 
 # Inicio sesión con un usuario de prueba
 login_button = driver.find_element(By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
@@ -33,7 +30,7 @@ ActionChains(driver).move_to_element(account_page_link).perform()
 account_page_link.click()
 
 # Actualizo el username
-edit_profile_button = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[1]/div/div/div/div/button').click()
+edit_profile_button = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[1]/div/div/div/div/div[3]/button[1]').click()
 username_input = driver.find_element(By.XPATH, '//*[@id="outlined-basic"]')
 
 # Seleccionar todo el texto en el campo de entrada y borrarlo
