@@ -3,6 +3,7 @@ import { PageLayout } from '../layouts/PageLayout';
 import { useAccessToken } from '../hooks';
 import { useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
+import { Loader } from '../components';
 
 export const Home = () => {
 	const { user, isAuthenticated, isLoading, error } = useAuth0();
@@ -43,7 +44,7 @@ export const Home = () => {
 
 	return (
 		<PageLayout title='Home'>
-			{isLoading && <div>Loading...</div>}
+			{isLoading && <Loader />}
 
 			{error && <div>Oops... {error.message}</div>}
 
