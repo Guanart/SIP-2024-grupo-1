@@ -20,13 +20,13 @@ import './Account.css';
 
 export const Account = () => {
 	const { auth0_id } = useParams();
-
 	const { accessToken, role } = useAccessToken();
-	const navigate = useNavigate();
 	const { user, isAuthenticated } = useAuth0();
+	const navigate = useNavigate();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 	const [updatedUser, setUpdatedUser] = useState<UpdatedUser | null>(null);
 
 	useEffect(() => {
@@ -89,7 +89,7 @@ export const Account = () => {
 			throw Error('Error updating user profile');
 		}
 
-		setIsOpen(false);
+		setIsEditModalOpen(false);
 	}
 
 	async function handleClick() {
@@ -180,7 +180,9 @@ export const Account = () => {
 													minWidth: '125px',
 													maxWidth: '160px',
 												}}
-												onClick={() => setIsOpen(true)}
+												onClick={() =>
+													setIsEditModalOpen(true)
+												}
 											>
 												Edit profile
 											</Button>
@@ -192,7 +194,9 @@ export const Account = () => {
 													minWidth: '145px',
 													maxWidth: '160px',
 												}}
-												onClick={() => handleClick()}
+												onClick={() =>
+													setIsDeleteModalOpen(true)
+												}
 											>
 												Delete account
 											</Button>
@@ -207,8 +211,8 @@ export const Account = () => {
 
 			<BasicModal
 				title='Edit profile'
-				isOpen={isOpen}
-				handleClose={() => setIsOpen(false)}
+				isOpen={isEditModalOpen}
+				handleClose={() => setIsEditModalOpen(false)}
 			>
 				<form onSubmit={handleSubmit} className='edit-profile-form'>
 					<TextField
@@ -286,7 +290,7 @@ export const Account = () => {
 						<Button
 							variant='contained'
 							color='error'
-							onClick={() => setIsOpen(false)}
+							onClick={() => setIsEditModalOpen(false)}
 							sx={{
 								display: 'block',
 								width: '90%',
@@ -299,6 +303,56 @@ export const Account = () => {
 						</Button>
 					</Box>
 				</form>
+			</BasicModal>
+
+			<BasicModal
+				title='Delete account'
+				isOpen={isDeleteModalOpen}
+				handleClose={() => setIsDeleteModalOpen(false)}
+			>
+				<>
+					<Typography
+						variant='h6'
+						component='h4'
+						color='primary'
+						sx={{
+							paddingLeft: '4px',
+							fontSize: '1rem',
+							fontWeight: 'normal',
+						}}
+					>
+						Are you sure you want to delete your account?
+					</Typography>
+
+					<Box sx={{ marginTop: '16px' }}>
+						<Button
+							variant='contained'
+							color='error'
+							onClick={() => handleClick()}
+							sx={{
+								display: 'block',
+								width: '90%',
+								margin: 'auto',
+								py: '8px',
+							}}
+						>
+							Delete account
+						</Button>
+						<Button
+							variant='contained'
+							sx={{
+								display: 'block',
+								width: '90%',
+								margin: 'auto',
+								py: '8px',
+								marginTop: '8px',
+							}}
+							onClick={() => setIsDeleteModalOpen(false)}
+						>
+							Cancel
+						</Button>
+					</Box>
+				</>
 			</BasicModal>
 
 			{!isLoading && (

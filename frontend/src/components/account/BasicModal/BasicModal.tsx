@@ -41,7 +41,7 @@ export const BasicModal: FunctionComponent<ModalProps> = ({
 							variant='h5'
 							component='h3'
 							color='primary'
-							sx={{ p: '4px', py: '24px' }}
+							sx={{ p: '4px', py: '24px', paddingBottom: '12px' }}
 						>
 							{title}
 						</Typography>
