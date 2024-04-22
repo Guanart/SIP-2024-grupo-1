@@ -1,35 +1,30 @@
 import { FunctionComponent, useEffect } from 'react';
 import { Header } from '../components';
-import { useLocation } from 'react-router-dom';
 import './PageLayout.css';
+import { Typography } from '@mui/material';
 
 type PageLayoutProps = {
 	children: React.ReactNode;
+	title: string;
 };
 
 export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 	children,
+	title,
 }) => {
-	const location = useLocation();
 	useEffect(() => {
-		let title = '';
-
-		if (location.pathname === '/') {
-			title = 'Home';
-		} else if (location.pathname.includes('account')) {
-			title = 'Account';
-		} else {
-			title = location.pathname.slice(1);
-			title = title.charAt(0).toUpperCase() + title.slice(1);
-		}
-
 		document.title = `${title} | LOT`;
-	}, [location]);
+	}, [title]);
 
 	return (
 		<>
 			<Header />
-			<main>{children}</main>
+			<main>
+				<Typography variant='h5' component='h2'>
+					{title}
+				</Typography>
+				{children}
+			</main>
 		</>
 	);
 };

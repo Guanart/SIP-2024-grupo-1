@@ -7,3 +7,7 @@
 .remove-margin {
 	margin-left: 0 !important;
 }
+
+p {
+	color: white;
+}

@@ -111,11 +111,8 @@ export const Account = () => {
 	}
 
 	return (
-		<PageLayout>
+		<PageLayout title='Account'>
 			<Container>
-				<Typography variant='h5' component='h2' color='primary'>
-					My profile
-				</Typography>
 				{isLoading && <Loader />}
 				{!isLoading && currentUser && (
 					<Container sx={{ mt: '16px', pl: '0px' }}>
@@ -148,7 +145,7 @@ export const Account = () => {
 												sx={{
 													px: '8px',
 													fontWeight: 'normal',
-													color: 'grey',
+													color: '#BDBDBD',
 												}}
 											>
 												{currentUser.email}
@@ -314,7 +311,6 @@ export const Account = () => {
 					<Typography
 						variant='h6'
 						component='h4'
-						color='primary'
 						sx={{
 							paddingLeft: '4px',
 							fontSize: '1rem',
@@ -358,7 +354,7 @@ export const Account = () => {
 			{!isLoading && (
 				<>
 					<Container sx={{ mt: '24px' }}>
-						<Typography variant='h6' component='h2' color='primary'>
+						<Typography variant='h6' component='h2'>
 							Tokens
 						</Typography>
 						<p>
@@ -367,7 +363,7 @@ export const Account = () => {
 						</p>
 					</Container>
 					<Container sx={{ mt: '24px' }}>
-						<Typography variant='h6' component='h2' color='primary'>
+						<Typography variant='h6' component='h2'>
 							Marketplace
 						</Typography>
 						<p>

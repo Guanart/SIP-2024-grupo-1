@@ -42,14 +42,13 @@ export const Home = () => {
 	}, [accessToken, user, isAuthenticated]);
 
 	return (
-		<PageLayout>
-			<h2>Home</h2>
+		<PageLayout title='Home'>
 			{isLoading && <div>Loading...</div>}
 
 			{error && <div>Oops... {error.message}</div>}
 
 			{isAuthenticated && (
-				<div>
+				<div style={{ color: 'white' }}>
 					<pre>
 						Logged user data: <br />
 						{JSON.stringify(user, null, 2)}
