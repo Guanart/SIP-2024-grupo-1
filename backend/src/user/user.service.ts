@@ -47,10 +47,13 @@ export class UserService {
   }
 
   async delete({ auth0_id }: DeleteUserDto): Promise<User> {
-    const deletedUser = await this.prisma.user.delete({
+    const active = false;
+
+    const deletedUser = await this.prisma.user.update({
       where: {
         auth0_id,
       },
+      data: { active },
     });
 
     return deletedUser;
