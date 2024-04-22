@@ -49,13 +49,6 @@ updated_username = username_element.text.split("user@example.com")[0]
 expected_username = "matias"
 assert updated_username == expected_username, f"El texto obtenido '{updated_username}' no coincide con el valor esperado '{expected_username}'"
 
-message = "Usuario actualizado con éxito"
-driver.execute_script("alert(arguments[0]);", message)
-
-# Esperar un momento para ver los resultados
-input("Presiona Enter para cerrar el navegador...")
-
 # Cerrar el navegador
 driver.quit()
-# driver.close()
 
