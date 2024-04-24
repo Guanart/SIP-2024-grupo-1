@@ -38,6 +38,7 @@ export class UserController {
 
       return JSON.stringify({
         message: `User ${newUser.auth0_id} created`,
+        user,
       });
     } catch (exception) {
       if (exception instanceof BadRequestException) {
@@ -93,6 +94,7 @@ export class UserController {
 
       return JSON.stringify({
         message: `User ${updatedUser.auth0_id} updated`,
+        user,
       });
     } catch (exception) {
       if (
@@ -115,7 +117,7 @@ export class UserController {
       let user: User = await this.userService.findOne(deletedUser.auth0_id);
 
       if (!user) {
-        throw new NotFoundException();
+        throw new NotFoundException(`User ${deletedUser.auth0_id} not found`);
       }
 
       user = await this.userService.delete(deletedUser);
@@ -126,6 +128,7 @@ export class UserController {
 
       return JSON.stringify({
         message: `User ${deletedUser.auth0_id} deleted`,
+        user,
       });
     } catch (exception) {
       if (
