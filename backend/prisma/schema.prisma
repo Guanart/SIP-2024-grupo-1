@@ -17,3 +17,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Wallet {
+  id        Int      @id @default(autoincrement())
+  user_id   Int      @unique
+  cbu       String   @unique
+  paypal_id String   @unique
+  active    Boolean  @default(true) // bajas logicas
+}
