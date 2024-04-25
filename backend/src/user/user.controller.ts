@@ -30,7 +30,18 @@ export class UserController {
   @Post()
   async create(@Body() newUser: CreateUserDto): Promise<string> {
     try {
-      const user: User = await this.userService.create(newUser);
+      const isActive: boolean = await this.userService.isActive(
+        newUser.auth0_id,
+      );
+
+      let user = null;
+
+      if (isActive === null) {
+        user = await this.userService.create(newUser);
+      } else if (isActive === false) {
+        //? Si un usuario que había eliminado su cuenta, vuelve a iniciar sesión, se la vuelve a habilitar.
+        user = await this.userService.update({ ...newUser, active: true });
+      }
 
       if (!user) {
         throw new BadRequestException();

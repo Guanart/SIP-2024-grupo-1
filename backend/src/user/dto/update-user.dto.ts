@@ -12,4 +12,6 @@ export class UpdateUserDto {
   avatar?: string;
 
   country?: string;
+
+  active?: boolean;
 }

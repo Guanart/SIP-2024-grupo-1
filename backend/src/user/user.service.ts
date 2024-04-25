@@ -33,13 +33,13 @@ export class UserService {
     // country,
     avatar,
     auth0_id,
+    active,
   }: UpdateUserDto): Promise<User> {
     const updatedUser = await this.prisma.user.update({
       where: {
         auth0_id,
-        active: true,
       },
-      data: { username, avatar },
+      data: { username, avatar, active },
     });
 
     // TODO: actualizar relación USER_COUNTRY
@@ -60,5 +60,15 @@ export class UserService {
     });
 
     return deletedUser ? User.fromObject(deletedUser) : null;
+  }
+
+  async isActive(auth0_id: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        auth0_id,
+      },
+    });
+
+    return user ? user.active : null;
   }
 }

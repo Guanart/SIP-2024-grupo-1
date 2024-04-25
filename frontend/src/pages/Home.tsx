@@ -13,11 +13,12 @@ export const Home = () => {
 		// Verifica si el usuario logueado ya está dado de alta en la API. Caso contrario, envía petición para darlo de alta (es nuevo usuario)
 		async function readUserStatus(user: User) {
 			try {
-				await fetchWithAuth({
+				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
 					url: `http://localhost:3000/user/${user.sub}`,
 				});
+				console.log(response);
 			} catch (error) {
 				const account = {
 					username: user.nickname,
