@@ -86,9 +86,9 @@ export class WalletController {
   @Put('/')
   async update(@Body() updatedWallet: UpdateWalletDto): Promise<string> {
     try {
-      const { user_id } = updatedWallet;
+      const { wallet_id } = updatedWallet;
 
-      let wallet: Wallet = await this.walletService.findOne(user_id);
+      let wallet: Wallet = await this.walletService.findOne(wallet_id);
 
       if (!wallet) {
         throw new NotFoundException(`Wallet not found`);
@@ -123,7 +123,9 @@ export class WalletController {
   @Delete('/')
   async delete(@Body() deletedWallet: DeleteWalletDto): Promise<string> {
     try {
-      let wallet: Wallet = await this.walletService.findOne(deletedWallet.id);
+      let wallet: Wallet = await this.walletService.findOne(
+        deletedWallet.wallet_id,
+      );
 
       if (!wallet) {
         throw new NotFoundException();
@@ -136,7 +138,7 @@ export class WalletController {
       }
 
       return JSON.stringify({
-        message: `Wallet ${deletedWallet.id} deleted`,
+        message: `Wallet ${deletedWallet.wallet_id} deleted`,
       });
     } catch (exception) {
       if (
