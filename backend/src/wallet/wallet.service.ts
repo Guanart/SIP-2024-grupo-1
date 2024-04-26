@@ -14,6 +14,8 @@ export class WalletService {
       data: walletData,
     });
 
+    console.log(typeof walletData.user_id);
+
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 
@@ -22,7 +24,12 @@ export class WalletService {
       where: {
         user_id,
       },
+      include: {
+        user: true,
+      },
     });
+
+    console.log(wallet);
 
     return wallet ? Wallet.fromObject(wallet) : null;
   }
