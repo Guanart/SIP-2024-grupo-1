@@ -29,7 +29,7 @@ $ docker compose up -d
 $ npx prisma migrate dev --name init
 ```
 
-4. Run the application
+5. Run the application
 
 ```bash
 # development
@@ -38,3 +38,5 @@ $ pnpm run start:dev
 # production mode
 $ pnpm run start:prod
 ```
+
+6. Make a GET request to /seed to load test data into the database (click [here]("http://localhost:3000/seed"))

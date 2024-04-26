@@ -17,13 +17,87 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   wallet    Wallet?
+  Player    Player?
 }
 
 model Wallet {
-  id        Int     @id @default(autoincrement())
-  user_id   Int     @unique
-  user      User?   @relation(fields: [user_id], references: [id])
-  cbu       String  @unique
-  paypal_id String  @unique
-  active    Boolean @default(true) // bajas logicas
+  id        Int      @id @default(autoincrement())
+  user_id   Int      @unique
+  user      User?    @relation(fields: [user_id], references: [id])
+  cbu       String   @unique
+  paypal_id String   @unique
+  active    Boolean  @default(true) // bajas logicas
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Game {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  Player    Player[]
+  Event     Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Player {
+  id          Int           @id @default(autoincrement())
+  user_id     Int           @unique
+  user        User?         @relation(fields: [user_id], references: [id])
+  biography   String
+  ranking     Int
+  game_id     Int
+  game        Game?         @relation(fields: [game_id], references: [id])
+  active      Boolean       @default(true)
+  Fundraising Fundraising[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Event {
+  id          Int           @id @default(autoincrement())
+  start_date  DateTime
+  end_date    DateTime
+  max_players Int
+  prize       Float
+  name        String
+  game_id     Int
+  game        Game?         @relation(fields: [game_id], references: [id])
+  Fundraising Fundraising[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Fundraising {
+  id               Int          @id @default(autoincrement())
+  goal_amount      Float
+  prize_percentage Float
+  risk_level       RiskLevel    @default(LOW)
+  active           Boolean      @default(true)
+  player_id        Int
+  player           Player?      @relation(fields: [player_id], references: [id])
+  event_id         Int
+  event            Event?       @relation(fields: [event_id], references: [id])
+  Collection       Collection[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model Collection {
+  id                     Int          @id @default(autoincrement())
+  token_price_percentage Float
+  amount_left            Int
+  current_price          Float
+  initial_amount         Int
+  initial_price          Float
+  fundraising_id         Int
+  fundraising            Fundraising? @relation(fields: [fundraising_id], references: [id])
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
 }

@@ -1,13 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { WalletModule } from './wallet/wallet.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
-  imports: [AuthModule, ConfigModule.forRoot(), UserModule, WalletModule],
+  imports: [
+    AuthModule,
+    ConfigModule.forRoot(),
+    UserModule,
+    WalletModule,
+    SeedModule,
+  ],
   controllers: [],
   providers: [],
 })
