@@ -23,6 +23,9 @@ export class UserService {
         auth0_id,
         active: true,
       },
+      include: {
+        wallet: true,
+      },
     });
 
     return user ? User.fromObject(user) : null;
