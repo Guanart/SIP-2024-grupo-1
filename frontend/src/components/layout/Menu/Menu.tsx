@@ -56,8 +56,8 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 			isProtected: false,
 		},
 		{
-			text: 'Fundraising',
-			href: '/fundraising',
+			text: 'Fundraisings',
+			href: '/fundraisings',
 			icon: <EmojiEventsIcon />,
 			isProtected: false,
 		},

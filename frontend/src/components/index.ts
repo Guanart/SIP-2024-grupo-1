@@ -7,6 +7,7 @@ import { Loader } from './global/Loader/Loader';
 import { BasicModal } from './account/BasicModal/BasicModal';
 import { Header } from './layout/Header/Header';
 import { Menu } from './layout/Menu/Menu';
+import { FundraisingCard } from './fundraisings/FundraisingCard';
 
 export {
 	LogoutButton,
@@ -18,4 +19,5 @@ export {
 	BasicModal,
 	Header,
 	Menu,
+	FundraisingCard,
 };

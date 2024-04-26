@@ -5,7 +5,6 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import './global/index.css';
 import {
 	About,
-	Fundraising,
 	Home,
 	Marketplace,
 	Trending,
@@ -13,6 +12,8 @@ import {
 	Login,
 	Error,
 	Account,
+	Fundraisings,
+	Fundraising,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -35,7 +36,11 @@ const privateRoutes = [
 		element: <Marketplace />,
 	},
 	{
-		path: '/fundraising',
+		path: '/fundraisings',
+		element: <Fundraisings />,
+	},
+	{
+		path: `/fundraising/:fundraising_id`,
 		element: <Fundraising />,
 	},
 ];

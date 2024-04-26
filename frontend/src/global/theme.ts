@@ -29,6 +29,19 @@ export const theme: ThemeOptions = createTheme({
 				},
 			},
 		},
+		MuiTextField: {
+			styleOverrides: {
+				root: {
+					'& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+						{
+							borderColor: '#45FFCA',
+						},
+					'& .MuiInputLabel-root.Mui-focused': {
+						color: '#45FFCA',
+					},
+				},
+			},
+		},
 	},
 });
 
