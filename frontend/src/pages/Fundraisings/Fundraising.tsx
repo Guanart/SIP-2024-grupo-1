@@ -1,10 +1,23 @@
 import { useState } from 'react';
 import { Stack, Typography, LinearProgress, TextField } from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
+import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import axios from 'axios';
 import { FundraisingCard } from '../../components/fundraisings/FundraisingCard';
+
+const REACT_APP_API_URL = 'http://localhost:3000';
+const REACT_APP_MP_PUBLIC_KEY = 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552';
 
 export const Fundraising = () => {
 	const [amount, setAmount] = useState<number>(1);
+	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
+
+	initMercadoPago(
+		REACT_APP_MP_PUBLIC_KEY ?? 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552',
+		{
+			locale: 'es-AR',
+		}
+	);
 
 	function handleAmountChange(value: string) {
 		const nextAmount: number = parseInt(value.trim()) ?? 1;
@@ -14,6 +27,32 @@ export const Fundraising = () => {
 			setAmount(1);
 		}
 	}
+
+	const createPreference = async () => {
+		try {
+			const response = await axios.post(
+				REACT_APP_API_URL
+					? REACT_APP_API_URL + '/mercado-pago/create-preference'
+					: 'http://localhost:3000/mercado-pago/create-preference',
+				{
+					title: 'Mariano Rapa',
+					quantity: 1,
+					unit_price: 100,
+				}
+			);
+			const { id } = response.data;
+			return id;
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const handleBuy = async () => {
+		const id = await createPreference();
+		if (id) {
+			setPreferenceId(id);
+		}
+	};
 
 	return (
 		<PageLayout title='Fundraising'>
@@ -196,9 +235,16 @@ export const Fundraising = () => {
 					inputProps={{ maxLength: 80 }}
 					sx={{ maxWidth: '100px' }}
 				/>
-				<button style={{ maxWidth: '250px' }}>
-					Mercado pago button
-				</button>
+				{!preferenceId && (
+					<button onClick={handleBuy} style={{ maxWidth: '250px' }}>
+						Comprar
+					</button>
+				)}
+				{preferenceId && (
+					<Wallet
+						initialization={{ preferenceId: preferenceId }}
+					></Wallet>
+				)}
 			</Stack>
 		</PageLayout>
 	);
