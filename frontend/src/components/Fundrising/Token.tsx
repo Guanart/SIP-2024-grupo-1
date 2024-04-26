@@ -1,25 +1,29 @@
-import "./Product.css";
+import "./Token.css";
 import { initMercadoPago, Wallet } from "@mercadopago/sdk-react";
 import axios from "axios";
 import { useState } from "react";
 
+const REACT_APP_API_URL = null;
+const REACT_APP_MP_PUBLIC_KEY = null;
 
-const Token = () => {
-  const [preferenceId, setPreferenceId] = useState(null)
-  initMercadoPago("YOUR_PUBLIC_KEY", {
+export const Token = () => {
+  const [preferenceId, setPreferenceId] = useState(null)    // Estado para guardar la preferenceId que me traigo del server
+  initMercadoPago(REACT_APP_MP_PUBLIC_KEY ?? 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552', {
     locale: "es-AR",
   })
 
   const createPreference = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/createPreference",
+        REACT_APP_API_URL ? REACT_APP_API_URL +
+          "/mercado-pago/create-preference" :
+          "http://localhost:3000/mercado-pago/create-preference",
         {
           title: "Mariano Rapa",
           quantity: 1,
-          price: 100,
+          unit_price: 100,
         }
-      )
+      );
       const { id } = response.data
       return id
     } catch (error) {
@@ -39,13 +43,15 @@ const Token = () => {
       <div className="card-product">
         <div className="card">
           <img
-            src="https://res.cloudinary.com/pabcode/image/upload/v1699871193/e-commerce/mopgcvdiepr8axkazmcp.png"
+            src="https://media.licdn.com/dms/image/D4D22AQHrhkwBrs1O7A/feedshare-shrink_800/0/1707322337586?e=2147483647&v=beta&t=636aO6AwUMVg-Ff14Uic6opM_izpdQPhNTg5SF5nPkE"
             alt="Product Image"
           />
-          <h3>Bananita contenta</h3>
+          <h3>Mariano Rapa</h3>
           <p>Precio: $100</p>
           <button onClick={handleBuy}>Comprar</button>
-          {preferenceId && <Wallet initialization={{ preferenceId: preferenceId }}></Wallet>}
+          {preferenceId && (
+            <Wallet initialization={{ preferenceId: preferenceId }}></Wallet>
+          )}
         </div>
       </div>
     </div>
