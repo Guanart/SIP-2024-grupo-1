@@ -226,24 +226,29 @@ export const Fundraising = () => {
 				direction='row'
 				spacing='4px'
 			>
-				<TextField
-					id='outlined-number'
-					label='Amount'
-					type='number'
-					value={amount}
-					onChange={(event) => handleAmountChange(event.target.value)}
-					inputProps={{ maxLength: 80 }}
-					sx={{ maxWidth: '100px' }}
-				/>
 				{!preferenceId && (
-					<button onClick={handleBuy} style={{ maxWidth: '250px' }}>
-						Comprar
-					</button>
+					<>
+						<TextField
+							id='outlined-number'
+							label='Amount'
+							type='number'
+							value={amount}
+							onChange={(event) =>
+								handleAmountChange(event.target.value)
+							}
+							inputProps={{ maxLength: 80 }}
+							sx={{ maxWidth: '100px' }}
+						/>
+						<button
+							onClick={handleBuy}
+							style={{ maxWidth: '250px' }}
+						>
+							Comprar
+						</button>
+					</>
 				)}
 				{preferenceId && (
-					<Wallet
-						initialization={{ preferenceId: preferenceId }}
-					></Wallet>
+					<Wallet initialization={{ preferenceId: preferenceId }} />
 				)}
 			</Stack>
 		</PageLayout>
