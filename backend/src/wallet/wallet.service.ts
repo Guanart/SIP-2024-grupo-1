@@ -14,41 +14,41 @@ export class WalletService {
       data: walletData,
     });
 
-    console.log(typeof walletData.user_id);
-
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 
-  async findOne(user_id: number): Promise<Wallet> {
+  async findOne(wallet_id: number): Promise<Wallet> {
     const wallet = await this.prisma.wallet.findUnique({
       where: {
-        user_id,
+        id: wallet_id,
       },
       include: {
         user: true,
       },
     });
 
-    console.log(wallet);
-
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 
-  async update({ user_id, cbu, paypal_id }: UpdateWalletDto): Promise<Wallet> {
+  async update({
+    wallet_id,
+    cbu,
+    paypal_id,
+  }: UpdateWalletDto): Promise<Wallet> {
     const updatedWallet = await this.prisma.wallet.update({
       where: {
-        user_id,
+        id: wallet_id,
       },
-      data: { user_id, cbu, paypal_id },
+      data: { cbu, paypal_id },
     });
 
     return updatedWallet ? Wallet.fromObject(updatedWallet) : null;
   }
 
-  async delete({ id }: DeleteWalletDto): Promise<Wallet> {
+  async delete({ wallet_id }: DeleteWalletDto): Promise<Wallet> {
     const deletedWallet = await this.prisma.wallet.update({
       where: {
-        id,
+        id: wallet_id,
       },
       data: { active: false },
     });
