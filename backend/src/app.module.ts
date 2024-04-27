@@ -6,6 +6,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 
 import { SeedModule } from './seed/seed.module';
+import { FundraisingModule } from './fundraising/fundraising.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SeedModule } from './seed/seed.module';
     WalletModule,
     SeedModule,
     MercadoPagoModule,
+    FundraisingModule,
   ],
 })
 export class AppModule {}
