@@ -12,7 +12,7 @@ export class FundraisingService {
   async getAllFundraisings() {
     return this.prisma.fundraising.findMany({
       include: {
-        Collection: true,
+        collection: true,
       },
     });
   }
@@ -21,7 +21,7 @@ export class FundraisingService {
     return this.prisma.fundraising.findUnique({
       where: { id },
       include: {
-        Collection: true,
+        collection: true,
       },
     });
   }
