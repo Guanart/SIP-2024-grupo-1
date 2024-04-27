@@ -214,13 +214,13 @@ export const Account = () => {
 				<form onSubmit={handleSubmit} className='edit-profile-form'>
 					<TextField
 						disabled
-						id='outlined-disabled'
+						id='email'
 						label='Email'
 						value={currentUser?.email}
 						inputProps={{ maxLength: 80 }}
 					/>
 					<TextField
-						id='outlined-basic'
+						id='username'
 						label='Username'
 						variant='outlined'
 						value={updatedUser?.username}
@@ -236,7 +236,7 @@ export const Account = () => {
 						inputProps={{ maxLength: 80 }}
 					/>
 					<TextField
-						id='outlined-basic'
+						id='avatar'
 						label='Avatar'
 						variant='outlined'
 						value={updatedUser?.avatar}
@@ -253,7 +253,7 @@ export const Account = () => {
 					/>
 					{role === 'player' && (
 						<TextField
-							id='outlined-basic'
+							id='biography'
 							label='Biography'
 							variant='outlined'
 							multiline
