@@ -5,9 +5,10 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
+import { Wallet as WalletType } from '../../types/Wallet';
 
 export const Wallet = () => {
-	const [wallet, setWallet] = useState(null);
+	const [wallet, setWallet] = useState<WalletType | null>(null);
 	const [cbu, setCbu] = useState<string>('');
 	const [paypalId, setPaypalId] = useState<string>('');
 	const [userId, setUserId] = useState<string>('');
@@ -26,8 +27,11 @@ export const Wallet = () => {
 				if (response.ok) {
 					const { user } = await response.json();
 					setUserId(user.id);
+
 					if (user.wallet) {
 						setWallet(user.wallet);
+						setCbu(user.wallet.cbu);
+						setPaypalId(user.wallet.paypal_id);
 					}
 				}
 			} catch (error) {
@@ -41,7 +45,7 @@ export const Wallet = () => {
 		getUserWallet(user);
 	}, [accessToken, isAuthenticated, user]);
 
-	async function createWallet() {
+	async function handleCreateWallet() {
 		const response = await fetchWithAuth({
 			isAuthenticated,
 			accessToken,
@@ -58,22 +62,48 @@ export const Wallet = () => {
 		setWallet(data.wallet);
 	}
 
+	async function handleUpdateWallet() {
+		const response = await fetchWithAuth({
+			isAuthenticated,
+			accessToken,
+			url: `http://localhost:3000/wallet`,
+			method: 'PUT',
+			data: {
+				wallet_id: wallet?.id,
+				cbu,
+				paypal_id: paypalId,
+			},
+		});
+
+		const data = await response.json();
+		setWallet(data.wallet);
+	}
+
 	return (
 		<PageLayout title='Wallet'>
-			{wallet ? (
-				<Typography variant='body2'>
-					{JSON.stringify(wallet)}
-				</Typography>
-			) : (
-				<Stack spacing={2} sx={{ mt: '16px' }} justifyContent='center'>
-					<Typography sx={{ maxWidth: '400px' }}>
-						Looks like you haven't created a wallet yet! Don't
-						worry, it only takes a few moments to set one up
-					</Typography>
-					<Typography sx={{ maxWidth: '400px' }}>
-						Please fill out the form below and click the button to
-						create your wallet.
-					</Typography>
+			<Stack direction={{ xs: 'column', md: 'row' }} spacing={8}>
+				<Stack
+					spacing={2}
+					sx={{ mt: '16px', maxWidth: '500px' }}
+					justifyContent='center'
+				>
+					{wallet ? (
+						<Typography variant='body2'>
+							{JSON.stringify(wallet)}
+						</Typography>
+					) : (
+						<>
+							<Typography sx={{ maxWidth: '400px' }}>
+								Looks like you haven't created a wallet yet!
+								Don't worry, it only takes a few moments to set
+								one up
+							</Typography>
+							<Typography sx={{ maxWidth: '400px' }}>
+								Please fill out the form below and click the
+								button to create your wallet.
+							</Typography>
+						</>
+					)}
 					<TextField
 						disabled
 						id='user-id'
@@ -99,16 +129,28 @@ export const Wallet = () => {
 						inputProps={{ minLength: 1 }}
 						sx={{ maxWidth: '400px' }}
 					/>
-					<Button
-						variant='contained'
-						color='secondary'
-						onClick={() => createWallet()}
-						sx={{ maxWidth: '400px' }}
-					>
-						Create wallet
-					</Button>
+					{!wallet ? (
+						<Button
+							variant='contained'
+							color='secondary'
+							onClick={() => handleCreateWallet()}
+							sx={{ maxWidth: '400px' }}
+						>
+							Create wallet
+						</Button>
+					) : (
+						<Button
+							variant='contained'
+							color='secondary'
+							onClick={() => handleUpdateWallet()}
+							sx={{ maxWidth: '400px' }}
+						>
+							Update wallet
+						</Button>
+					)}
 				</Stack>
-			)}
+				<p>Mostrar listado de movimientos y/o tokens en posesión</p>
+			</Stack>
 		</PageLayout>
 	);
 };
