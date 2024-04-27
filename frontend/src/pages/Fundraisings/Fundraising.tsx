@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { Stack, Typography, LinearProgress, TextField } from '@mui/material';
+import {
+	Stack,
+	Typography,
+	LinearProgress,
+	TextField,
+	Button,
+} from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
 import axios from 'axios';
@@ -239,12 +245,14 @@ export const Fundraising = () => {
 							inputProps={{ maxLength: 80 }}
 							sx={{ maxWidth: '100px' }}
 						/>
-						<button
+						<Button
+							variant='contained'
+							color='secondary'
 							onClick={handleBuy}
 							style={{ maxWidth: '250px' }}
 						>
 							Comprar
-						</button>
+						</Button>
 					</>
 				)}
 				{preferenceId && (

@@ -8,8 +8,8 @@ export const LoginButton = () => {
 	return (
 		<Button
 			variant='contained'
-			className='login-button'
 			color='secondary'
+			className='login-button'
 			sx={{
 				fontWeight: 'bold',
 			}}
