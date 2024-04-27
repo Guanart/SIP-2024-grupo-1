@@ -52,15 +52,15 @@ export class WalletController {
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['read:wallets'])
-  @Get('/:user_id')
-  async findOne(@Param('user_id') user_id: string): Promise<string> {
+  @Get('/:wallet_id')
+  async findOne(@Param('wallet_id') wallet_id: string): Promise<string> {
     try {
-      if (isNaN(parseInt(user_id))) {
-        throw new BadRequestException('Invalid user ID');
+      if (isNaN(parseInt(wallet_id))) {
+        throw new BadRequestException('Invalid wallet ID');
       }
 
       const wallet: Wallet = await this.walletService.findOne(
-        parseInt(user_id),
+        parseInt(wallet_id),
       );
 
       if (!wallet) {
@@ -139,6 +139,7 @@ export class WalletController {
 
       return JSON.stringify({
         message: `Wallet ${deletedWallet.wallet_id} deleted`,
+        wallet,
       });
     } catch (exception) {
       if (
