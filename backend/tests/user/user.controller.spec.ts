@@ -22,12 +22,19 @@ describe('UserController', () => {
         avatar: 'http://your-avatar.com',
       };
 
-      jest.spyOn(userService, 'create').mockResolvedValueOnce({} as User);
+      jest.spyOn(userService, 'isActive').mockResolvedValueOnce(null);
+
+      jest
+        .spyOn(userService, 'create')
+        .mockResolvedValueOnce({ auth0_id: 'auth0|123456' } as User);
 
       const result = await userController.create(newUser);
 
       expect(result).toEqual(
-        JSON.stringify({ message: `User ${newUser.auth0_id} created` }),
+        JSON.stringify({
+          message: `User ${newUser.auth0_id} created`,
+          user: { auth0_id: 'auth0|123456' },
+        }),
       );
     });
   });
@@ -68,6 +75,7 @@ describe('UserController', () => {
       expect(result).toEqual(
         JSON.stringify({
           message: `User ${updatedUser.auth0_id} updated`,
+          user: {},
         }),
       );
     });
@@ -87,6 +95,7 @@ describe('UserController', () => {
     expect(result).toEqual(
       JSON.stringify({
         message: `User ${deletedUser.auth0_id} deleted`,
+        user: {},
       }),
     );
   });

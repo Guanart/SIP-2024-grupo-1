@@ -50,7 +50,10 @@ describe('UserService', () => {
       await userService.findOne(auth0_id);
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { auth0_id },
+        where: { auth0_id, active: true },
+        include: {
+          wallet: true,
+        },
       });
     });
   });
@@ -83,8 +86,9 @@ describe('UserService', () => {
 
       await userService.delete(deletedUser);
 
-      expect(prisma.user.delete).toHaveBeenCalledWith({
-        where: { auth0_id },
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { auth0_id, active: true },
+        data: { active: false },
       });
     });
   });
