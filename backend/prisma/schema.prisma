@@ -26,7 +26,6 @@ model Wallet {
   user      User?    @relation(fields: [user_id], references: [id])
   cbu       String   @unique
   paypal_id String   @unique
-  active    Boolean  @default(true) // bajas logicas
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
