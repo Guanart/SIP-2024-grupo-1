@@ -24,7 +24,7 @@ export class UserService {
         active: true,
       },
       include: {
-        wallet: true,
+        Wallet: true,
       },
     });
 

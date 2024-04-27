@@ -23,7 +23,7 @@ export class WalletService {
         id: wallet_id,
       },
       include: {
-        user: true,
+        User: true,
       },
     });
 
