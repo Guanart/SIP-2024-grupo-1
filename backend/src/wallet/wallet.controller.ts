@@ -9,7 +9,7 @@ import {
   // SetMetadata,
   BadRequestException,
   Put,
-  Delete,
+  // Delete,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { WalletService } from './wallet.service';
@@ -18,7 +18,7 @@ import { CreateWalletDto } from './dto';
 // import { PermissionsGuard } from '../auth/permissions.guard';
 // import { AuthGuard } from '../auth/auth.guard';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
-import { DeleteWalletDto } from './dto/delete-wallet-dto';
+// import { DeleteWalletDto } from './dto/delete-wallet-dto';
 
 @Controller('wallet')
 export class WalletController {
@@ -102,43 +102,6 @@ export class WalletController {
 
       return JSON.stringify({
         message: `Wallet ${wallet.id} updated`,
-        wallet,
-      });
-    } catch (exception) {
-      if (
-        exception instanceof NotFoundException ||
-        exception instanceof BadRequestException
-      ) {
-        throw exception;
-      } else {
-        throw new InternalServerErrorException('Internal Server Error');
-      }
-    }
-  }
-
-  //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
-  // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['delete:wallets'])
-  //! Esto no sé si serviría. Yo creo que la wallet debería eliminarse al momento en que el usuario se elimina.
-  @Delete('/')
-  async delete(@Body() deletedWallet: DeleteWalletDto): Promise<string> {
-    try {
-      let wallet: Wallet = await this.walletService.findOne(
-        deletedWallet.wallet_id,
-      );
-
-      if (!wallet) {
-        throw new NotFoundException();
-      }
-
-      wallet = await this.walletService.delete(deletedWallet);
-
-      if (!wallet) {
-        throw new BadRequestException();
-      }
-
-      return JSON.stringify({
-        message: `Wallet ${deletedWallet.wallet_id} deleted`,
         wallet,
       });
     } catch (exception) {

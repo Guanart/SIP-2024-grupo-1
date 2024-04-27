@@ -77,25 +77,4 @@ describe('WalletController', () => {
       );
     });
   });
-
-  it('should delete a wallet', async () => {
-    const deletedWallet = {
-      wallet_id: 1,
-    };
-
-    jest.spyOn(walletService, 'findOne').mockResolvedValueOnce({} as Wallet);
-
-    jest
-      .spyOn(walletService, 'delete')
-      .mockResolvedValueOnce({ id: deletedWallet.wallet_id } as Wallet);
-
-    const result = await walletController.delete(deletedWallet);
-
-    expect(result).toEqual(
-      JSON.stringify({
-        message: `Wallet ${deletedWallet.wallet_id} deleted`,
-        wallet: { id: deletedWallet.wallet_id },
-      }),
-    );
-  });
 });

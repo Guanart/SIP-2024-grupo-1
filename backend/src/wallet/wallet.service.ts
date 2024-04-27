@@ -3,7 +3,7 @@ import { Wallet } from './wallet.entity';
 import { PrismaService } from '../database/prisma.service';
 import { CreateWalletDto } from './dto';
 import { UpdateWalletDto } from './dto/update-wallet.dto';
-import { DeleteWalletDto } from './dto/delete-wallet-dto';
+// import { DeleteWalletDto } from './dto/delete-wallet-dto';
 
 @Injectable()
 export class WalletService {
@@ -43,16 +43,5 @@ export class WalletService {
     });
 
     return updatedWallet ? Wallet.fromObject(updatedWallet) : null;
-  }
-
-  async delete({ wallet_id }: DeleteWalletDto): Promise<Wallet> {
-    const deletedWallet = await this.prisma.wallet.update({
-      where: {
-        id: wallet_id,
-      },
-      data: { active: false },
-    });
-
-    return deletedWallet ? Wallet.fromObject(deletedWallet) : null;
   }
 }

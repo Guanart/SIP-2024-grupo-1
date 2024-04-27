@@ -74,18 +74,4 @@ describe('WalletService', () => {
       });
     });
   });
-
-  describe('delete', () => {
-    it('should delete a wallet', async () => {
-      const deletedWallet = { wallet_id: 1 };
-      const { wallet_id } = deletedWallet;
-
-      await walletService.delete(deletedWallet);
-
-      expect(prisma.wallet.update).toHaveBeenCalledWith({
-        where: { id: wallet_id },
-        data: { active: false },
-      });
-    });
-  });
 });
