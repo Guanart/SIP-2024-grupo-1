@@ -1,4 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+} from '@nestjs/common';
 import { FundraisingService } from './fundraising.service';
 
 @Controller('fundraising')
@@ -6,13 +12,35 @@ export class FundraisingController {
   constructor(private readonly fundraisingService: FundraisingService) {}
 
   @Get()
-  async getAllTokensForSale() {
-    return this.fundraisingService.getAllFundraisings();
+  async getAllFundraisings() {
+    const fundraisings = await this.fundraisingService.getAllFundraisings();
+    return JSON.stringify({
+      fundraisings,
+    });
   }
 
-  @Get(':id')
-  async getTokenById(@Param('id') id: string) {
-    return this.fundraisingService.getFundraisingById(Number(id));
+  @Get('/:id')
+  async getFundraisingById(@Param('id') id: string) {
+    try {
+      const fundraising = await this.fundraisingService.getFundraisingById(
+        Number(id),
+      );
+
+      if (!fundraising) {
+        throw new NotFoundException(`Fundraising ${id} not found`);
+      }
+
+      return JSON.stringify({
+        message: `Fundraising ${id} found`,
+        fundraising,
+      });
+    } catch (exception) {
+      if (exception instanceof NotFoundException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
   }
 
   // @Post(':collectionId/buy')

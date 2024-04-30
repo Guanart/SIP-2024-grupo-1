@@ -10,7 +10,10 @@ export class FundraisingService {
   ) {}
 
   async getAllFundraisings() {
-    return this.prisma.fundraising.findMany({
+    return await this.prisma.fundraising.findMany({
+      where: {
+        active: true,
+      },
       include: {
         collection: true,
       },
@@ -18,8 +21,8 @@ export class FundraisingService {
   }
 
   async getFundraisingById(id: number) {
-    return this.prisma.fundraising.findUnique({
-      where: { id },
+    return await this.prisma.fundraising.findUnique({
+      where: { id, active: true },
       include: {
         collection: true,
       },
