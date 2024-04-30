@@ -16,6 +16,8 @@ export class FundraisingService {
       },
       include: {
         collection: true,
+        event: true,
+        player: true,
       },
     });
   }
@@ -25,6 +27,8 @@ export class FundraisingService {
       where: { id, active: true },
       include: {
         collection: true,
+        event: true,
+        player: true,
       },
     });
   }
