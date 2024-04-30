@@ -65,6 +65,7 @@ model Event {
   fundraisings Fundraising[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  active       Boolean       @default(true)
 }
 
 model Fundraising {
