@@ -19,22 +19,18 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 	showActions = true,
 	fundraising,
 }) => {
-	const { player, event } = fundraising;
+	const { player } = fundraising;
 
 	return (
 		<Card sx={{ maxWidth: 345, borderColor: 'secondary' }}>
 			<CardMedia
 				sx={{ height: 140 }}
-				// image = {player.user.avatar}
-				image='https://files.bo3.gg/uploads/image/23965/image/webp-655c64b3d990b1f8755b29bf331d8eee.webp'
-				title='John Doe'
-				// title= {player.user.name}
+				image={player.user.avatar}
+				title={player.user.username}
 			/>
 			<CardContent>
 				<Typography gutterBottom variant='h5' component='h3'>
-					{/* {player.user.name} */}
-					{event.name}
-					John Doe
+					{player.user.username}
 				</Typography>
 				<Typography variant='body2'>{player.biography}</Typography>
 				<Typography component='div' sx={{ marginTop: '8px' }}>
@@ -62,7 +58,7 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 							fontWeight: 'bold',
 						}}
 					>
-						{event.name}
+						{fundraising.player.game.name}
 					</Typography>
 				</Typography>
 				<Typography component='div'>
@@ -76,8 +72,7 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 							fontWeight: 'bold',
 						}}
 					>
-						{event.name}
-						{/* {event.game.name} */}
+						{fundraising.event.name}
 					</Typography>
 				</Typography>
 			</CardContent>

@@ -17,7 +17,9 @@ export class FundraisingService {
       include: {
         collection: true,
         event: true,
-        player: true,
+        player: {
+          include: { user: true, game: true },
+        },
       },
     });
   }
@@ -28,7 +30,9 @@ export class FundraisingService {
       include: {
         collection: true,
         event: true,
-        player: true,
+        player: {
+          include: { user: true, game: true },
+        },
       },
     });
   }

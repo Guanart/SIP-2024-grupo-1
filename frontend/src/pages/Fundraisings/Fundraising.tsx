@@ -70,6 +70,7 @@ export const Fundraising = () => {
 		}
 	}
 
+	// TODO: Crear la preferencia con los datos reales de la colecta
 	const createPreference = async () => {
 		try {
 			const response = await axios.post(
