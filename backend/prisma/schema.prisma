@@ -71,6 +71,7 @@ model Event {
 model Fundraising {
   id               Int         @id @default(autoincrement())
   goal_amount      Float
+  current_amount   Float       @default(0)
   prize_percentage Float
   risk_level       RiskLevel   @default(LOW)
   active           Boolean     @default(true)

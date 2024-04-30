@@ -55,8 +55,8 @@ export class SeedController {
 
       const fundraising = await this.prisma.fundraising.create({
         data: {
-          goal_amount: 50000,
-          prize_percentage: 20,
+          goal_amount: 25000,
+          prize_percentage: 40,
           player_id: player.id,
           event_id: event.id,
           risk_level: 'LOW',
@@ -65,8 +65,8 @@ export class SeedController {
 
       const collection = await this.prisma.collection.create({
         data: {
-          initial_price: 50.0,
-          current_price: 50.0,
+          initial_price: 25.0,
+          current_price: 25.0,
           initial_amount: 1000,
           token_price_percentage: 0.02,
           fundraising_id: fundraising.id,
