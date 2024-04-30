@@ -11,7 +11,7 @@ export class SeedController {
       const user = await this.prisma.user.create({
         data: {
           email: 'johndoe@lot.com',
-          auth0_id: 'auth0|1a2b3c4d5e6f7g8h9',
+          auth0_id: 'auth0|6630e72f316573cb65b38115',
           username: 'John Doe',
           avatar:
             'https://files.bo3.gg/uploads/image/23965/image/webp-655c64b3d990b1f8755b29bf331d8eee.webp',
