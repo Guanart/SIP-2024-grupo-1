@@ -5,7 +5,7 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
-import { Wallet as WalletType } from '../../types/Wallet';
+import { Wallet as WalletType } from '../../types';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
