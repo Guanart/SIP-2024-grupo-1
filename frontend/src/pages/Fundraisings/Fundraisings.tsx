@@ -69,7 +69,8 @@ export const Fundraisings = () => {
 
 	return (
 		<PageLayout title='Fundraisings'>
-			{!isLoading ? (
+			{isLoading && <Loader />}
+			{!isLoading && (
 				<Stack spacing={4} mt={2}>
 					<TextField
 						id='filter'
@@ -102,8 +103,6 @@ export const Fundraisings = () => {
 						)}
 					</Container>
 				</Stack>
-			) : (
-				<Loader />
 			)}
 		</PageLayout>
 	);
