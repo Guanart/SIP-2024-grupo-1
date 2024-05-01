@@ -44,7 +44,12 @@ export const Fundraisings = () => {
 				}}
 			>
 				{fundraisings.map((fundraising) => {
-					return <FundraisingCard fundraising={fundraising} />;
+					return (
+						<FundraisingCard
+							fundraising={fundraising}
+							key={fundraising.id}
+						/>
+					);
 				})}
 			</Container>
 		</PageLayout>

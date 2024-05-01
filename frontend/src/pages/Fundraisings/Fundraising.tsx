@@ -70,21 +70,23 @@ export const Fundraising = () => {
 		}
 	}
 
-	// TODO: Crear la preferencia con los datos reales de la colecta
 	const createPreference = async () => {
 		try {
-			const response = await axios.post(
-				REACT_APP_API_URL
-					? REACT_APP_API_URL + '/mercado-pago/create-preference'
-					: 'http://localhost:3000/mercado-pago/create-preference',
-				{
-					title: 'Mariano Rapa',
-					quantity: 1,
-					unit_price: 100,
-				}
-			);
-			const { id } = response.data;
-			return id;
+			if (fundraising) {
+				console.log(fundraising);
+				const response = await axios.post(
+					REACT_APP_API_URL
+						? REACT_APP_API_URL + '/mercado-pago/create-preference'
+						: 'http://localhost:3000/mercado-pago/create-preference',
+					{
+						title: `${fundraising.player.user.username} | ${fundraising.event.name} (${amount})`,
+						quantity: amount,
+						unit_price: fundraising.collection.current_price,
+					}
+				);
+				const { id } = response.data;
+				return id;
+			}
 		} catch (error) {
 			console.log(error);
 		}
