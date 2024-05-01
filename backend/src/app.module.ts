@@ -4,9 +4,9 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { WalletModule } from './wallet/wallet.module';
 import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
-
 import { SeedModule } from './seed/seed.module';
 import { FundraisingModule } from './fundraising/fundraising.module';
+import { CollectionModule } from './collection/collection.module';
 
 @Module({
   imports: [
@@ -17,6 +17,7 @@ import { FundraisingModule } from './fundraising/fundraising.module';
     SeedModule,
     MercadoPagoModule,
     FundraisingModule,
+    CollectionModule,
   ],
 })
 export class AppModule {}

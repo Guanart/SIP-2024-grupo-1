@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { Collection } from './collection.entity';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class CollectionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private tokenService: TokenService,
+  ) {}
 
   async create(
     goal_amount: number,
@@ -26,11 +30,19 @@ export class CollectionService {
       },
     });
 
-    // id                     Int         @id @default(autoincrement())
-    // token_price_percentage Float
-    // amount_left            Int
-    // fundraising_id         Int         @unique
-    // fundraising            Fundraising @relation(fields: [fundraising_id], references: [id])
+    if (!collection) {
+      return null;
+    }
+
+    const count = await this.tokenService.emitInitialTokens(
+      initial_amount,
+      initial_price,
+      collection.id,
+    );
+
+    if (count !== initial_amount) {
+      return null;
+    }
 
     return collection ? Collection.fromObject(collection) : null;
   }

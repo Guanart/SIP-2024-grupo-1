@@ -103,4 +103,12 @@ model Collection {
   fundraising            Fundraising @relation(fields: [fundraising_id], references: [id])
   createdAt              DateTime    @default(now())
   updatedAt              DateTime    @updatedAt
+  Token                  Token[]
+}
+
+model Token {
+  id            Int        @id @default(autoincrement())
+  price         Float
+  collection_id Int
+  collection    Collection @relation(fields: [collection_id], references: [id])
 }
