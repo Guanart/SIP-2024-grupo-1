@@ -33,7 +33,7 @@ export class User {
     if (!email) throw 'Email property is required';
     if (!avatar) throw 'Avatar property is required';
 
-    const todo = new User(
+    const user = new User(
       id as number,
       auth0_id as string,
       email as string,
@@ -41,6 +41,7 @@ export class User {
       avatar as string,
       wallet as Wallet,
     );
-    return todo;
+
+    return user;
   }
 }
