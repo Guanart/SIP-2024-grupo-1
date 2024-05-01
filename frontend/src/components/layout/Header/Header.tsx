@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Stack, Avatar } from '@mui/material';
 import { LoginButton, LogoutButton, SignupButton, MenuButton } from '../..';
-import { useAuth0 } from '@auth0/auth0-react';
+import { User, useAuth0 } from '@auth0/auth0-react';
 import { Menu } from '../Menu/Menu';
 import './Header.css';
+import { fetchWithAuth } from '../../../utils/fetchWithAuth';
+import { useAccessToken } from '../../../hooks';
+import { Link } from 'react-router-dom';
 
 export function Header() {
 	const { isAuthenticated, user } = useAuth0();
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+	const [avatar, setAvatar] = useState<string | undefined>('');
+	const { accessToken } = useAccessToken();
+
+	useEffect(() => {
+		// Verifica si el usuario logueado ya está dado de alta en la API. Caso contrario, envía petición para darlo de alta (es nuevo usuario)
+		async function readUserStatus(user: User) {
+			try {
+				const response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `http://localhost:3000/user/${user.sub}`,
+				});
+
+				const data = await response.json();
+				setAvatar(data.user.avatar);
+			} catch (error) {
+				setAvatar(user?.picture);
+			}
+		}
+
+		if (!user) return;
+		if (!accessToken) return;
+
+		readUserStatus(user);
+	}, [accessToken, user, isAuthenticated]);
 
 	function toggleMenu() {
 		setIsMenuOpen(!isMenuOpen);
@@ -25,7 +53,9 @@ export function Header() {
 				<Stack direction='row' spacing={1.5}>
 					{isAuthenticated ? (
 						<>
-							<Avatar alt={user?.name} src={user?.picture} />
+							<Link to={`/account/${user?.sub}`}>
+								<Avatar alt={user?.name} src={avatar} />
+							</Link>
 							<LogoutButton />
 						</>
 					) : (
