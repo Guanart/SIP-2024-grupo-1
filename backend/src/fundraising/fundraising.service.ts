@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
+import { MercadoPagoService } from '../mercado-pago/mercado-pago.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
 import { Fundraising } from './fundraising.entity';
-import { CollectionService } from 'src/collection/collection.service';
+import { CollectionService } from '../collection/collection.service';
 
 @Injectable()
 export class FundraisingService {
