@@ -14,6 +14,7 @@ import {
 	Account,
 	Fundraisings,
 	Fundraising,
+	StartFundraising,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -42,6 +43,10 @@ const privateRoutes = [
 	{
 		path: `/fundraising/:fundraising_id`,
 		element: <Fundraising />,
+	},
+	{
+		path: `/fundraising/start`,
+		element: <StartFundraising />,
 	},
 ];
 

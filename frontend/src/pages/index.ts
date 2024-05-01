@@ -3,6 +3,7 @@ export * from './About';
 export * from './Trending';
 export * from './Fundraisings/Fundraisings';
 export * from './Fundraisings/Fundraising';
+export * from './Fundraisings/StartFundraising';
 export * from './Wallet/Wallet';
 export * from './Error';
 export * from './Marketplace';

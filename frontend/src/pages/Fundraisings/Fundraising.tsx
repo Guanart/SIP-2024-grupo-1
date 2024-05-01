@@ -14,7 +14,8 @@ import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Fundraising as FundraisingType } from '../../types';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { KeyboardBackspaceIcon } from '../../global/icons';
 
 const REACT_APP_API_URL = 'http://localhost:3000';
 const REACT_APP_MP_PUBLIC_KEY = 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552';
@@ -101,12 +102,20 @@ export const Fundraising = () => {
 
 	return (
 		<PageLayout title='Fundraising'>
+			<Link to={`/fundraisings`}>
+				<Button size='small' color='secondary'>
+					<KeyboardBackspaceIcon
+						sx={{ marginRight: '4px', marginY: '16px' }}
+					/>{' '}
+					Back
+				</Button>
+			</Link>
 			{fundraising && (
 				<>
 					<Stack
 						direction={{ xs: 'column', md: 'row' }}
 						spacing={{ xs: '24px', md: '48px' }}
-						sx={{ paddingTop: '32px', justifyContent: 'center' }}
+						sx={{ paddingTop: '8px', justifyContent: 'center' }}
 					>
 						<Stack
 							sx={{ paddingX: '0px', width: '350px' }}

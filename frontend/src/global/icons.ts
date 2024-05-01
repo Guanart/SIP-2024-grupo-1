@@ -6,6 +6,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import InfoIcon from '@mui/icons-material/Info';
 import MenuIcon from '@mui/icons-material/Menu';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export {
 	HomeIcon,
@@ -16,4 +17,5 @@ export {
 	EmojiEventsIcon,
 	TrendingUpIcon,
 	InfoIcon,
+	KeyboardBackspaceIcon,
 };

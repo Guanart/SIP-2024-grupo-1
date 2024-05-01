@@ -1,15 +1,16 @@
 import { PageLayout } from '../../layouts/PageLayout';
 import { FundraisingCard } from '../../components/fundraisings/FundraisingCard';
-import { Container, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Fundraising } from '../../types';
 import { Loader } from '../../components';
+import { Link } from 'react-router-dom';
 
 export const Fundraisings = () => {
-	const { accessToken } = useAccessToken();
+	const { accessToken, role } = useAccessToken();
 	const [fundraisings, setFundraisings] = useState<Fundraising[]>([]);
 	const [currentFundraisings, setCurrentFundraisings] = useState<
 		Fundraising[]
@@ -72,16 +73,47 @@ export const Fundraisings = () => {
 			{isLoading && <Loader />}
 			{!isLoading && (
 				<Stack spacing={4} mt={2}>
-					<TextField
-						id='filter'
-						label='Type to filter fundraisings...'
-						variant='outlined'
-						value={filter}
-						onChange={(event) => setFilter(event.target.value)}
-						inputProps={{ maxLength: 80 }}
-						sx={{ maxWidth: '600px', width: '95%' }}
-						type='text'
-					/>
+					<Stack
+						spacing={4}
+						mt={2}
+						direction={{ xs: 'column-reverse', md: 'row' }}
+					>
+						<TextField
+							id='filter'
+							label='Type to filter fundraisings...'
+							variant='outlined'
+							value={filter}
+							onChange={(event) => setFilter(event.target.value)}
+							inputProps={{ maxLength: 80 }}
+							sx={{ maxWidth: '600px', width: '90%' }}
+							type='text'
+						/>
+						{role === 'player' && (
+							<Button
+								variant='contained'
+								color='secondary'
+								onClick={() =>
+									console.log('Updating fundraising...')
+								}
+								sx={{
+									maxWidth: '300px',
+									display: 'block',
+									paddingY: '12px',
+								}}
+							>
+								<Link
+									to='/fundraising/start'
+									style={{
+										textDecoration: 'none',
+										maxWidth: '300px',
+										color: 'inherit',
+									}}
+								>
+									Start a fundraising
+								</Link>
+							</Button>
+						)}
+					</Stack>
 					<Container
 						sx={{
 							marginTop: '18px',
