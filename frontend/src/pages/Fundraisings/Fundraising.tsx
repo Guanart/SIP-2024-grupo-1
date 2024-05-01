@@ -307,40 +307,62 @@ export const Fundraising = () => {
 					<Stack
 						sx={{
 							mx: 'auto',
-							mt: '24px',
+							mt: '0px',
 							width: '750px',
 						}}
 						direction='row'
 						spacing='4px'
 					>
-						{!preferenceId && (
-							<>
-								<TextField
-									id='outlined-number'
-									label='Amount'
-									type='number'
-									value={amount}
-									onChange={(event) =>
-										handleAmountChange(event.target.value)
-									}
-									inputProps={{ maxLength: 80 }}
-									sx={{ maxWidth: '100px' }}
+						{user?.sub === fundraising.player.user.auth0_id && (
+							<Button
+								variant='contained'
+								color='secondary'
+								onClick={() =>
+									console.log('Updating fundraising...')
+								}
+								sx={{
+									maxWidth: '250px',
+									display: 'block',
+									paddingY: '12px',
+								}}
+							>
+								Update your fundraising
+							</Button>
+						)}
+						{user?.sub !== fundraising.player.user.auth0_id &&
+							!preferenceId && (
+								<>
+									<TextField
+										id='outlined-number'
+										label='Amount'
+										type='number'
+										value={amount}
+										onChange={(event) =>
+											handleAmountChange(
+												event.target.value
+											)
+										}
+										inputProps={{ maxLength: 80 }}
+										sx={{ maxWidth: '100px' }}
+									/>
+									<Button
+										variant='contained'
+										color='secondary'
+										onClick={handleBuy}
+										style={{ maxWidth: '250px' }}
+									>
+										Buy
+									</Button>
+								</>
+							)}
+						{user?.sub !== fundraising.player.user.auth0_id &&
+							preferenceId && (
+								<Wallet
+									initialization={{
+										preferenceId: preferenceId,
+									}}
 								/>
-								<Button
-									variant='contained'
-									color='secondary'
-									onClick={handleBuy}
-									style={{ maxWidth: '250px' }}
-								>
-									Comprar
-								</Button>
-							</>
-						)}
-						{preferenceId && (
-							<Wallet
-								initialization={{ preferenceId: preferenceId }}
-							/>
-						)}
+							)}
 					</Stack>
 				</>
 			)}
