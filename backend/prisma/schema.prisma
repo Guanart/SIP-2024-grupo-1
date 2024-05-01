@@ -18,6 +18,8 @@ model User {
   updatedAt DateTime @updatedAt
   wallet    Wallet?
   Player    Player?
+  // country_id      Int
+  // country      Country?
 }
 
 model Wallet {
