@@ -14,7 +14,7 @@ export function Header() {
 	}
 
 	return (
-		<AppBar position='fixed'>
+		<AppBar position='fixed' sx={{ width: '100%' }}>
 			<Menu isOpen={isMenuOpen} toggleMenu={toggleMenu} />
 			<Toolbar>
 				<MenuButton toggleMenu={toggleMenu} />

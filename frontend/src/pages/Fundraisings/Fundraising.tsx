@@ -151,6 +151,7 @@ export const Fundraising = () => {
 											height: '20px',
 											ml: '2px',
 											mt: '4px',
+											maxWidth: '250px',
 										}}
 									/>
 								</Typography>
@@ -183,6 +184,7 @@ export const Fundraising = () => {
 											height: '20px',
 											ml: '2px',
 											mt: '4px',
+											maxWidth: '250px',
 										}}
 									/>
 								</Typography>
