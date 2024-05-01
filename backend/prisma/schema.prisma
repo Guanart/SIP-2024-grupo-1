@@ -17,7 +17,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   wallet    Wallet?
-  Player    Player?
+  player    Player?
   // country_id      Int
   // country      Country?
 }

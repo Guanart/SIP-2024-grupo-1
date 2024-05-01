@@ -45,7 +45,7 @@ export const Account = () => {
 			})
 			.then((data) => {
 				const { user } = data;
-
+				console.log(data);
 				if (!user) return;
 
 				setIsLoading(false);
@@ -151,12 +151,40 @@ export const Account = () => {
 												{currentUser.email}
 											</Typography>
 										</Typography>
+										{role === 'player' && (
+											<>
+												<Typography
+													component='span'
+													color='secondary'
+													sx={{
+														display: 'inline-block',
+														py: '2px',
+														fontWeight: 'bold',
+													}}
+												>
+													{
+														currentUser.player?.game
+															.name
+													}
+												</Typography>
+												<Typography
+													component='span'
+													sx={{
+														px: '6px',
+														fontWeight: 'normal',
+														marginLeft: '0px',
+													}}
+												>
+													|
+												</Typography>
+											</>
+										)}
 										<Typography
-											variant='subtitle2'
 											component='span'
 											sx={{
 												py: '2px',
-												fontWeight: 'normal',
+												fontWeight: 'bold',
+												marginLeft: '0px',
 											}}
 										>
 											Argentina
@@ -200,6 +228,17 @@ export const Account = () => {
 										</Stack>
 									)}
 								</Stack>
+								{role === 'player' && (
+									<Typography
+										component='p'
+										sx={{
+											py: '2px',
+											fontWeight: 'normal',
+										}}
+									>
+										{currentUser.player?.biography}
+									</Typography>
+								)}
 							</Stack>
 						</Stack>
 					</Container>

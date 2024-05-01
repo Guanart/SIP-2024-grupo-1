@@ -1,3 +1,5 @@
+import { Wallet } from '.';
+import { Player } from './Player';
 export interface User {
 	auth0_id: string;
 	id: number;
@@ -7,6 +9,8 @@ export interface User {
 	biography?: string;
 	createdAt: Date;
 	updatedAt: Date;
+	player?: Player;
+	wallet?: Wallet;
 }
 
 export interface UpdatedUser {

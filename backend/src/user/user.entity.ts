@@ -1,3 +1,4 @@
+import { Player } from 'src/player/player.entity';
 import { Wallet } from 'src/wallet/wallet.entity';
 
 export class User {
@@ -7,6 +8,7 @@ export class User {
   username: string;
   avatar?: string;
   wallet: Wallet;
+  player: Player;
 
   public constructor(
     id: number,
@@ -15,6 +17,7 @@ export class User {
     username: string,
     avatar: string,
     wallet: Wallet,
+    player: Player,
   ) {
     this.id = id;
     this.auth0_id = auth0_id;
@@ -22,10 +25,11 @@ export class User {
     this.username = username;
     this.avatar = avatar;
     this.wallet = wallet;
+    this.player = player;
   }
 
   public static fromObject(object: { [key: string]: unknown }): User {
-    const { id, auth0_id, email, username, avatar, wallet } = object;
+    const { id, auth0_id, email, username, avatar, wallet, player } = object;
 
     if (!id) throw 'ID property is required';
     if (!username) throw 'Username property is required';
@@ -40,6 +44,7 @@ export class User {
       username as string,
       avatar as string,
       wallet as Wallet,
+      player as Player,
     );
 
     return user;

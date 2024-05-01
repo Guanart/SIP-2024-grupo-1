@@ -24,6 +24,9 @@ export class UserService {
         active: true,
       },
       include: {
+        player: {
+          include: { game: true },
+        },
         wallet: true,
       },
     });
