@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MercadoPagoController } from './mercado-pago.controller';
+import { MercadoPagoController } from '../../src/mercado-pago/mercado-pago.controller';
 
 describe('MercadoPagoController', () => {
   let controller: MercadoPagoController;

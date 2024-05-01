@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MercadoPagoService } from './mercado-pago.service';
+import { MercadoPagoService } from '../../src/mercado-pago/mercado-pago.service';
 
 describe('MercadoPagoService', () => {
   let service: MercadoPagoService;
