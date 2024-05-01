@@ -47,7 +47,6 @@ export class Fundraising {
     if (!id) throw 'ID property is required';
     if (!goal_amount) throw 'Goal amount property is required';
     if (!prize_percentage) throw 'Prize percentage property is required';
-    if (!event) throw 'Event property is required';
 
     const fundraising = new Fundraising(
       id as number,
