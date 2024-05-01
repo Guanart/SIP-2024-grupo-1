@@ -3,17 +3,24 @@ import { PrismaService } from '../database/prisma.service';
 import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
 import { Fundraising } from './fundraising.entity';
+import { CollectionService } from 'src/collection/collection.service';
 
 @Injectable()
 export class FundraisingService {
   constructor(
     private prisma: PrismaService,
     private mercadoPagoService: MercadoPagoService,
+    private collectionService: CollectionService,
   ) {}
 
   async createFundraising(newFundraising: CreateFundraisingDto) {
-    const { goal_amount, prize_percentage, player_id, event_id } =
-      newFundraising;
+    const {
+      goal_amount,
+      prize_percentage,
+      player_id,
+      event_id,
+      initial_price,
+    } = newFundraising;
 
     const fundraising = await this.prisma.fundraising.create({
       data: {
@@ -23,6 +30,15 @@ export class FundraisingService {
         event_id,
       },
     });
+
+    const collection = await this.collectionService.create(
+      goal_amount,
+      prize_percentage,
+      initial_price,
+      fundraising.id,
+    );
+
+    console.log(collection);
 
     return fundraising ? Fundraising.fromObject(fundraising) : null;
   }

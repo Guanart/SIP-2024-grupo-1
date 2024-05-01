@@ -5,6 +5,10 @@ export class CreateFundraisingDto {
   @Min(1)
   goal_amount: number;
 
+  @IsNotEmpty()
+  @Min(1)
+  initial_price: number;
+
   @Min(0)
   @Max(100)
   @IsNotEmpty()
