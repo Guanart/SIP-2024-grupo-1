@@ -1,6 +1,6 @@
 import { PageLayout } from '../../layouts/PageLayout';
 import { FundraisingCard } from '../../components/fundraisings/FundraisingCard';
-import { Button, Container, Stack, TextField, Typography } from '@mui/material';
+import { Button, Stack, TextField, Typography } from '@mui/material';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
@@ -85,7 +85,7 @@ export const Fundraisings = () => {
 							value={filter}
 							onChange={(event) => setFilter(event.target.value)}
 							inputProps={{ maxLength: 80 }}
-							sx={{ maxWidth: '600px', width: '90%' }}
+							sx={{ maxWidth: '600px', width: '95%' }}
 							type='text'
 						/>
 						{role === 'player' && (
@@ -112,9 +112,19 @@ export const Fundraisings = () => {
 							</Link>
 						)}
 					</Stack>
-					<Container
+					<Stack
 						sx={{
 							marginTop: '18px',
+							width: '100%',
+							alignItems: 'center',
+							flexWrap: 'wrap',
+							display: 'flex',
+							gap: '16px',
+							justifyContent: 'flex-start',
+							flexDirection: 'row',
+							...(window.innerWidth <= 770 && {
+								justifyContent: 'center',
+							}),
 						}}
 					>
 						{currentFundraisings.length > 0 ? (
@@ -131,7 +141,7 @@ export const Fundraisings = () => {
 								No fundraisings match your search.
 							</Typography>
 						)}
-					</Container>
+					</Stack>
 				</Stack>
 			)}
 		</PageLayout>
