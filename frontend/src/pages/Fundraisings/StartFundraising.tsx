@@ -55,7 +55,7 @@ export const StartFundraising = () => {
 					}
 				}
 			} catch (error) {
-				console.log(error);
+				navigate(`/error/500`);
 			}
 		}
 
@@ -63,7 +63,7 @@ export const StartFundraising = () => {
 		if (!accessToken) return;
 
 		getEvents();
-	}, [accessToken, isAuthenticated, user]);
+	}, [accessToken, isAuthenticated, user, navigate]);
 
 	async function handleStartFundraising() {
 		console.log('Creating fundraising...');

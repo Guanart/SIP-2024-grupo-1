@@ -69,6 +69,10 @@ const publicRoutes = [
 		element: <Trending />,
 	},
 	{
+		path: '/error/:code',
+		element: <Error />,
+	},
+	{
 		path: '*',
 		element: <Error />,
 	},

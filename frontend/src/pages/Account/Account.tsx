@@ -86,7 +86,7 @@ export const Account = () => {
 		setUpdatedUser(null);
 
 		if (!response.ok) {
-			throw Error('Error updating user profile');
+			navigate('/error/500');
 		}
 
 		setIsEditModalOpen(false);
@@ -104,7 +104,7 @@ export const Account = () => {
 		});
 
 		if (!response.ok) {
-			throw Error('Error deleting user account');
+			navigate('/error/500');
 		}
 
 		navigate('/login');

@@ -6,6 +6,7 @@ import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
 import { Wallet as WalletType } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
@@ -14,6 +15,7 @@ export const Wallet = () => {
 	const [userId, setUserId] = useState<string>('');
 	const { accessToken } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		async function getUserWallet(user: User) {
@@ -35,7 +37,7 @@ export const Wallet = () => {
 					}
 				}
 			} catch (error) {
-				console.log(error);
+				navigate('/error/500');
 			}
 		}
 
@@ -43,7 +45,7 @@ export const Wallet = () => {
 		if (!accessToken) return;
 
 		getUserWallet(user);
-	}, [accessToken, isAuthenticated, user]);
+	}, [accessToken, isAuthenticated, user, navigate]);
 
 	async function handleCreateWallet() {
 		const response = await fetchWithAuth({
@@ -57,6 +59,10 @@ export const Wallet = () => {
 				paypal_id: paypalId,
 			},
 		});
+
+		if (!response.ok) {
+			navigate('/error/500');
+		}
 
 		const data = await response.json();
 		setWallet(data.wallet);
@@ -74,6 +80,10 @@ export const Wallet = () => {
 				paypal_id: paypalId,
 			},
 		});
+
+		if (!response.ok) {
+			navigate('/error/500');
+		}
 
 		const data = await response.json();
 		setWallet(data.wallet);
