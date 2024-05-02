@@ -89,26 +89,27 @@ export const Fundraisings = () => {
 							type='text'
 						/>
 						{role === 'player' && (
-							<Button
-								variant='contained'
-								color='secondary'
-								sx={{
+							<Link
+								to='/fundraising/start'
+								style={{
+									textDecoration: 'none',
 									maxWidth: '300px',
-									display: 'block',
-									paddingY: '12px',
+									color: 'inherit',
+									marginTop: '2px',
 								}}
 							>
-								<Link
-									to='/fundraising/start'
-									style={{
-										textDecoration: 'none',
+								<Button
+									variant='contained'
+									color='secondary'
+									sx={{
 										maxWidth: '300px',
-										color: 'inherit',
+										display: 'block',
+										paddingY: '12px',
 									}}
 								>
 									Start a fundraising
-								</Link>
-							</Button>
+								</Button>
+							</Link>
 						)}
 					</Stack>
 					<Container
