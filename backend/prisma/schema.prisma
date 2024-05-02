@@ -32,6 +32,14 @@ model Wallet {
   updatedAt DateTime @updatedAt
 }
 
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  wallet_id Int
+  token_id  Int
+  type_id   Int
+  timestamp DateTime 
+}
+
 model Game {
   id        Int      @id @default(autoincrement())
   name      String   @unique
