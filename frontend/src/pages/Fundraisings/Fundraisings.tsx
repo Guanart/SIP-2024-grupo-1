@@ -92,9 +92,6 @@ export const Fundraisings = () => {
 							<Button
 								variant='contained'
 								color='secondary'
-								onClick={() =>
-									console.log('Updating fundraising...')
-								}
 								sx={{
 									maxWidth: '300px',
 									display: 'block',
