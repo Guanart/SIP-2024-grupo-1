@@ -137,8 +137,8 @@ export const Fundraisings = () => {
 								);
 							})
 						) : (
-							<Typography>
-								No fundraisings match your search.
+							<Typography variant='h6'>
+								No active fundraisings found.
 							</Typography>
 						)}
 					</Stack>
