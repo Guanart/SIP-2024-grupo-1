@@ -7,14 +7,20 @@ import {
   NotFoundException,
   Param,
   Post,
+  // SetMetadata,
+  // UseGuards,
 } from '@nestjs/common';
 import { FundraisingService } from './fundraising.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
+// import { PermissionsGuard } from 'src/auth/permissions.guard';
+// import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('fundraising')
 export class FundraisingController {
   constructor(private readonly fundraisingService: FundraisingService) {}
 
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['create:fundraisings'])
   @Post()
   async startFundraising(
     @Body() newFundraising: CreateFundraisingDto,
@@ -40,6 +46,8 @@ export class FundraisingController {
     }
   }
 
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['read:fundraisings'])
   @Get()
   async getAllFundraisings() {
     const fundraisings = await this.fundraisingService.getAllFundraisings();
@@ -48,6 +56,8 @@ export class FundraisingController {
     });
   }
 
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['read:fundraisings'])
   @Get('/:id')
   async getFundraisingById(@Param('id') id: string) {
     try {
