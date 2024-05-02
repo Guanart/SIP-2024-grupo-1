@@ -44,7 +44,7 @@ export class FundraisingService {
   }
 
   async getAllFundraisings() {
-    return await this.prisma.fundraising.findMany({
+    const fundraisings = await this.prisma.fundraising.findMany({
       where: {
         active: true,
       },
@@ -56,6 +56,10 @@ export class FundraisingService {
         },
       },
     });
+
+    return fundraisings
+      ? fundraisings.map((fundraising) => Fundraising.fromObject(fundraising))
+      : null;
   }
 
   async getFundraisingById(id: number) {

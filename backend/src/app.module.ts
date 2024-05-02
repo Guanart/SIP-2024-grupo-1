@@ -7,6 +7,7 @@ import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 import { SeedModule } from './seed/seed.module';
 import { FundraisingModule } from './fundraising/fundraising.module';
 import { CollectionModule } from './collection/collection.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CollectionModule } from './collection/collection.module';
     MercadoPagoModule,
     FundraisingModule,
     CollectionModule,
+    EventModule,
   ],
 })
 export class AppModule {}
