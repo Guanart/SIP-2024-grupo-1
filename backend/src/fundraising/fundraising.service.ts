@@ -22,6 +22,18 @@ export class FundraisingService {
       initial_price,
     } = newFundraising;
 
+    // No permite crear una colecta si el jugador ya tiene una colecta activa en este momento
+    // const activeFundraising = await this.prisma.fundraising.findMany({
+    //   where: {
+    //     player_id,
+    //     active: true,
+    //   },
+    // });
+
+    // if (activeFundraising.length > 0) {
+    //   return null;
+    // }
+
     const fundraising = await this.prisma.fundraising.create({
       data: {
         goal_amount,
