@@ -32,6 +32,7 @@ export const Account = () => {
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
+		if (updatedUser) return;
 
 		fetchWithAuth({
 			isAuthenticated,
