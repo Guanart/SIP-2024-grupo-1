@@ -225,7 +225,7 @@ export const StartFundraising = () => {
 								sx={{ maxWidth: '400px', width: '90%' }}
 							>
 								{events.map((event) => (
-									<MenuItem key={event.id} value={event.id}>
+									<MenuItem key={event.id} value={event.id} id={event.id}>
 										{event.name}
 									</MenuItem>
 								))}
