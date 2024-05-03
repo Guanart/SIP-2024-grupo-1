@@ -31,7 +31,7 @@ account_page_link.click()
 
 # Actualizo el username
 edit_profile_button = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[1]/div/div/div/div/div[3]/button[1]').click()
-username_input = driver.find_element(By.XPATH, '//*[@id="outlined-basic"]')
+username_input = driver.find_element(By.XPATH, '//*[@id="username"]')
 
 # Seleccionar todo el texto en el campo de entrada y borrarlo
 username_input.send_keys(Keys.CONTROL + "a")
