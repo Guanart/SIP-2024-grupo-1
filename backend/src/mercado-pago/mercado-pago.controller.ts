@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { MercadoPagoService } from './mercado-pago.service';
 import { CreatePreference } from './create-preference.dto';
 
@@ -12,9 +12,13 @@ export class MercadoPagoController {
     return this.mercadoPagoService.createPreference(items);
   }
 
-  @Post('webhook') async handleWebhook(@Body() notification: any) {
+  @Post('webhook')
+  async handleWebhook(@Body() notification: any) {
     console.log(notification);
-  } // Handle the webhook notification logic here
+  }
 
-  @Post('oauth') async authorizeSeller() { } // Handle the seller authorization logic here }
+  @Get('oauth') 
+  async authorizeSeller(@Query('code') code: string) {
+    return this.mercadoPagoService.authorizeSeller(code);
+  }
 }
