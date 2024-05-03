@@ -37,12 +37,13 @@ model Transaction {
   wallet_id Int
   token_id  Int
   type_id   Int
-  timestamp DateTime 
+  timestamp DateTime
 }
 
 model Game {
   id        Int      @id @default(autoincrement())
   name      String   @unique
+  icon      String   @default("")
   player    Player[]
   event     Event[]
   createdAt DateTime @default(now())

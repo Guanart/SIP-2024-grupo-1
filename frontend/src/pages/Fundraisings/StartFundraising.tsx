@@ -130,7 +130,13 @@ export const StartFundraising = () => {
 						>
 							Token preview
 						</Typography>
-						<Card sx={{ maxWidth: 345, borderColor: 'secondary' }}>
+						<Card
+							sx={{
+								maxWidth: 345,
+								width: 345,
+								borderColor: 'secondary',
+							}}
+						>
 							<CardMedia
 								sx={{ height: 140 }}
 								image={currentUser?.avatar}
@@ -170,12 +176,21 @@ export const StartFundraising = () => {
 										color='secondary'
 										component='div'
 										sx={{
-											display: 'inline',
+											display: 'inline-flex',
 											marginLeft: '6px',
 											fontWeight: 'bold',
+											alignItems: 'center',
+											gap: '8px',
 										}}
 									>
 										{currentUser?.player?.game.name}
+										<img
+											style={{ display: 'inline' }}
+											width='35px'
+											height='25px'
+											src={currentUser?.player?.game.icon}
+											alt={`${currentUser?.player?.game.name} icon`}
+										/>
 									</Typography>
 								</Typography>
 								<Typography component='div'>
@@ -225,7 +240,11 @@ export const StartFundraising = () => {
 								sx={{ maxWidth: '400px', width: '90%' }}
 							>
 								{events.map((event) => (
-									<MenuItem key={event.id} value={event.id} id={event.id}>
+									<MenuItem
+										key={event.id}
+										value={event.id}
+										id={event.id}
+									>
 										{event.name}
 									</MenuItem>
 								))}

@@ -29,6 +29,7 @@ export class SeedController {
       const game = await this.prisma.game.create({
         data: {
           name: 'Valorant',
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/1280px-Valorant_logo_-_pink_color_version.svg.png',
         },
       });
 

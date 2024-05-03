@@ -326,6 +326,7 @@ export const Fundraising = () => {
 							<Button
 								variant='contained'
 								color='secondary'
+								style={{ marginTop: '8px' }}
 								onClick={() =>
 									console.log('Updating fundraising...')
 								}

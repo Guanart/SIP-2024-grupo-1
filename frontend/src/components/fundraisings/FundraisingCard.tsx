@@ -22,13 +22,15 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 	const { player } = fundraising;
 
 	return (
-		<Card sx={{ maxWidth: 345, borderColor: 'secondary' }}>
+		<Card sx={{ maxWidth: 345, width: 345, borderColor: 'secondary' }}>
 			<CardMedia
 				sx={{ height: 140 }}
 				image={player.user.avatar}
 				title={player.user.username}
 			/>
-			<CardContent>
+			<CardContent
+				sx={{ display: 'flex', flexDirection: 'column', gap: '6px' }}
+			>
 				<Typography gutterBottom variant='h5' component='h3'>
 					{player.user.username}
 				</Typography>
@@ -53,12 +55,21 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 						color='secondary'
 						component='div'
 						sx={{
-							display: 'inline',
+							display: 'inline-flex',
 							marginLeft: '6px',
 							fontWeight: 'bold',
+							alignItems: 'center',
+							gap: '8px',
 						}}
 					>
 						{fundraising.player.game.name}
+						<img
+							style={{ display: 'inline' }}
+							width='35px'
+							height='25px'
+							src={fundraising.player.game.icon}
+							alt={`${fundraising.player.game.name} icon`}
+						/>
 					</Typography>
 				</Typography>
 				<Typography component='div'>
