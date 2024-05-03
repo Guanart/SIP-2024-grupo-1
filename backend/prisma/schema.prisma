@@ -23,21 +23,23 @@ model User {
 }
 
 model Wallet {
-  id        Int      @id @default(autoincrement())
-  user_id   Int      @unique
-  user      User     @relation(fields: [user_id], references: [id])
-  cbu       String   @unique
-  paypal_id String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+    id        Int      @id @default(autoincrement())
+    user_id   Int      @unique
+    user      User     @relation(fields: [user_id], references: [id])
+    cbu       String   @unique
+    paypal_id String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    transactions Transaction[]
 }
 
 model Transaction {
-  id        Int      @id @default(autoincrement())
-  wallet_id Int
-  token_id  Int
-  type_id   Int
-  timestamp DateTime
+    id        Int      @id @default(autoincrement())
+    wallet_id Int
+    wallet    Wallet   @relation(fields: [wallet_id], references: [id])
+    token_id  Int
+    type_id   Int
+    timestamp DateTime
 }
 
 model Game {

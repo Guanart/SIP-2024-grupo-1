@@ -1,4 +1,5 @@
-import { Button, Stack, TextField } from '@mui/material';
+//import { Button, Stack, TextField } from '@mui/material';
+import { Button, Stack, TextField, List, ListItem, ListItemText } from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
@@ -6,7 +7,9 @@ import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
 import { Wallet as WalletType } from '../../types';
+import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
+import AddTransactionButton from './AddTransactionButton'; // Importa el componente
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
@@ -34,6 +37,7 @@ export const Wallet = () => {
 						setWallet(user.wallet);
 						setCbu(user.wallet.cbu);
 						setPaypalId(user.wallet.paypal_id);
+						console.log(user.wallet.transactions)
 					}
 				}
 			} catch (error) {
@@ -88,6 +92,12 @@ export const Wallet = () => {
 		const data = await response.json();
 		setWallet(data.wallet);
 	}
+
+	const placeholderTransactions = [
+        { id: 1, description: 'Purchase at Store', date: '2024-05-03', amount: '50.00' },
+        { id: 2, description: 'Online subscription', date: '2024-05-02', amount: '15.00' },
+        { id: 3, description: 'ATM Withdrawal', date: '2024-05-01', amount: '100.00' },
+    ];
 
 	return (
 		<PageLayout title='Wallet'>
@@ -159,7 +169,23 @@ export const Wallet = () => {
 						</Button>
 					)}
 				</Stack>
-				<p>Mostrar listado de movimientos y/o tokens en posesión</p>
+                {/* Section to display list of movements/tokens */}
+                {wallet && (
+                    <Stack spacing={2} sx={{ mt: '16px', maxWidth: '500px' }} justifyContent='center'>
+                        <Typography variant='h6'>Transacciones</Typography>
+						<AddTransactionButton walletId={wallet.id} />
+                        <List>
+                            {placeholderTransactions.map((transaction) => (
+                                <ListItem key={transaction.id}>
+                                    <ListItemText
+                                        primary={`Description: ${transaction.description}`}
+                                        secondary={`Date: ${transaction.date} | Amount: ${transaction.amount}`}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Stack>
+                )}
 			</Stack>
 		</PageLayout>
 	);

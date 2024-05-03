@@ -24,6 +24,7 @@ export class WalletService {
       },
       include: {
         user: true,
+        transactions: true,
       },
     });
 
