@@ -28,6 +28,7 @@ export const Account = () => {
 	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 	const [updatedUser, setUpdatedUser] = useState<UpdatedUser | null>(null);
+	const [biography, setBiography] = useState<string>('');
 
 	useEffect(() => {
 		if (!isAuthenticated) return;
@@ -52,19 +53,14 @@ export const Account = () => {
 				setCurrentUser(user);
 
 				if (!updatedUser) {
+					setUpdatedUser({
+						auth0_id: user.auth0_id,
+						username: user.username,
+						avatar: user.avatar,
+					});
+
 					if (role === 'player') {
-						setUpdatedUser({
-							auth0_id: user.auth0_id,
-							username: user.username,
-							avatar: user.avatar,
-							biography: user.biography,
-						});
-					} else {
-						setUpdatedUser({
-							auth0_id: user.auth0_id,
-							username: user.username,
-							avatar: user.avatar,
-						});
+						setBiography(user.player.biography);
 					}
 				}
 			});
@@ -82,6 +78,25 @@ export const Account = () => {
 			method: 'PUT',
 			data: updatedUser,
 		});
+
+		if (role === 'player') {
+			if (currentUser?.player?.biography !== biography) {
+				const response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `http://localhost:3000/player`,
+					method: 'PUT',
+					data: {
+						player_id: currentUser?.player?.id,
+						biography,
+					},
+				});
+
+				if (!response.ok) {
+					navigate('/error/500');
+				}
+			}
+		}
 
 		setUpdatedUser(null);
 
@@ -299,14 +314,12 @@ export const Account = () => {
 							maxRows={4}
 							onChange={(event) => {
 								const biography =
-									event.target.value.trim() ??
-									currentUser?.biography;
-								setUpdatedUser({
-									...updatedUser,
-									['biography']: biography,
-								});
+									event.target.value ??
+									currentUser?.player?.biography;
+								setBiography(biography);
 							}}
-							value={updatedUser?.biography}
+							value={biography}
+							type='text'
 							inputProps={{ maxLength: 200 }}
 						/>
 					)}

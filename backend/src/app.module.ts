@@ -8,6 +8,7 @@ import { SeedModule } from './seed/seed.module';
 import { FundraisingModule } from './fundraising/fundraising.module';
 import { CollectionModule } from './collection/collection.module';
 import { EventModule } from './event/event.module';
+import { PlayerModule } from './player/player.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { EventModule } from './event/event.module';
     FundraisingModule,
     CollectionModule,
     EventModule,
+    PlayerModule,
   ],
 })
 export class AppModule {}

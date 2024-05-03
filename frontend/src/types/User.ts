@@ -17,5 +17,4 @@ export interface UpdatedUser {
 	auth0_id?: string;
 	username?: string;
 	avatar?: string;
-	biography?: string;
 }
