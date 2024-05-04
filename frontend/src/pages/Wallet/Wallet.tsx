@@ -181,7 +181,6 @@ export const Wallet = () => {
 			{(transactions && wallet) && (
                     <Stack spacing={2} sx={{ mt: '16px', maxWidth: '500px' }} justifyContent='center'>
                         <Typography variant='h6'>Transacciones</Typography>
-						<AddTransactionButton walletId={wallet.id} />
                         <List>
                             {transactions.map((transaction) => (
                                 <ListItem key={transaction.id} sx={{ 
