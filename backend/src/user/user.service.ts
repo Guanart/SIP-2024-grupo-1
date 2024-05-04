@@ -27,7 +27,9 @@ export class UserService {
         player: {
           include: { game: true },
         },
-        wallet: true,
+        wallet: {
+          include: {transactions: true},
+        }
       },
     });
 

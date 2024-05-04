@@ -9,6 +9,7 @@ import { FundraisingModule } from './fundraising/fundraising.module';
 import { CollectionModule } from './collection/collection.module';
 import { EventModule } from './event/event.module';
 import { PlayerModule } from './player/player.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PlayerModule } from './player/player.module';
     CollectionModule,
     EventModule,
     PlayerModule,
+    TransactionModule,
   ],
 })
 export class AppModule {}
