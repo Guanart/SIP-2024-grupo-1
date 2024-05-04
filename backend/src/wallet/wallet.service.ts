@@ -27,7 +27,6 @@ export class WalletService {
         transactions: true,
       },
     });
-
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 
