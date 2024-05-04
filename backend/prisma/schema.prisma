@@ -64,8 +64,8 @@ model Player {
   fundraisings Fundraising[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  access_token String
-  public_key   String
+  access_token String?     
+  public_key   String?
 }
 
 model Event {
