@@ -40,6 +40,8 @@ export class SeedController {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
           ranking: 10,
           game_id: game.id,
+          public_key: '',
+          access_token: '',
         },
       });
 
@@ -50,6 +52,17 @@ export class SeedController {
           max_players: 12,
           prize: 1000000,
           name: 'Supermagic',
+          game_id: game.id,
+        },
+      });
+
+      await this.prisma.event.create({
+        data: {
+          start_date: new Date('04/07/2024'),
+          end_date: new Date('06/08/2024'),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Pro League V',
           game_id: game.id,
         },
       });
