@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import { Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
+import AddTransactionButton from './AddTransactionButton';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
@@ -93,17 +94,30 @@ export const Wallet = () => {
 		setWallet(data.wallet);
 	}
 
+	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
+	const getColorByTypeId = (typeId: number) => {
+		switch (typeId) {
+			case 1:
+				return 'rgba(8, 175, 48, 0.8)'; // VERDE
+			case 2:
+				return 'rgba(147, 11, 11, 0.8)'; // ROJO
+			default:
+				return 'gray'; // Color gris como predeterminado si no coincide ningún case
+		}
+	};
+
 	return (
 		<PageLayout title='Wallet'>
-			<Stack direction={{ xs: 'column', md: 'row' }} spacing={8}>
+			<Stack direction={{ xs: 'column', md: 'row' }} spacing={20}>
 				<Stack
 					spacing={2}
 					sx={{ mt: '16px', maxWidth: '500px' }}
 					justifyContent='center'
 				>
 					{wallet ? (
-						<Typography variant='body2'>
-							{JSON.stringify(wallet)}
+						<Typography sx={{ minWidth: '400px' }}>
+							{/*JSON.stringify(wallet)*/}
+							Bienvenido!
 						</Typography>
 					) : (
 						<>
@@ -163,13 +177,19 @@ export const Wallet = () => {
 						</Button>
 					)}
 				</Stack>
-                {/* Section to display list of movements/tokens */}
-                {transactions && (
+			</Stack>
+			{(transactions && wallet) && (
                     <Stack spacing={2} sx={{ mt: '16px', maxWidth: '500px' }} justifyContent='center'>
                         <Typography variant='h6'>Transacciones</Typography>
+						<AddTransactionButton walletId={wallet.id} />
                         <List>
                             {transactions.map((transaction) => (
-                                <ListItem key={transaction.id}>
+                                <ListItem key={transaction.id} sx={{ 
+									backgroundColor: getColorByTypeId(transaction.type_id),
+									borderRadius: '8px', // Establece el radio de las esquinas a 8px
+                        			padding: '8px', // Agrega algo de padding para separarlo de los bordes
+                        			marginBottom: '8px' // Agrega margen inferior entre cada elemento de la lista
+									}}>
                                     <ListItemText
                                         primary={`Token: ${transaction.token_id}`}
                                         secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
@@ -177,9 +197,8 @@ export const Wallet = () => {
                                 </ListItem>
                             ))}
                         </List>
-                    </Stack>
-                )}
-			</Stack>
+                	</Stack>
+                	)}
 		</PageLayout>
 	);
 };
