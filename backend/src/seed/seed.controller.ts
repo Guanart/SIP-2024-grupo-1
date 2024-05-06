@@ -18,11 +18,29 @@ export class SeedController {
         },
       });
 
-      const wallet = await this.prisma.wallet.create({
+      const user2 = await this.prisma.user.create({
+        data: {
+          email: 'ricardomilos@lot.com',
+          auth0_id: 'auth0|6638d9bf4c8fdfcd1554b151',
+          username: 'Ricardo Milos',
+          avatar:
+            'https://image.lexica.art/full_jpg/49883613-3c07-4ef9-b6be-15347ae09ec8',
+        },
+      });
+
+      await this.prisma.wallet.create({
         data: {
           user_id: user.id,
           cbu: '2655926629852484698',
           paypal_id: 'paypal_id578721',
+        },
+      });
+
+      const wallet2 = await this.prisma.wallet.create({
+        data: {
+          user_id: user2.id,
+          cbu: '2655926629852484689',
+          paypal_id: 'paypal_id578712',
         },
       });
 
@@ -106,7 +124,7 @@ export class SeedController {
         await this.prisma.token_wallet.create({
           data: {
             token_id: token.id,
-            wallet_id: wallet.id,
+            wallet_id: wallet2.id,
           },
         });
       });
