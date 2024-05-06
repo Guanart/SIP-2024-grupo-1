@@ -117,7 +117,7 @@ model Collection {
   fundraising            Fundraising @relation(fields: [fundraising_id], references: [id])
   createdAt              DateTime    @default(now())
   updatedAt              DateTime    @updatedAt
-  Token                  Token[]
+  token                  Token[]
 }
 
 model Token {
@@ -131,8 +131,8 @@ model Token {
 model Token_wallet {
   token_id  Int
   wallet_id Int
-  Wallet    Wallet @relation(fields: [wallet_id], references: [id])
-  Token     Token  @relation(fields: [token_id], references: [id])
+  wallet    Wallet @relation(fields: [wallet_id], references: [id])
+  token     Token  @relation(fields: [token_id], references: [id])
 
   @@id([wallet_id, token_id])
 }

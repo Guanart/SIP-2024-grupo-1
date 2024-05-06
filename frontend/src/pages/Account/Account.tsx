@@ -15,7 +15,7 @@ import {
 	Button,
 	TextField,
 } from '@mui/material';
-import { BasicModal, Loader } from '../../components';
+import { BasicModal, Loader, TokenList } from '../../components';
 import './Account.css';
 
 export const Account = () => {
@@ -408,12 +408,9 @@ export const Account = () => {
 				<>
 					<Container sx={{ mt: '24px' }}>
 						<Typography variant='h6' component='h2'>
-							Tokens
+							Most valuable tokens
 						</Typography>
-						<p>
-							Acá pensaba mostrar los 5 tokens más valiosos o algo
-							por el estilo
-						</p>
+						<TokenList />
 					</Container>
 					<Container sx={{ mt: '24px' }}>
 						<Typography variant='h6' component='h2'>

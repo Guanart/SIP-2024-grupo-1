@@ -28,8 +28,8 @@ export class UserService {
           include: { game: true },
         },
         wallet: {
-          include: {transactions: true},
-        }
+          include: { transactions: true },
+        },
       },
     });
 

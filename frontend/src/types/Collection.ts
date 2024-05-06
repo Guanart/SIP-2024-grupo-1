@@ -1,3 +1,4 @@
+import { Fundraising } from './Fundraising';
 export interface Collection {
 	id: number;
 	fundraising_id: number;
@@ -8,4 +9,5 @@ export interface Collection {
 	initial_amount: number;
 	createdAt: Date;
 	updatedAt: Date;
+	fundraising: Fundraising;
 }

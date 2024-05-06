@@ -25,6 +25,13 @@ export class WalletService {
       include: {
         user: true,
         transactions: true,
+        token_wallet: {
+          include: {
+            token: {
+              include: { collection: { include: { fundraising: true } } },
+            },
+          },
+        },
       },
     });
     return wallet ? Wallet.fromObject(wallet) : null;

@@ -23,4 +23,36 @@ export class TokenService {
 
     return count;
   }
+
+  async getMostValuableTokens(wallet_id: number) {
+    const tokens = await this.prisma.token_wallet.findMany({
+      where: {
+        wallet_id,
+      },
+      include: {
+        token: {
+          include: {
+            collection: {
+              include: {
+                fundraising: {
+                  include: {
+                    event: true,
+                    player: { include: { user: true, game: true } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      take: 5,
+      orderBy: {
+        token: {
+          price: 'desc',
+        },
+      },
+    });
+
+    return tokens;
+  }
 }

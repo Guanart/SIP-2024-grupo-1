@@ -1,5 +1,12 @@
 //import { Button, Stack, TextField } from '@mui/material';
-import { Button, Stack, TextField, List, ListItem, ListItemText } from '@mui/material';
+import {
+	Button,
+	Stack,
+	TextField,
+	List,
+	ListItem,
+	ListItemText,
+} from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
@@ -9,11 +16,13 @@ import Typography from '@mui/material/Typography';
 import { Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import AddTransactionButton from './AddTransactionButton';
+// import AddTransactionButton from './AddTransactionButton';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
-	const [transactions, setTransactions] = useState<TransactionType[] | null>(null);
+	const [transactions, setTransactions] = useState<TransactionType[] | null>(
+		null
+	);
 	const [cbu, setCbu] = useState<string>('');
 	const [paypalId, setPaypalId] = useState<string>('');
 	const [userId, setUserId] = useState<string>('');
@@ -178,26 +187,45 @@ export const Wallet = () => {
 					)}
 				</Stack>
 			</Stack>
-			{(transactions && wallet) && (
-                    <Stack spacing={2} sx={{ mt: '16px', maxWidth: '500px' }} justifyContent='center'>
-                        <Typography variant='h6'>Transacciones</Typography>
-                        <List>
-                            {transactions.map((transaction) => (
-                                <ListItem key={transaction.id} sx={{ 
-									backgroundColor: getColorByTypeId(transaction.type_id),
+			{wallet && (
+				<Stack
+					spacing={2}
+					sx={{ mt: '16px', maxWidth: '500px' }}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Tokens</Typography>
+				</Stack>
+			)}
+
+			{transactions && wallet && (
+				<Stack
+					spacing={2}
+					sx={{ mt: '16px', maxWidth: '500px' }}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Transacciones</Typography>
+					<List>
+						{transactions.map((transaction) => (
+							<ListItem
+								key={transaction.id}
+								sx={{
+									backgroundColor: getColorByTypeId(
+										transaction.type_id
+									),
 									borderRadius: '8px', // Establece el radio de las esquinas a 8px
-                        			padding: '8px', // Agrega algo de padding para separarlo de los bordes
-                        			marginBottom: '8px' // Agrega margen inferior entre cada elemento de la lista
-									}}>
-                                    <ListItemText
-                                        primary={`Token: ${transaction.token_id}`}
-                                        secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                	</Stack>
-                	)}
+									padding: '8px', // Agrega algo de padding para separarlo de los bordes
+									marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
+								}}
+							>
+								<ListItemText
+									primary={`Token: ${transaction.token_id}`}
+									secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
+								/>
+							</ListItem>
+						))}
+					</List>
+				</Stack>
+			)}
 		</PageLayout>
 	);
 };

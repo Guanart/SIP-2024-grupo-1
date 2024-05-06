@@ -10,6 +10,7 @@ import { CollectionModule } from './collection/collection.module';
 import { EventModule } from './event/event.module';
 import { PlayerModule } from './player/player.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { TokenModule } from './token/token.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TransactionModule } from './transaction/transaction.module';
     EventModule,
     PlayerModule,
     TransactionModule,
+    TokenModule,
   ],
 })
 export class AppModule {}

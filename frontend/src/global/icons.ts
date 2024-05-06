@@ -7,10 +7,12 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import InfoIcon from '@mui/icons-material/Info';
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 
 export {
 	HomeIcon,
 	MenuIcon,
+	DoubleArrowIcon,
 	WalletIcon,
 	AccountCircleIcon,
 	TokenIcon,
