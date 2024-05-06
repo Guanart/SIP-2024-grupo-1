@@ -11,7 +11,6 @@ export class TokenService {
     collection_id: number,
   ): Promise<number> {
     const data = [];
-    console.log(amount);
 
     for (let i = 0; i < amount; i++) {
       data.push({ price, collection_id });

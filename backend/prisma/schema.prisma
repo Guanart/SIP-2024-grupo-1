@@ -107,17 +107,18 @@ enum RiskLevel {
 }
 
 model Collection {
-  id                     Int         @id @default(autoincrement())
-  token_price_percentage Float
-  amount_left            Int
-  current_price          Float
-  initial_amount         Int
-  initial_price          Float
-  fundraising_id         Int         @unique
-  fundraising            Fundraising @relation(fields: [fundraising_id], references: [id])
-  createdAt              DateTime    @default(now())
-  updatedAt              DateTime    @updatedAt
-  token                  Token[]
+  id                              Int         @id @default(autoincrement())
+  token_prize_percentage          Float
+  previous_token_prize_percentage Float
+  amount_left                     Int
+  current_price                   Float
+  initial_amount                  Int
+  previous_price                  Float
+  fundraising_id                  Int         @unique
+  fundraising                     Fundraising @relation(fields: [fundraising_id], references: [id])
+  createdAt                       DateTime    @default(now())
+  updatedAt                       DateTime    @updatedAt
+  token                           Token[]
 }
 
 model Token {

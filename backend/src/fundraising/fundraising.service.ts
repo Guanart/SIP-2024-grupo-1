@@ -4,6 +4,7 @@ import { MercadoPagoService } from '../mercado-pago/mercado-pago.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
 import { Fundraising } from './fundraising.entity';
 import { CollectionService } from '../collection/collection.service';
+import { UpdateFundraisingDto } from './dto/update-fundraising.dto';
 
 @Injectable()
 export class FundraisingService {
@@ -43,14 +44,12 @@ export class FundraisingService {
       },
     });
 
-    const collection = await this.collectionService.create(
+    await this.collectionService.create(
       goal_amount,
       prize_percentage,
       initial_price,
       fundraising.id,
     );
-
-    console.log(collection);
 
     return fundraising ? Fundraising.fromObject(fundraising) : null;
   }
@@ -75,7 +74,7 @@ export class FundraisingService {
   }
 
   async getFundraisingById(id: number) {
-    return await this.prisma.fundraising.findUnique({
+    const fundraising = await this.prisma.fundraising.findUnique({
       where: { id, active: true },
       include: {
         collection: true,
@@ -85,6 +84,30 @@ export class FundraisingService {
         },
       },
     });
+
+    return fundraising ? Fundraising.fromObject(fundraising) : null;
+  }
+
+  async updateFundraising(
+    currentFundraising: Fundraising,
+    updatedFundraising: UpdateFundraisingDto,
+  ) {
+    const fundraising = await this.prisma.fundraising.update({
+      where: { id: currentFundraising.id },
+      data: {
+        goal_amount: updatedFundraising.goal_amount,
+      },
+    });
+
+    const collection = await this.collectionService.update(
+      updatedFundraising.goal_amount,
+      updatedFundraising.initial_price,
+      fundraising,
+    );
+
+    if (!collection) return null;
+
+    return fundraising ? Fundraising.fromObject(fundraising) : null;
   }
 
   // async generateMercadoPagoPreference(collectionId: number, amount: number) {

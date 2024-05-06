@@ -7,11 +7,13 @@ import {
   NotFoundException,
   Param,
   Post,
+  Put,
   // SetMetadata,
   // UseGuards,
 } from '@nestjs/common';
 import { FundraisingService } from './fundraising.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
+import { UpdateFundraisingDto } from './dto/update-fundraising.dto';
 // import { PermissionsGuard } from 'src/auth/permissions.guard';
 // import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -45,6 +47,55 @@ export class FundraisingController {
       }
     }
   }
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['update:fundraisings'])
+  @Put('/:fundraising_id')
+  async updateFundraising(
+    @Param('fundraising_id') fundraising_id: string,
+    @Body() updatedFundraising: UpdateFundraisingDto,
+  ): Promise<string> {
+    try {
+      const fundraising = await this.fundraisingService.getFundraisingById(
+        Number(fundraising_id),
+      );
+
+      if (!fundraising) {
+        throw new NotFoundException(`Fundraising ${fundraising_id} not found`);
+      }
+
+      if (
+        fundraising.collection.current_price < updatedFundraising.initial_price
+      ) {
+        throw new BadRequestException(
+          'The price of the token can only be decreased',
+        );
+      }
+
+      if (fundraising.goal_amount > updatedFundraising.goal_amount) {
+        throw new BadRequestException('The goal amount can only be increased');
+      }
+
+      this.fundraisingService.updateFundraising(
+        fundraising,
+        updatedFundraising,
+      );
+
+      return JSON.stringify({
+        message: `Fundraising ${fundraising_id} updated`,
+        updatedFundraising,
+        fundraising,
+      });
+    } catch (exception) {
+      if (exception instanceof BadRequestException) {
+        throw exception;
+      }
+      if (exception instanceof NotFoundException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
 
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['read:fundraisings'])
@@ -58,19 +109,19 @@ export class FundraisingController {
 
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['read:fundraisings'])
-  @Get('/:id')
-  async getFundraisingById(@Param('id') id: string) {
+  @Get('/:fundraising_id')
+  async getFundraisingById(@Param('fundraising_id') fundraising_id: string) {
     try {
       const fundraising = await this.fundraisingService.getFundraisingById(
-        Number(id),
+        Number(fundraising_id),
       );
 
       if (!fundraising) {
-        throw new NotFoundException(`Fundraising ${id} not found`);
+        throw new NotFoundException(`Fundraising ${fundraising_id} not found`);
       }
 
       return JSON.stringify({
-        message: `Fundraising ${id} found`,
+        message: `Fundraising ${fundraising_id} found`,
         fundraising,
       });
     } catch (exception) {

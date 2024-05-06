@@ -260,7 +260,7 @@ export const Fundraising = () => {
 										>
 											{
 												fundraising.collection
-													.token_price_percentage
+													.token_prize_percentage
 											}
 											%
 										</Typography>
@@ -282,7 +282,7 @@ export const Fundraising = () => {
 												(fundraising.prize_percentage /
 													100) *
 												(fundraising.collection
-													.token_price_percentage /
+													.token_prize_percentage /
 													100)}
 										</Typography>
 									</Typography>
