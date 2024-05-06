@@ -23,23 +23,24 @@ model User {
 }
 
 model Wallet {
-    id        Int      @id @default(autoincrement())
-    user_id   Int      @unique
-    user      User     @relation(fields: [user_id], references: [id])
-    cbu       String   @unique
-    paypal_id String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    transactions Transaction[]
+  id           Int            @id @default(autoincrement())
+  user_id      Int            @unique
+  user         User           @relation(fields: [user_id], references: [id])
+  cbu          String         @unique
+  paypal_id    String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  transactions Transaction[]
+  token_wallet Token_wallet[]
 }
 
 model Transaction {
-    id        Int      @id @default(autoincrement())
-    wallet_id Int
-    wallet    Wallet   @relation(fields: [wallet_id], references: [id])
-    token_id  Int
-    type_id   Int
-    timestamp DateTime
+  id        Int      @id @default(autoincrement())
+  wallet_id Int
+  wallet    Wallet   @relation(fields: [wallet_id], references: [id])
+  token_id  Int
+  type_id   Int
+  timestamp DateTime
 }
 
 model Game {
@@ -64,7 +65,7 @@ model Player {
   fundraisings Fundraising[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  access_token String?     
+  access_token String?
   public_key   String?
 }
 
@@ -120,8 +121,18 @@ model Collection {
 }
 
 model Token {
-  id            Int        @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   price         Float
   collection_id Int
-  collection    Collection @relation(fields: [collection_id], references: [id])
+  collection    Collection     @relation(fields: [collection_id], references: [id])
+  token_wallet  Token_wallet[]
+}
+
+model Token_wallet {
+  token_id  Int
+  wallet_id Int
+  Wallet    Wallet @relation(fields: [wallet_id], references: [id])
+  Token     Token  @relation(fields: [token_id], references: [id])
+
+  @@id([wallet_id, token_id])
 }

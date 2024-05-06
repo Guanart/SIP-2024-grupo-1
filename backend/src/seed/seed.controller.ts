@@ -88,6 +88,29 @@ export class SeedController {
         },
       });
 
+      const data = Array.from({ length: 10 }, () => ({
+        price: collection.initial_price,
+        collection_id: collection.id,
+      }));
+
+      await this.prisma.token.createMany({ data });
+
+      const tokens = await this.prisma.token.findMany({
+        where: {
+          collection_id: collection.id,
+        },
+        take: 10,
+      });
+
+      tokens.forEach(async (token) => {
+        await this.prisma.token_wallet.create({
+          data: {
+            token_id: token.id,
+            wallet_id: wallet.id,
+          },
+        });
+      });
+
       return 'Database loaded successfully with test data';
     } catch (exception) {
       return 'Failed to seed database with test data. Please try again later';
