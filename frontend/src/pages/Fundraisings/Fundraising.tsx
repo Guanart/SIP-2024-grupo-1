@@ -323,21 +323,26 @@ export const Fundraising = () => {
 						spacing='4px'
 					>
 						{user?.sub === fundraising.player.user.auth0_id && (
-							<Button
-								variant='contained'
-								color='secondary'
-								style={{ marginTop: '8px' }}
-								onClick={() =>
-									console.log('Updating fundraising...')
-								}
-								sx={{
-									maxWidth: '250px',
-									display: 'block',
-									paddingY: '12px',
-								}}
+							<Link
+								to={`/fundraising/update/${fundraising.id}`}
+								style={{ textDecoration: 'none' }}
 							>
-								Update your fundraising
-							</Button>
+								<Button
+									variant='contained'
+									color='secondary'
+									style={{ marginTop: '8px' }}
+									onClick={() =>
+										console.log('Updating fundraising...')
+									}
+									sx={{
+										maxWidth: '250px',
+										display: 'block',
+										paddingY: '12px',
+									}}
+								>
+									Update fundraising
+								</Button>
+							</Link>
 						)}
 						{user?.sub !== fundraising.player.user.auth0_id &&
 							!preferenceId && (
