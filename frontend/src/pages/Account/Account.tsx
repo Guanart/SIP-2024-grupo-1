@@ -15,7 +15,12 @@ import {
 	Button,
 	TextField,
 } from '@mui/material';
-import { BasicModal, Loader, TokenList } from '../../components';
+import {
+	BasicModal,
+	Loader,
+	TokenList,
+	PublicationList,
+} from '../../components';
 import './Account.css';
 
 export const Account = () => {
@@ -416,10 +421,7 @@ export const Account = () => {
 						<Typography variant='h6' component='h2'>
 							Marketplace
 						</Typography>
-						<p>
-							Acá pensaba mostrar las últimas 5 publicaciones del
-							Marketplace
-						</p>
+						<PublicationList />
 					</Container>
 				</>
 			)}

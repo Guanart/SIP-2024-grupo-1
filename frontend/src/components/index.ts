@@ -9,6 +9,7 @@ import { TokenList } from './account/TokenList';
 import { Header } from './layout/Header/Header';
 import { Menu } from './layout/Menu/Menu';
 import { FundraisingCard } from './fundraisings/FundraisingCard';
+import { PublicationList } from './account/PublicationList';
 
 export {
 	LogoutButton,
@@ -22,4 +23,5 @@ export {
 	Menu,
 	FundraisingCard,
 	TokenList,
+	PublicationList,
 };
