@@ -12,7 +12,7 @@ import { useAccessToken } from '../../hooks';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
-import { DoubleArrowIcon, KeyboardBackspaceIcon } from '../../global/icons';
+import { DoubleArrowIcon } from '../../global/icons';
 
 export const TokenList = () => {
 	const [tokens, setTokens] = useState<Token[]>([]);
