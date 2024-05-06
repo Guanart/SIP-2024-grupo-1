@@ -1,4 +1,4 @@
-export * from './Home';
+export * from './Home/Home';
 export * from './About';
 export * from './Trending';
 export * from './Fundraisings/Fundraisings';

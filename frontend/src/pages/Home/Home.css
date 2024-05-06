@@ -1,0 +1,101 @@
+.home {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.stack-container .container > h2 {
+	line-height: 3.5rem;
+	margin-top: 24px;
+	text-align: center;
+}
+
+.stack-container .container > h4 {
+	margin-top: 24px;
+	line-height: 2.4rem;
+	font-size: 2.2rem;
+	text-align: center;
+}
+
+.stack-container img {
+	width: 400px;
+	height: 300px;
+	margin: auto;
+	margin-top: 32px;
+}
+
+.home-button {
+	min-width: 150px;
+}
+
+@media screen and (min-width: 600px) {
+	.stack-container .container > h2 {
+		text-align: left;
+	}
+
+	.stack-container .container > h4 {
+		text-align: left;
+	}
+
+	.stack-container .container .box-container {
+		justify-content: left;
+	}
+
+	.stack-container img {
+		width: 500px;
+		height: 400px;
+		margin: auto;
+		margin-top: 32px;
+	}
+}
+
+@media screen and (min-width: 900px) {
+	.stack-container .container {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.stack-container img {
+		width: 600px;
+		height: 500px;
+		margin: auto;
+		margin-top: 32px;
+	}
+}
+
+@media screen and (min-width: 1100px) {
+	.home {
+		padding-left: 4rem;
+		padding-right: 4rem;
+	}
+
+	.stack-container img {
+		width: 700px;
+		height: 600px;
+		margin: auto;
+		margin-top: 32px;
+	}
+}
+
+@media screen and (min-width: 1500px) {
+	.home {
+		margin: auto;
+		max-width: 1500px;
+	}
+
+	.stack-container .container > h2 {
+		font-size: 5rem;
+		line-height: 5rem;
+	}
+
+	.stack-container .container > h4 {
+		text-align: left;
+	}
+
+	.stack-container img {
+		width: 800px;
+		height: 700px;
+		margin: auto;
+		margin-top: 32px;
+	}
+}
