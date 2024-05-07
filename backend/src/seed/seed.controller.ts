@@ -101,14 +101,14 @@ export class SeedController {
           previous_price: 25.0,
           current_price: 25.0,
           initial_amount: 1000,
-          token_prize_percentage: 0.02,
-          previous_token_prize_percentage: 0.02,
+          token_prize_percentage: 0.04,
+          previous_token_prize_percentage: 0.04,
           fundraising_id: fundraising.id,
           amount_left: 990,
         },
       });
 
-      const data = Array.from({ length: 10 }, () => ({
+      const data = Array.from({ length: 1000 }, () => ({
         price: collection.current_price,
         collection_id: collection.id,
       }));

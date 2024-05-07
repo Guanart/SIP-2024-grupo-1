@@ -58,21 +58,42 @@ export class CollectionService {
       where: { fundraising_id: fundraising.id },
     });
 
-    const ownedTokens = collection.initial_amount - collection.amount_left;
+    // TODO: Recalcular un proporcional para determinar que cantidad de tokens representa el monto objetivo alcanzado al momento. En caso de cambio de precio
+    // Es decir, si se vendieron 10 tokens a U$D 25, luego de la actualización (nuevo precio = U$D 12.5) esos U$D 250 representan 20 tokens.
+    const compensationRatio = collection.current_price / new_initial_price; // la proporción en este caso es (25 / 12.5) = 2
 
-    const recalculated_amount = Math.ceil(new_goal_amount / new_initial_price);
-    const recalculated_amount_left = recalculated_amount - ownedTokens;
+    const ownedTokens = collection.initial_amount - collection.amount_left;
+    const recalculatedOwnedTokens = ownedTokens * compensationRatio;
+
+    const recalculatedAmount = Math.ceil(new_goal_amount / new_initial_price);
+
+    const recalculatedAmountLeft = recalculatedAmount - recalculatedOwnedTokens;
+
+    const amountOfTokensToBeEmited =
+      recalculatedAmount - collection.initial_amount;
+
+    console.log('amount should be 1000:', amountOfTokensToBeEmited);
+    console.log('recalculated amount should be 2000: ', recalculatedAmount);
+    console.log(
+      'recalculated amount left should be 1980: ',
+      recalculatedAmountLeft,
+    );
 
     const recalculated_token_prize_percentage =
-      fundraising.prize_percentage / recalculated_amount;
+      fundraising.prize_percentage / recalculatedAmount;
+
+    console.log(
+      'recalculated token prize percentage should be 0.02: ',
+      recalculated_token_prize_percentage,
+    );
 
     collection = await this.prisma.collection.update({
       where: {
         id: collection.id,
       },
       data: {
-        initial_amount: recalculated_amount,
-        amount_left: recalculated_amount_left,
+        initial_amount: recalculatedAmount,
+        amount_left: recalculatedAmountLeft,
         previous_token_prize_percentage: collection.token_prize_percentage,
         token_prize_percentage: recalculated_token_prize_percentage,
         current_price: new_initial_price,
@@ -85,20 +106,16 @@ export class CollectionService {
       data: { price: new_initial_price },
     });
 
-    const amountOfTokensToBeEmited =
-      recalculated_amount - collection.initial_amount;
+    const options = {
+      amount: amountOfTokensToBeEmited,
+      price: new_initial_price,
+      collection_id: collection.id,
+      compensation_ratio: compensationRatio,
+    };
 
-    // TODO: Implementar emisión de nuevos tokens
-    console.log(amountOfTokensToBeEmited);
+    const amountEmitted = await this.tokenService.emitNewTokens(options);
 
-    // const data = Array.from({ length: 10 }, () => ({
-    //   price: new_initial_price,
-    //   collection_id: collection.id,
-    // }));
-
-    // await this.prisma.token.createMany({ data });
-
-    // TODO: Implementar compensación a compradores de tokens previo a la actualización
+    if (amountEmitted !== amountOfTokensToBeEmited) return null;
 
     return collection ? Collection.fromObject(collection) : null;
   }
