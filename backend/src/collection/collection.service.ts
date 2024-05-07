@@ -18,7 +18,7 @@ export class CollectionService {
     fundraising_id: number,
   ) {
     const initial_amount = Math.ceil(goal_amount / initial_price);
-    const token_prize_percentage = prize_percentage / initial_amount;
+    const token_prize_percentage = prize_percentage / 100 / initial_amount;
 
     const collection = await this.prisma.collection.create({
       data: {
