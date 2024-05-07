@@ -80,7 +80,7 @@ export class CollectionService {
     );
 
     const recalculated_token_prize_percentage =
-      fundraising.prize_percentage / recalculatedAmount;
+      fundraising.prize_percentage / 100 / recalculatedAmount;
 
     console.log(
       'recalculated token prize percentage should be 0.02: ',
