@@ -232,7 +232,7 @@ export const Fundraising = () => {
 								Token details
 								<Stack sx={{ paddingLeft: '8px' }}>
 									<Typography component='div' variant='body2'>
-										Token ID
+										Collection ID
 										<Typography
 											color='secondary'
 											component='div'
@@ -244,6 +244,25 @@ export const Fundraising = () => {
 											}}
 										>
 											{fundraising.collection.id}
+										</Typography>
+									</Typography>
+									<Typography component='div' variant='body2'>
+										Token price
+										<Typography
+											color='secondary'
+											component='div'
+											variant='body2'
+											sx={{
+												display: 'inline',
+												marginLeft: '6px',
+												fontWeight: 'bold',
+											}}
+										>
+											U$D{' '}
+											{
+												fundraising.collection
+													.current_price
+											}
 										</Typography>
 									</Typography>
 									<Typography component='div' variant='body2'>
@@ -281,28 +300,8 @@ export const Fundraising = () => {
 											{fundraising.event.prize *
 												(fundraising.prize_percentage /
 													100) *
-												(fundraising.collection
-													.token_prize_percentage /
-													100)}
-										</Typography>
-									</Typography>
-									<Typography component='div' variant='body2'>
-										Token price
-										<Typography
-											color='secondary'
-											component='div'
-											variant='body2'
-											sx={{
-												display: 'inline',
-												marginLeft: '6px',
-												fontWeight: 'bold',
-											}}
-										>
-											U$D{' '}
-											{
 												fundraising.collection
-													.current_price
-											}
+													.token_prize_percentage}
 										</Typography>
 									</Typography>
 								</Stack>
