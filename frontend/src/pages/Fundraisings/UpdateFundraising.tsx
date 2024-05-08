@@ -3,14 +3,10 @@ import { PageLayout } from '../../layouts/PageLayout';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
 	Button,
-	Card,
-	CardContent,
-	CardMedia,
 	FormControl,
 	InputLabel,
 	MenuItem,
 	Select,
-	Stack,
 	TextField,
 	Typography,
 } from '@mui/material';
@@ -19,7 +15,6 @@ import { Fundraising } from '../../types';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Container } from '@mui/material';
 import { Loader } from '../../components';
 
 export const UpdateFundraising = () => {
@@ -153,7 +148,7 @@ export const UpdateFundraising = () => {
 					}),
 				}}
 			>
-				<Typography variant='h6'>New fundraising</Typography>
+				<Typography variant='h6'>Update your fundraising</Typography>
 				<TextField
 					id='event-name'
 					value={fundraising.event.name}
