@@ -75,14 +75,15 @@ export class FundraisingController {
         throw new BadRequestException('The goal amount can only be increased');
       }
 
-      this.fundraisingService.updateFundraising(
-        updatedFundraising,
-        fundraising,
-      );
+      const currentFundraising =
+        await this.fundraisingService.updateFundraising(
+          updatedFundraising,
+          fundraising,
+        );
 
       return JSON.stringify({
         message: `Fundraising ${fundraising_id} updated`,
-        updatedFundraising,
+        updatedFundraising: currentFundraising,
         fundraising,
       });
     } catch (exception) {
@@ -92,6 +93,7 @@ export class FundraisingController {
       if (exception instanceof NotFoundException) {
         throw exception;
       } else {
+        console.log(exception);
         throw new InternalServerErrorException('Internal Server Error');
       }
     }
