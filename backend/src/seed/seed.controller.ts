@@ -131,6 +131,16 @@ export class SeedController {
         });
       });
 
+      tokens.forEach(async (token) => {
+        await this.prisma.transaction.createMany({
+          data: {
+            wallet_id: wallet2.id,
+            token_id: token.id,
+            type_id: 1,
+          },
+        });
+      });
+
       return 'Database loaded successfully with test data';
     } catch (exception) {
       return 'Failed to seed database with test data. Please try again later';

@@ -203,7 +203,7 @@ export const Wallet = () => {
 					sx={{ mt: '16px', maxWidth: '500px' }}
 					justifyContent='center'
 				>
-					<Typography variant='h6'>Transacciones</Typography>
+					<Typography variant='h6'>Transactions</Typography>
 					<List>
 						{transactions.map((transaction) => (
 							<ListItem

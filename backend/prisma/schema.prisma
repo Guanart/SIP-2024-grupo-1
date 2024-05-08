@@ -40,7 +40,7 @@ model Transaction {
   wallet    Wallet   @relation(fields: [wallet_id], references: [id])
   token_id  Int
   type_id   Int
-  timestamp DateTime
+  timestamp DateTime @default(now())
 }
 
 model Game {
