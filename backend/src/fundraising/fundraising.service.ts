@@ -89,8 +89,8 @@ export class FundraisingService {
   }
 
   async updateFundraising(
-    currentFundraising: Fundraising,
     updatedFundraising: UpdateFundraisingDto,
+    currentFundraising?: Fundraising,
   ) {
     const fundraising = await this.prisma.fundraising.update({
       where: { id: currentFundraising.id },

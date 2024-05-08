@@ -8,9 +8,9 @@ export class Fundraising {
   current_amount: number;
   prize_percentage: number;
   risk_level: string;
-  player: Player;
-  event: Event;
-  collection: Collection;
+  player?: Player;
+  event?: Event;
+  collection?: Collection;
 
   public constructor(
     id: number,

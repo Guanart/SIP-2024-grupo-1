@@ -76,8 +76,8 @@ export class FundraisingController {
       }
 
       this.fundraisingService.updateFundraising(
-        fundraising,
         updatedFundraising,
+        fundraising,
       );
 
       return JSON.stringify({

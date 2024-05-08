@@ -8,6 +8,7 @@ jest.mock('../../src/database/prisma.service', () => ({
   PrismaService: jest.fn().mockImplementation(() => ({
     fundraising: {
       create: jest.fn(),
+      update: jest.fn(),
     },
   })),
 }));
@@ -15,6 +16,7 @@ jest.mock('../../src/database/prisma.service', () => ({
 jest.mock('../../src/collection/collection.service.ts', () => ({
   CollectionService: jest.fn().mockImplementation(() => ({
     create: jest.fn(),
+    update: jest.fn(),
   })),
 }));
 
@@ -93,6 +95,61 @@ describe('FundraisingService', () => {
           player_id: 1,
           event_id: 1,
         },
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('should update an existing fundraising', async () => {
+      const updatedFundraising = {
+        initial_price: 12.5,
+        goal_amount: 25000,
+      };
+
+      const currentFundraising = {
+        id: 123,
+        goal_amount: 25000,
+        current_amount: 0,
+        prize_percentage: 40,
+        risk_level: 'LOW',
+      };
+
+      const { goal_amount } = updatedFundraising;
+
+      jest.spyOn(prisma.fundraising, 'update').mockResolvedValue({
+        id: 123,
+        goal_amount: 25000,
+        current_amount: 0,
+        prize_percentage: 40,
+        risk_level: 'LOW',
+        active: true,
+        player_id: 1,
+        event_id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      await fundraisingService.updateFundraising(
+        updatedFundraising,
+        currentFundraising,
+      );
+
+      expect(prisma.fundraising.update).toHaveBeenCalledWith({
+        where: { id: 123 },
+        data: { goal_amount },
+      });
+
+      expect(collectionService.update).toHaveBeenCalledWith(25000, 12.5, {
+        active: true,
+        createdAt: expect.any(Date),
+        current_amount: 0,
+        event_id: 1,
+        goal_amount: 25000,
+        id: 123,
+        player_id: 1,
+        prize_percentage: 40,
+        risk_level: 'LOW',
+        updatedAt: expect.any(Date),
       });
     });
   });
