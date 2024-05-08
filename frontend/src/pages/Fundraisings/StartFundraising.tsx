@@ -79,9 +79,9 @@ export const StartFundraising = () => {
 		const newFundraising = {
 			player_id: currentUser?.player?.id,
 			event_id: eventId,
-			goal_amount: goalAmount,
-			prize_percentage: prizePercentage,
-			initial_price: initialPrice,
+			goal_amount: Number(goalAmount),
+			prize_percentage: Number(prizePercentage),
+			initial_price: Number(initialPrice),
 		};
 
 		try {
@@ -97,9 +97,11 @@ export const StartFundraising = () => {
 			if (response.ok) {
 				const { message, fundraising } = await response.json();
 				console.log(message);
+				console.log(fundraising);
 				navigate(`/fundraising/${fundraising.id}`);
 			}
 		} catch (error) {
+			console.log(error);
 			navigate(`/error`);
 		}
 	}
