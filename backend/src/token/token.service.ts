@@ -39,8 +39,7 @@ export class TokenService {
 
     const { count } = await this.prisma.token.createMany({ data });
 
-    // TODO: Implementar compensación a compradores de tokens previo a la actualización.
-    // Entregar tokens para llegar a su monto invertido inicial.
+    // Entrega tokens para llegar a su monto invertido inicial.
     // Si tiene 10 tokens comprados a U$D 25 y el nuevo precio del token es U$D 12.5, ahora deberá poseer 20 tokens. Se le entregan 10.
     const owners = await this.prisma.token_wallet.findMany({
       include: { token: true },
@@ -64,7 +63,7 @@ export class TokenService {
         tokenCount * compensation_ratio - tokenCount;
 
       for (let i = 0; i < compensationTokensCount; i++) {
-        // Obtengo el primer token de la colleción que no tiene owner
+        // En cada iteración, obtengo el primer token de la colleción que no tiene owner
         const token = await this.prisma.token.findFirst({
           where: {
             collection_id,
