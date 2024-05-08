@@ -125,7 +125,7 @@ export const UpdateFundraising = () => {
 	}
 
 	return (
-		<PageLayout title='Update your fundraising'>
+		<PageLayout title='Update fundraising'>
 			<Link to={`/fundraising/${fundraising_id}`}>
 				<Button size='small' color='secondary'>
 					<KeyboardBackspaceIcon
@@ -142,13 +142,16 @@ export const UpdateFundraising = () => {
 					flexDirection: 'column',
 					gap: '16px',
 					minWidth: '400px',
-					marginTop: '24px',
+					marginTop: '8px',
 					...(window.innerWidth <= 900 && {
 						marginTop: '0px', // Cambiar el marginTop para pantallas pequeñas
 					}),
 				}}
 			>
-				<Typography variant='h6'>Update your fundraising</Typography>
+				<Typography sx={{ maxWidth: '400px' }}>
+					You can only decrease the token price or increase the goal
+					amount
+				</Typography>
 				<TextField
 					id='event-name'
 					value={fundraising.event.name}
