@@ -31,25 +31,23 @@ fundraisings_page_link.click()
 
 time.sleep(2) # Esto es para asegurarme que la página
 
-create_fundraising_page_link = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/div[1]/a')
-ActionChains(driver).move_to_element(create_fundraising_page_link).perform()
-create_fundraising_page_link.click()
+view_details_link = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/div[2]/div/div[3]/a/button')
+ActionChains(driver).move_to_element(view_details_link).perform()
+view_details_link.click()
 
 time.sleep(2) # Esto es para asegurarme que la página
 
-events_select  = driver.find_element(By.XPATH, '//*[@id="event-select"]').click()
-event_option = driver.find_element(By.XPATH, '//*[@id="1"]').click()
+update_fundraising_button  = driver.find_element(By.XPATH, '//*[@id="root"]/main/div[2]/a/button').click()
 
-goal_amount_input  = driver.find_element(By.XPATH, '//*[@id="goal-amount"]')
-goal_amount_input.send_keys("100000")
+time.sleep(2) # Esto es para asegurarme que la página
 
-prize_percentage_input  = driver.find_element(By.XPATH, '//*[@id="prize-percentage"]')
-prize_percentage_input.send_keys("45")
 
-initial_price_input  = driver.find_element(By.XPATH, '//*[@id="initial-price"]')
-initial_price_input.send_keys("25")
 
-start_fundraising_button  = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/form/button').click()
+token_price_select  = driver.find_element(By.XPATH, '//*[@id="token-price-select"]').click()
+token_price_select_option  = driver.find_element(By.XPATH, '//*[@data-value="12.5"]').click()
+
+
+update_fundraising_button  = driver.find_element(By.XPATH, '//*[@id="root"]/main/form/button').click()
 
 
 # time.sleep(5)

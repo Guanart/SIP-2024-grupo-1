@@ -11,7 +11,7 @@ driver = webdriver.get()
 login_button = driver.find_element(By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
 
 email_input = driver.find_element(By.XPATH, '//*[@id="username"]')
-email_input.send_keys("user@example.com")
+email_input.send_keys("johndoe@lot.com")
 
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
@@ -23,6 +23,7 @@ time.sleep(2)
 logout_button = driver.find_element(By.XPATH, '//*[@id="root"]/header/div/div/button')
 assert logout_button.is_displayed()
 
-# Cerrar el navegador
-driver.quit()
+# time.sleep(5)
+time.sleep(1)
 
+input("Press Enter to continue...")
