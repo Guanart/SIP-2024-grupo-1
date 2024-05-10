@@ -13,16 +13,18 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
-import { Wallet as WalletType } from '../../types';
+import { Token_wallet, Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
 // import AddTransactionButton from './AddTransactionButton';
+import { TokensList } from '../../components/wallet/TokensList';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
 	const [transactions, setTransactions] = useState<TransactionType[] | null>(
 		null
 	);
+	const [tokens, setTokens] = useState<Token_wallet[]>([]);
 	const [cbu, setCbu] = useState<string>('');
 	const [paypalId, setPaypalId] = useState<string>('');
 	const [userId, setUserId] = useState<string>('');
@@ -44,6 +46,7 @@ export const Wallet = () => {
 					setUserId(user.id);
 
 					if (user.wallet) {
+						setTokens(user.wallet.token_wallet);
 						setWallet(user.wallet);
 						setTransactions(user.wallet.transactions);
 						setCbu(user.wallet.cbu);
@@ -117,30 +120,50 @@ export const Wallet = () => {
 
 	return (
 		<PageLayout title='Wallet'>
-			<Stack direction={{ xs: 'column', md: 'row' }} spacing={20}>
+			{wallet ? (
+				<Typography
+					sx={{
+						minWidth: '400px',
+						fontSize: '18px',
+						marginTop: '8px',
+					}}
+				>
+					Bienvenido!
+				</Typography>
+			) : (
+				<>
+					<Typography
+						sx={{
+							maxWidth: '400px',
+							fontSize: '18px',
+							marginTop: '8px',
+						}}
+					>
+						Looks like you haven't created a wallet yet! Don't
+						worry, it only takes a few moments to set one up
+					</Typography>
+					<Typography
+						sx={{
+							maxWidth: '400px',
+							fontSize: '18px',
+							marginTop: '4px',
+						}}
+					>
+						Please fill out the form below and click the button to
+						create your wallet.
+					</Typography>
+				</>
+			)}
+			<Stack
+				direction={{ xs: 'column', md: 'row' }}
+				sx={{ mt: '16px' }}
+				spacing={20}
+			>
 				<Stack
 					spacing={2}
-					sx={{ mt: '16px', maxWidth: '500px' }}
-					justifyContent='center'
+					sx={{ mt: '16px' }}
+					direction={{ xs: 'column', md: 'row' }}
 				>
-					{wallet ? (
-						<Typography sx={{ minWidth: '400px' }}>
-							{/*JSON.stringify(wallet)*/}
-							Bienvenido!
-						</Typography>
-					) : (
-						<>
-							<Typography sx={{ maxWidth: '400px' }}>
-								Looks like you haven't created a wallet yet!
-								Don't worry, it only takes a few moments to set
-								one up
-							</Typography>
-							<Typography sx={{ maxWidth: '400px' }}>
-								Please fill out the form below and click the
-								button to create your wallet.
-							</Typography>
-						</>
-					)}
 					<TextField
 						disabled
 						id='user-id'
@@ -190,10 +213,14 @@ export const Wallet = () => {
 			{wallet && (
 				<Stack
 					spacing={2}
-					sx={{ mt: '16px', maxWidth: '500px' }}
+					sx={{
+						mt: '16px',
+						width: '100%',
+					}}
 					justifyContent='center'
 				>
 					<Typography variant='h6'>Tokens</Typography>
+					<TokensList tokens={tokens} />
 				</Stack>
 			)}
 
@@ -212,8 +239,8 @@ export const Wallet = () => {
 									backgroundColor: getColorByTypeId(
 										transaction.type_id
 									),
-									borderRadius: '8px', // Establece el radio de las esquinas a 8px
-									padding: '8px', // Agrega algo de padding para separarlo de los bordes
+									borderRadius: '4px', // Establece el radio de las esquinas a 8px
+									padding: '12px', // Agrega algo de padding para separarlo de los bordes
 									marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
 								}}
 							>

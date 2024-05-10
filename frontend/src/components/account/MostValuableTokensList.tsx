@@ -14,7 +14,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import { DoubleArrowIcon } from '../../global/icons';
 
-export const TokenList = () => {
+export const MostValuableTokensList = () => {
 	const [tokens, setTokens] = useState<Token[]>([]);
 	const { accessToken } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
@@ -59,7 +59,7 @@ export const TokenList = () => {
 		if (!accessToken) return;
 
 		getUserMostValuableTokens(user);
-	}, [accessToken, isAuthenticated, user, navigate]);
+	}, [accessToken, isAuthenticated, user, navigate, auth0_id]);
 
 	if (tokens.length === 0) {
 		return (

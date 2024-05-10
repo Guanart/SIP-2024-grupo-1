@@ -5,8 +5,6 @@ import {
   Param,
   // UseGuards,
   // SetMetadata,
-  BadRequestException,
-  // Delete,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service';

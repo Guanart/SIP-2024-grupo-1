@@ -18,7 +18,7 @@ import {
 import {
 	BasicModal,
 	Loader,
-	TokenList,
+	MostValuableTokensList,
 	PublicationList,
 } from '../../components';
 import './Account.css';
@@ -415,7 +415,7 @@ export const Account = () => {
 						<Typography variant='h6' component='h2'>
 							Most valuable tokens
 						</Typography>
-						<TokenList />
+						<MostValuableTokensList />
 					</Container>
 					<Container sx={{ mt: '24px' }}>
 						<Typography variant='h6' component='h2'>
