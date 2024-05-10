@@ -25,25 +25,19 @@ export class TokenController {
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['read:tokens'])
-  @Get('/valuable/:wallet_id')
+  @Get('/valuable/:auth0_id')
   async getMostValuableTokens(
-    @Param('wallet_id') wallet_id: string,
+    @Param('auth0_id') auth0_id: string,
   ): Promise<string> {
     try {
-      if (isNaN(parseInt(wallet_id))) {
-        throw new BadRequestException('Invalid wallet ID');
-      }
-
-      const wallet: Wallet = await this.walletService.findOne(
-        parseInt(wallet_id),
-      );
+      const wallet: Wallet = await this.walletService.findOneByUserId(auth0_id);
 
       if (!wallet) {
         throw new NotFoundException(`Wallet not found`);
       }
 
       const mostValuableTokens = await this.tokenService.getMostValuableTokens(
-        parseInt(wallet_id),
+        wallet.id,
       );
 
       return JSON.stringify({

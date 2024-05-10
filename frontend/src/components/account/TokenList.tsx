@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { Token, Token_wallet } from '../../types';
 import { useAccessToken } from '../../hooks';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import { DoubleArrowIcon } from '../../global/icons';
 
@@ -19,6 +19,7 @@ export const TokenList = () => {
 	const { accessToken } = useAccessToken();
 	const { user, isAuthenticated } = useAuth0();
 	const navigate = useNavigate();
+	const { auth0_id } = useParams();
 
 	useEffect(() => {
 		async function getUserMostValuableTokens(user: User) {
@@ -30,11 +31,10 @@ export const TokenList = () => {
 				});
 
 				if (response.ok) {
-					const { user } = await response.json();
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://localhost:3000/token/valuable/${user.wallet.id}`,
+						url: `http://localhost:3000/token/valuable/${auth0_id}`,
 					});
 
 					if (response.ok) {

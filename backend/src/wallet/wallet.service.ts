@@ -37,6 +37,28 @@ export class WalletService {
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 
+  async findOneByUserId(auth0_id: string): Promise<Wallet> {
+    const user = await this.prisma.user.findUnique({ where: { auth0_id } });
+
+    const wallet = await this.prisma.wallet.findUnique({
+      where: {
+        user_id: user.id,
+      },
+      include: {
+        user: true,
+        transactions: true,
+        token_wallet: {
+          include: {
+            token: {
+              include: { collection: { include: { fundraising: true } } },
+            },
+          },
+        },
+      },
+    });
+    return wallet ? Wallet.fromObject(wallet) : null;
+  }
+
   async update({
     wallet_id,
     cbu,
