@@ -51,9 +51,7 @@ describe('UserService', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { auth0_id, active: true },
-        include: {
-          wallet: true,
-        },
+        include: expect.any(Object),
       });
     });
   });

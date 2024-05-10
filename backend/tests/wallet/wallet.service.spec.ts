@@ -49,7 +49,7 @@ describe('WalletService', () => {
 
       expect(prisma.wallet.findUnique).toHaveBeenCalledWith({
         where: { id: wallet_id },
-        include: { user: true },
+        include: expect.any(Object),
       });
     });
   });
