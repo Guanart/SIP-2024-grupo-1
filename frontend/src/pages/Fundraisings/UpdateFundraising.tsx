@@ -3,10 +3,14 @@ import { PageLayout } from '../../layouts/PageLayout';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
 	Button,
+	Card,
+	CardContent,
+	Container,
 	FormControl,
 	InputLabel,
 	MenuItem,
 	Select,
+	Stack,
 	TextField,
 	Typography,
 } from '@mui/material';
@@ -135,87 +139,171 @@ export const UpdateFundraising = () => {
 				</Button>
 			</Link>
 
-			<form
-				onSubmit={(event) => handleUpdateFundraising(event)}
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '16px',
-					minWidth: '400px',
-					marginTop: '8px',
-					...(window.innerWidth <= 900 && {
-						marginTop: '0px', // Cambiar el marginTop para pantallas pequeñas
-					}),
-				}}
-			>
-				<Typography sx={{ maxWidth: '400px' }}>
-					You can only decrease the token price or increase the goal
-					amount
-				</Typography>
-				<TextField
-					id='event-name'
-					value={fundraising.event.name}
-					label='Event'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					disabled={true}
-				/>
-				<TextField
-					id='prize-percentage'
-					value={fundraising.prize_percentage}
-					label='Prize percentage (%)'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					type='number'
-					disabled={true}
-				/>
-				<TextField
-					id='goal-amount'
-					value={goalAmount}
-					label='Goal amount (U$D)'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					type='number'
-					disabled={true}
-					onChange={(event) => {
-						const value = Number(event.target.value);
-						if (value < 0) {
-							setGoalAmount(0);
-						} else {
-							setGoalAmount(event.target.value);
-						}
+			<Stack direction={{ xs: 'column-reverse', md: 'row' }} spacing={2}>
+				<form
+					onSubmit={(event) => handleUpdateFundraising(event)}
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						gap: '16px',
+						minWidth: '400px',
+						marginTop: '8px',
+						...(window.innerWidth <= 900 && {
+							marginTop: '0px', // Cambiar el marginTop para pantallas pequeñas
+						}),
 					}}
-				/>
-				<FormControl>
-					<InputLabel id='token-price'>
-						Token new price (U$D)
-					</InputLabel>
-					<Select
-						labelId='token-new-price'
-						id='token-price-select'
-						label='Token new price (U$D)'
+				>
+					<Typography sx={{ maxWidth: '400px', fontSize: '18px' }}>
+						You can only decrease the token price or increase the
+						goal amount
+					</Typography>
+					<TextField
+						id='event-name'
+						value={fundraising.event.name}
+						label='Event'
+						sx={{ maxWidth: '400px', width: '90%' }}
+						disabled={true}
+					/>
+					<TextField
+						id='prize-percentage'
+						value={fundraising.prize_percentage}
+						label='Prize percentage (%)'
 						sx={{ maxWidth: '400px', width: '90%' }}
 						type='number'
-						onChange={(event) =>
-							setInitialPrice(Number(event.target.value))
-						}
-						value={initialPrice}
+						disabled={true}
+					/>
+					<TextField
+						id='goal-amount'
+						value={goalAmount}
+						label='Goal amount (U$D)'
+						sx={{ maxWidth: '400px', width: '90%' }}
+						type='number'
+						disabled={true}
+						onChange={(event) => {
+							const value = Number(event.target.value);
+							if (value < 0) {
+								setGoalAmount(0);
+							} else {
+								setGoalAmount(event.target.value);
+							}
+						}}
+					/>
+					<FormControl>
+						<InputLabel id='token-price'>
+							Token new price (U$D)
+						</InputLabel>
+						<Select
+							labelId='token-new-price'
+							id='token-price-select'
+							label='Token new price (U$D)'
+							sx={{ maxWidth: '400px', width: '90%' }}
+							type='number'
+							onChange={(event) =>
+								setInitialPrice(Number(event.target.value))
+							}
+							value={initialPrice}
+						>
+							{allowedPrices.map((price) => {
+								return (
+									<MenuItem key={price} value={price}>
+										{price}
+									</MenuItem>
+								);
+							})}
+						</Select>
+					</FormControl>
+					<Button
+						variant='contained'
+						color='secondary'
+						type='submit'
+						sx={{ maxWidth: '400px', width: '90%' }}
 					>
-						{allowedPrices.map((price) => {
-							return (
-								<MenuItem key={price} value={price}>
-									{price}
-								</MenuItem>
-							);
-						})}
-					</Select>
-				</FormControl>
-				<Button
-					variant='contained'
-					color='secondary'
-					type='submit'
-					sx={{ maxWidth: '400px', width: '90%' }}
-				>
-					Update fundraising
-				</Button>
-			</form>
+						Update fundraising
+					</Button>
+				</form>
+				<Container sx={{ paddingX: '0px !important' }}>
+					<Typography variant='h6'>Your fundraising</Typography>
+					<Card
+						variant='outlined'
+						sx={{ maxWidth: '400px', mt: '8px', paddingY: '0px' }}
+					>
+						<CardContent>
+							<Typography
+								sx={{ fontSize: 15, fontWeight: 'bold' }}
+								color='secondary'
+								gutterBottom
+							>
+								{fundraising.player.user.username}
+							</Typography>
+							<Typography
+								component='div'
+								sx={{ fontWeight: 'bold' }}
+							>
+								Event
+								<Typography
+									component='p'
+									variant='h6'
+									color='secondary'
+								>
+									{fundraising.event.name}
+								</Typography>
+							</Typography>
+							<Typography
+								sx={{ fontWeight: 'bold' }}
+								component='div'
+							>
+								Game
+								<Typography
+									component='p'
+									variant='h6'
+									color='secondary'
+								>
+									{fundraising.player.game.name}
+								</Typography>
+							</Typography>
+
+							<Typography sx={{ fontWeight: 'bold' }}>
+								Initial tokens
+								<Typography
+									component='p'
+									variant='h6'
+									color='secondary'
+								>
+									{fundraising.collection.initial_amount} (
+									{fundraising.collection.amount_left} left)
+								</Typography>
+							</Typography>
+							<hr
+								style={{
+									marginTop: '8px',
+									marginBottom: '8px',
+								}}
+							/>
+							<Typography variant='h6' component='div'>
+								Goal amount
+								<Typography
+									component='p'
+									variant='h6'
+									color='secondary'
+								>
+									U$D {fundraising.goal_amount}
+								</Typography>
+							</Typography>
+							<Typography variant='h6' component='div'>
+								Token price
+								<Typography
+									component='p'
+									variant='h6'
+									color='secondary'
+								>
+									U$D
+									{fundraising.collection.current_price}
+								</Typography>
+							</Typography>
+						</CardContent>
+					</Card>
+				</Container>
+			</Stack>
 		</PageLayout>
 	);
 };
