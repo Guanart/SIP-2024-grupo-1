@@ -88,7 +88,7 @@ export class SeedController {
       const fundraising = await this.prisma.fundraising.create({
         data: {
           goal_amount: 25000,
-          current_amount: 250,
+          current_amount: 125,
           prize_percentage: 40,
           player_id: player.id,
           event_id: event.id,
@@ -104,7 +104,7 @@ export class SeedController {
           token_prize_percentage: 0.0004,
           previous_token_prize_percentage: 0.0004,
           fundraising_id: fundraising.id,
-          amount_left: 990,
+          amount_left: 995,
         },
       });
 
@@ -119,7 +119,7 @@ export class SeedController {
         where: {
           collection_id: collection.id,
         },
-        take: 10,
+        take: 5,
       });
 
       tokens.forEach(async (token) => {
