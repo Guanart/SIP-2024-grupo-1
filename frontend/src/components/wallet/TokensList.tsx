@@ -37,7 +37,6 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 		);
 	}
 
-	console.log(tokens);
 
 	return (
 		<List
