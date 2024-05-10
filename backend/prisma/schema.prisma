@@ -8,18 +8,44 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  auth0_id  String   @unique
-  email     String
-  username  String   @db.VarChar(255)
-  avatar    String
-  active    Boolean  @default(true) // bajas logicas
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  wallet    Wallet?
-  player    Player?
+  id                  Int                   @id @default(autoincrement())
+  auth0_id            String                @unique
+  email               String
+  username            String                @db.VarChar(255)
+  avatar              String
+  active              Boolean               @default(true) // bajas logicas
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  wallet              Wallet?
+  player              Player?
   // country_id      Int
   // country      Country?
+  VerificationRequest VerificationRequest[]
+}
+
+model Rank {
+  id                  Int                   @id @default(autoincrement())
+  description         String                @unique
+  VerificationRequest VerificationRequest[]
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model VerificationRequest {
+  id        Int           @id @default(autoincrement())
+  user_id   Int        
+  user      User          @relation(fields: [user_id], references: [id])
+  game_id   Int
+  game      Game          @relation(fields: [game_id], references: [id])
+  status    RequestStatus @default(PENDING)
+  rank_id   Int
+  rank      Rank          @relation(fields: [rank_id], references: [id])
+  filepath  String
+  createdAt DateTime      @default(now())
 }
 
 model Wallet {
@@ -44,13 +70,14 @@ model Transaction {
 }
 
 model Game {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  icon      String   @default("")
-  player    Player[]
-  event     Event[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique
+  icon                String                @default("")
+  player              Player[]
+  event               Event[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  VerificationRequest VerificationRequest[]
 }
 
 model Player {

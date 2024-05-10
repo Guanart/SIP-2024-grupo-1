@@ -10,3 +10,4 @@ export * from './Error';
 export * from './Marketplace';
 export * from './Account/Account';
 export * from './Login/Login';
+export * from './SendPlayerRequest/RequestForm';

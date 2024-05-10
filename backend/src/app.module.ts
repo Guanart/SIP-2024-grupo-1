@@ -11,6 +11,8 @@ import { EventModule } from './event/event.module';
 import { PlayerModule } from './player/player.module';
 import { TransactionModule } from './transaction/transaction.module';
 import { TokenModule } from './token/token.module';
+import { GameModule } from './game/game.module';
+import { RankModule } from './rank/rank.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { TokenModule } from './token/token.module';
     PlayerModule,
     TransactionModule,
     TokenModule,
+    GameModule,
+    RankModule,
   ],
 })
 export class AppModule {}

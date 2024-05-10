@@ -16,6 +16,7 @@ import {
 	Fundraising,
 	StartFundraising,
 	UpdateFundraising,
+	RequestForm,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -52,6 +53,10 @@ const privateRoutes = [
 	{
 		path: `/fundraising/update/:fundraising_id`,
 		element: <UpdateFundraising />,
+	},
+	{
+		path: `/sendPlayerRequest`,
+		element: <RequestForm />,
 	},
 ];
 

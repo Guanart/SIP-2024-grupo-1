@@ -20,6 +20,7 @@ import {
 	TrendingUpIcon,
 } from '../../../global/icons';
 import { Link } from 'react-router-dom';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 type MenuProps = {
 	isOpen: boolean;
@@ -65,6 +66,12 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 			text: 'Trending',
 			href: '/trending',
 			icon: <TrendingUpIcon />,
+			isProtected: false,
+		},
+		{
+			text: 'Player Request',
+			href: '/sendPlayerRequest',
+			icon: <AssignmentTurnedInIcon />,
 			isProtected: false,
 		},
 	];

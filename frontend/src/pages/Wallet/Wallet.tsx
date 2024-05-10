@@ -17,6 +17,7 @@ import { Token_wallet, Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
 // import AddTransactionButton from './AddTransactionButton';
+// <AddTransactionButton walletId={wallet.id} />
 import { TokensList } from '../../components/wallet/TokensList';
 
 export const Wallet = () => {
@@ -230,7 +231,7 @@ export const Wallet = () => {
 					sx={{ mt: '16px', maxWidth: '500px' }}
 					justifyContent='center'
 				>
-					<Typography variant='h6'>Transactions</Typography>
+					<Typography variant='h6'>Transacciones</Typography>
 					<List>
 						{transactions.map((transaction) => (
 							<ListItem
