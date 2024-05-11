@@ -57,7 +57,7 @@ export const Home = () => {
 						Unlock the power of our tokens
 					</Typography>
 					<Typography variant='h4' color='secondary'>
-						Invest now and be part of the revolution.
+						Invest now and be part of the revolution
 					</Typography>
 					<Box
 						className='box-container'
