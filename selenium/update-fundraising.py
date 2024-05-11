@@ -1,14 +1,47 @@
 import time
-import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
 
+import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
 
 driver = webdriver.get()
 
-# Inicio sesión con un usuario de prueba
+# Inicio sesión con una cuenta de usuario
+login_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
+
+
+email_input = driver.find_element(By.XPATH, '//*[@id="username"]')
+email_input.send_keys("ricardomilos@lot.com")
+
+password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
+password_input.send_keys("Admin123")
+
+submit_button = driver.find_element(
+    By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
+
+# time.sleep(5)
+time.sleep(2)
+
+# Abro el menú de navegación
+open_menu_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/button').click()
+time.sleep(2)  # Esto es para asegurarme que el menú carga correctamente
+
+
+account_page_link = driver.find_element(
+    By.XPATH, '/html/body/div[2]/div[3]/div/ul/a[4]')
+
+account_page_link.click()
+
+time.sleep(5)
+
+logout_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/div/button').click()
+
+# Inicio sesión con una cuenta de jugador
 login_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
 
@@ -59,6 +92,39 @@ update_fundraising_button = driver.find_element(
 
 
 # time.sleep(5)
-time.sleep(1)
+time.sleep(3)
+
+logout_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/div/button').click()
+
+# Inicio sesión con una cuenta de usuario
+login_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
+
+
+email_input = driver.find_element(By.XPATH, '//*[@id="username"]')
+email_input.send_keys("ricardomilos@lot.com")
+
+password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
+password_input.send_keys("Admin123")
+
+submit_button = driver.find_element(
+    By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
+
+# time.sleep(5)
+time.sleep(2)
+
+# Abro el menú de navegación
+open_menu_button = driver.find_element(
+    By.XPATH, '//*[@id="root"]/header/div/button').click()
+time.sleep(2)  # Esto es para asegurarme que el menú carga correctamente
+
+
+account_page_link = driver.find_element(
+    By.XPATH, '/html/body/div[2]/div[3]/div/ul/a[4]')
+
+account_page_link.click()
+
+time.sleep(3)
 
 input("Press Enter to continue...")
