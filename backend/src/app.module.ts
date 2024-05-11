@@ -13,6 +13,8 @@ import { TransactionModule } from './transaction/transaction.module';
 import { TokenModule } from './token/token.module';
 import { GameModule } from './game/game.module';
 import { RankModule } from './rank/rank.module';
+//import { VerificationRequestModule } from './verification-request/verificationRequest.module';
+import { VerificationRequestModule } from './verification-request/verification-request.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { RankModule } from './rank/rank.module';
     TokenModule,
     GameModule,
     RankModule,
+    VerificationRequestModule,
   ],
 })
 export class AppModule {}

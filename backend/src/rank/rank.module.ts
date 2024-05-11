@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TokenService } from 'src/token/token.service';
 import { PrismaService } from '../database/prisma.service';
 import { RankService } from 'src/rank/rank.service';
+import { RankController } from './rank.controller';
 
 @Module({
   imports: [],
-  controllers: [],
-  providers: [RankService, PrismaService, TokenService],
+  controllers: [RankController],
+  providers: [RankService, PrismaService],
 })
 export class RankModule {}

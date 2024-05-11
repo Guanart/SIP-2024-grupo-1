@@ -14,7 +14,7 @@ import {
 import { GameService } from './game.service';
 
 @Controller('game')
-export class GamesController {
+export class GameController {
   constructor(
     private gameService: GameService,
   ) {}

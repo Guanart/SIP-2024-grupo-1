@@ -9,20 +9,16 @@ import {
     // SetMetadata,
     BadRequestException,
     Put,
-    Delete,
     InternalServerErrorException,
   } from '@nestjs/common';
-  import { verificationRequestService } from './verificationRequest.service';
-  import { VerificationRequest } from './verificationRequest.entity';
+  import { VerificationRequestService } from './verification-request.service';
+  import { VerificationRequest } from './verification-request.entity';
   import { CreateVerificationRequestDto } from './dto';
-   import { PermissionsGuard } from '../auth/permissions.guard';
-   import { AuthGuard } from '../auth/auth.guard';
   import { UpdateVerificationRequestDto } from './dto/update-verificationRequest.dto';
-  
-  @Controller('verificationRequest')
-  export class verificationRequestController {
-    constructor(private verificationRequestService: verificationRequestService) {}
-  
+
+@Controller('verification-request')
+export class VerificationRequestController {
+    constructor(private verificationRequestService: VerificationRequestService) {}
     //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
     // @UseGuards(AuthGuard, PermissionsGuard)
     // @SetMetadata('permissions', ['create:Users'])
@@ -34,7 +30,6 @@ import {
         if (!verificationRequest) {
           throw new BadRequestException();
         }
-  
         return JSON.stringify({
           message: `Verification Request ${newVerificationRequest.user_id} created`,
         });

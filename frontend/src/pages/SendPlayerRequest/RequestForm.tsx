@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, useAuth0 } from '@auth0/auth0-react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { PageLayout } from '../../layouts/PageLayout';
 import { Stack, Button, Select, MenuItem, InputLabel, FormControl, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -24,31 +24,6 @@ export const RequestForm = () => {
 
     const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
 
-    /*
-    useEffect(() => {
-        // Cargar los juegos y rangos disponibles del backend
-        const fetchData = async () => {
-            try {
-                // Solicitud al backend para obtener juegos
-                const gamesResponse = await fetch('http://localhost:3000/games');
-                const gamesData = await gamesResponse.json();
-                console.log(gamesData);
-                setGames(gamesData);
-
-                // Solicitud al backend para obtener rangos
-                const ranksResponse = await fetch('http://localhost:3000/fundraising');
-                const ranksData = await ranksResponse.json();
-                console.log(ranksData);
-                setRanks(ranksData);
-            } catch (error) {
-                console.error('Error al cargar juegos o rangos:', error);
-            }
-        };
-
-        fetchData();
-    }, []);
-    */
-
     useEffect(() => {
 		async function getGames() {
 			try {
@@ -59,6 +34,7 @@ export const RequestForm = () => {
 				});
 				if (response.ok) {
 					const { games } = await response.json();
+                    console.log(game);
 					setGames(games);
 				}
 			} catch (error) {
@@ -74,6 +50,7 @@ export const RequestForm = () => {
 				});
 				if (response.ok) {
 					const { ranks } = await response.json();
+                    console.log(rank);
 					setRanks(ranks);
 				}
 			} catch (error) {
@@ -86,17 +63,30 @@ export const RequestForm = () => {
         getRanks();
 	}, [accessToken, isAuthenticated, user]);
 
+    /*
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, files } = event.target;
-
-        if (name === 'pdfFile' && files) {
-            setPdfFile(files[0]);
+        console.log("Evento onChange activado");
+        const { name, files } = event.target;
+        if (name === 'pdfFile' && files && files.length > 0) {
+            const selectedFile = files[0];
+            setPdfFile(selectedFile);
+            console.log("Archivo seleccionado:", selectedFile.name);
         } else if (name === 'selectedGame') {
-            setSelectedGame(value);
+            setSelectedGame(event.target.value);
         } else if (name === 'selectedRank') {
-            setSelectedRank(value);
+            setSelectedRank(event.target.value);
         }
-    };
+    }
+    */
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const selectedFile = files[0];
+            setPdfFile(selectedFile);
+            console.log("Archivo seleccionado:", selectedFile.name);
+        }
+    }    
 
     // Manejador de envío del formulario
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -117,7 +107,7 @@ export const RequestForm = () => {
             const response = await fetchWithAuth({
                 isAuthenticated: true,
                 accessToken,
-                url:  `http://localhost:3000/verificationRequest`, // Reemplaza con la URL de tu API
+                url:  `http://localhost:3000/verification-request`, // Reemplaza con la URL de tu API
                 method: 'POST',
                 data: formData,
             });
@@ -140,7 +130,6 @@ export const RequestForm = () => {
 
     const handleSelectChange = (event: SelectChangeEvent<string>, name: string) => {
         const value = event.target.value;
-
         if (name === 'game') {
             setGame(value);
         } else if (name === 'rank') {
@@ -181,10 +170,13 @@ export const RequestForm = () => {
                                     required
                                     fullWidth
                                 >
-                                    <MenuItem value="rango1">Rango 1</MenuItem>
-                                    <MenuItem value="rango2">Rango 2</MenuItem>
-                                    <MenuItem value="rango3">Rango 3</MenuItem>
-                                    {/* Más opciones */}
+                                    {ranks.length > 0 ? (
+                                        ranks.map((rankItem, index) => (
+                                            <MenuItem key={index} value={rankItem}>{rankItem}</MenuItem>
+                                        ))
+                                    ) : (
+                                        <MenuItem disabled>No hay rangos disponibles por el momento</MenuItem>
+                                    )}
                                 </Select>
                             </FormControl>
 
@@ -199,23 +191,32 @@ export const RequestForm = () => {
                                     required
                                     fullWidth
                                 >
-                                    <MenuItem value="juego1">Juego 1</MenuItem>
-                                    <MenuItem value="juego2">Juego 2</MenuItem>
-                                    <MenuItem value="juego3">Juego 3</MenuItem>
-                                    {/* Más opciones */}
+                                    {games.length > 0 ? (
+                                        games.map((gameItem, index) => (
+                                            <MenuItem key={index} value={gameItem}>{gameItem}</MenuItem>
+                                        ))
+                                    ) : (
+                                        <MenuItem disabled>No hay juegos disponibles por el momento</MenuItem>
+                                    )}
                                 </Select>
                             </FormControl>
 
                             {/* Campo de entrada para el archivo PDF */}
-                            {/* Botón para subir archivo PDF */}
                             <Stack direction="row" spacing={1} alignItems="center">
+                                <input
+                                    type="file"
+                                    id="pdf-file-upload"
+                                    style={{ display: 'none' }}
+                                    accept="application/pdf"
+                                    onChange={(event) => handleFileChange(event)}
+                                />
                                 <label htmlFor="pdf-file-upload">
                                     <input
                                         type="file"
                                         id="pdf-file-upload"
                                         style={{ display: 'none' }}
                                         accept="application/pdf"
-                                        onChange={handleInputChange}
+                                        //onChange={(event) => handleInputChange(event)}
                                     />
                                     <Button variant="contained" component="span" color='secondary'>
                                         Subir PDF

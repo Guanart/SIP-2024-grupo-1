@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TokenService } from 'src/token/token.service';
 import { PrismaService } from '../database/prisma.service';
 import { GameService } from 'src/game/game.service';
+import { GameController } from './game.controller';
 
 @Module({
   imports: [],
-  controllers: [],
-  providers: [GameService, PrismaService, TokenService],
+  controllers: [GameController],
+  providers: [GameService, PrismaService],
 })
 export class GameModule {}
