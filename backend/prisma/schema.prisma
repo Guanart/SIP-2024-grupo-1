@@ -31,6 +31,8 @@ model Wallet {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     transactions Transaction[]
+    access_token String?  @unique
+    public_key   String?  @unique
 }
 
 model Transaction {

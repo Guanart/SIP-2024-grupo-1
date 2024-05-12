@@ -9,4 +9,10 @@ export class CreatePreference {
 
   @IsNotEmpty()
   unit_price: number;
+
+  @IsNotEmpty()
+  type: string;
+
+  @IsNotEmpty()
+  id: number;
 }

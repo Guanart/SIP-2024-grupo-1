@@ -17,8 +17,9 @@ import { Fundraising as FundraisingType } from '../../types';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyboardBackspaceIcon } from '../../global/icons';
 
-const REACT_APP_API_URL = 'http://localhost:3000';
-const REACT_APP_MP_PUBLIC_KEY = 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552';
+const REACT_APP_API_URL = "http://localhost:3000/mercado-pago/create-preference";
+const REACT_APP_MP_PUBLIC_KEY = "APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b";	// vendedor 3 en app sandbox
+const REACT_APP_PREFERENCE_TYPE = "fundraising";
 
 export const Fundraising = () => {
 	const [amount, setAmount] = useState<number>(1);
@@ -26,7 +27,7 @@ export const Fundraising = () => {
 	const { accessToken } = useAccessToken();
 	const [fundraising, setFundraising] = useState<FundraisingType>();
 	const { user, isAuthenticated } = useAuth0();
-	const { fundraising_id } = useParams();
+	const { id } = useParams();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -35,7 +36,7 @@ export const Fundraising = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/fundraising/${fundraising_id}`,
+					url: `http://localhost:3000/fundraising/${id}`,
 				});
 
 				if (response.ok) {
@@ -53,14 +54,14 @@ export const Fundraising = () => {
 		if (!accessToken) return;
 
 		getFundraisings();
-	}, [accessToken, isAuthenticated, user, fundraising_id, navigate]);
+	}, [accessToken, isAuthenticated, user, id, navigate]);
 
 	initMercadoPago(
-		REACT_APP_MP_PUBLIC_KEY ?? 'TEST-960f6880-26b7-4fbd-b001-587fc4a7e552',
-		{
-			locale: 'es-AR',
-		}
-	);
+    REACT_APP_MP_PUBLIC_KEY,
+    {
+      locale: "es-AR",
+    }
+  );
 
 	function handleAmountChange(value: string) {
 		const nextAmount: number = parseInt(value.trim()) ?? 1;
@@ -75,18 +76,14 @@ export const Fundraising = () => {
 		try {
 			if (fundraising) {
 				console.log(fundraising);
-				const response = await axios.post(
-					REACT_APP_API_URL
-						? REACT_APP_API_URL + '/mercado-pago/create-preference'
-						: 'http://localhost:3000/mercado-pago/create-preference',
-					{
-						title: `${fundraising.player.user.username} | ${fundraising.event.name} (${amount})`,
-						quantity: amount,
-						unit_price: fundraising.collection.current_price,
-					}
-				);
-				const { id } = response.data;
-				return id;
+				const response = await axios.post(REACT_APP_API_URL, {
+					title: `${fundraising.player.user.username} | ${fundraising.event.name} (${amount})`,
+					quantity: amount,
+					unit_price: fundraising.collection.current_price,
+					type: REACT_APP_PREFERENCE_TYPE,
+					id: id
+				});
+				return response.data.id;
 			}
 		} catch (error) {
 			console.log(error);
