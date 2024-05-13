@@ -72,20 +72,8 @@ export class CollectionService {
     const amountOfTokensToBeEmited =
       recalculatedAmount - collection.initial_amount;
 
-    console.log('amount should be 1000:', amountOfTokensToBeEmited);
-    console.log('recalculated amount should be 2000: ', recalculatedAmount);
-    console.log(
-      'recalculated amount left should be 1980: ',
-      recalculatedAmountLeft,
-    );
-
     const recalculated_token_prize_percentage =
       fundraising.prize_percentage / 100 / recalculatedAmount;
-
-    console.log(
-      'recalculated token prize percentage should be 0.0002: ',
-      recalculated_token_prize_percentage,
-    );
 
     collection = await this.prisma.collection.update({
       where: {
