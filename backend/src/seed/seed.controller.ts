@@ -31,16 +31,12 @@ export class SeedController {
       await this.prisma.wallet.create({
         data: {
           user_id: user.id,
-          cbu: '2655926629852484698',
-          paypal_id: 'paypal_id578721',
         },
       });
 
       const wallet2 = await this.prisma.wallet.create({
         data: {
           user_id: user2.id,
-          cbu: '2655926629852484689',
-          paypal_id: 'paypal_id578712',
         },
       });
 

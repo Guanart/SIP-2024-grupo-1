@@ -6,12 +6,16 @@ import {
   // UseGuards,
   // SetMetadata,
   InternalServerErrorException,
+  UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import { WalletService } from '../wallet/wallet.service';
 import { Wallet } from '../wallet/wallet.entity';
 // import { PermissionsGuard } from '../auth/permissions.guard';
 // import { AuthGuard } from '../auth/auth.guard';
 import { TokenService } from './token.service';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { PermissionsGuard } from 'src/auth/permissions.guard';
 
 @Controller('token')
 export class TokenController {

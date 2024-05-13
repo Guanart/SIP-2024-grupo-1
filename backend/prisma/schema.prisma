@@ -37,7 +37,7 @@ enum RequestStatus {
 
 model VerificationRequest {
   id        Int           @id @default(autoincrement())
-  user_id   Int        
+  user_id   Int
   user      User          @relation(fields: [user_id], references: [id])
   game_id   Int
   game      Game          @relation(fields: [game_id], references: [id])
@@ -49,19 +49,19 @@ model VerificationRequest {
 }
 
 model Wallet {
-  id           Int            @id @default(autoincrement())
-  user_id      Int            @unique
-  user         User           @relation(fields: [user_id], references: [id])
-  cbu          String         @unique
-  paypal_id    String?         @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                      Int                       @id @default(autoincrement())
+  user_id                 Int                       @unique
+  user                    User                      @relation(fields: [user_id], references: [id])
+  // cbu          String         @unique
+  // paypal_id    String?         @unique
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
   access_token String?  @unique
   public_key   String?  @unique
-  transactions Transaction[]
-  token_wallet Token_wallet[]
+  transactions            Transaction[]
+  token_wallet            Token_wallet[]
   marketplace_publication Marketplace_publication[]
-  in_wallet In_wallet[]
+  in_wallet               In_wallet[]
 }
 
 model Transaction {
@@ -153,11 +153,11 @@ model Collection {
 }
 
 model Token {
-  id            Int            @id @default(autoincrement())
-  price         Float
-  collection_id Int
-  collection    Collection     @relation(fields: [collection_id], references: [id])
-  token_wallet  Token_wallet[]
+  id                Int                 @id @default(autoincrement())
+  price             Float
+  collection_id     Int
+  collection        Collection          @relation(fields: [collection_id], references: [id])
+  token_wallet      Token_wallet[]
   publication_token Publication_token[]
 }
 
@@ -170,29 +170,27 @@ model Token_wallet {
   @@id([wallet_id, token_id])
 }
 
-
-
 model Marketplace_publication {
-  publication_id Int @id @default(autoincrement())
-  active Boolean
-  price Float
-  date DateTime @default(now())
-  out_wallet Int
-  wallet    Wallet @relation(fields: [out_wallet], references: [id])
-  in_wallet In_wallet[]
+  publication_id    Int                 @id @default(autoincrement())
+  active            Boolean
+  price             Float
+  date              DateTime            @default(now())
+  out_wallet        Int
+  wallet            Wallet              @relation(fields: [out_wallet], references: [id])
+  in_wallet         In_wallet[]
   publication_token Publication_token[]
 }
 
 model In_wallet {
-  publication_id Int  @id
-  wallet_id Int //No necesita ser ID, es uno por publicacion de marketplace (N,0)
-  marketplace_publication  Marketplace_publication @relation(fields: [publication_id], references: [publication_id])
-  wallet    Wallet @relation(fields: [wallet_id], references: [id])
+  publication_id          Int                     @id
+  wallet_id               Int //No necesita ser ID, es uno por publicacion de marketplace (N,0)
+  marketplace_publication Marketplace_publication @relation(fields: [publication_id], references: [publication_id])
+  wallet                  Wallet                  @relation(fields: [wallet_id], references: [id])
 }
 
 model Publication_token {
-  publication_id Int  @id
-  token_id Int //No necesita ser ID, es uno por publicacion de marketplace (N,0)
-  marketplace_publication  Marketplace_publication @relation(fields: [publication_id], references: [publication_id])
-  token    Token @relation(fields: [token_id], references: [id])
+  publication_id          Int                     @id
+  token_id                Int //No necesita ser ID, es uno por publicacion de marketplace (N,0)
+  marketplace_publication Marketplace_publication @relation(fields: [publication_id], references: [publication_id])
+  token                   Token                   @relation(fields: [token_id], references: [id])
 }
