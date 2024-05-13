@@ -47,7 +47,13 @@ export function Header() {
 			<Toolbar>
 				<MenuButton toggleMenu={toggleMenu} />
 				<Typography variant='h1' component='h1' sx={{ flexGrow: 1 }}>
-					<img src='/assets/logo.png' alt='LOT' className='logo' />
+					<Link to={`/`}>
+						<img
+							src='/assets/logo.png'
+							alt='LOT'
+							className='logo'
+						/>
+					</Link>
 				</Typography>
 
 				<Stack direction='row' spacing={1.5}>

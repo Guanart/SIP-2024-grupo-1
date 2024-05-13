@@ -9,6 +9,12 @@ import { FundraisingModule } from './fundraising/fundraising.module';
 import { CollectionModule } from './collection/collection.module';
 import { EventModule } from './event/event.module';
 import { PlayerModule } from './player/player.module';
+import { TransactionModule } from './transaction/transaction.module';
+import { TokenModule } from './token/token.module';
+import { GameModule } from './game/game.module';
+import { RankModule } from './rank/rank.module';
+//import { VerificationRequestModule } from './verification-request/verificationRequest.module';
+import { VerificationRequestModule } from './verification-request/verification-request.module';
 
 @Module({
   imports: [
@@ -22,6 +28,11 @@ import { PlayerModule } from './player/player.module';
     CollectionModule,
     EventModule,
     PlayerModule,
+    TransactionModule,
+    TokenModule,
+    GameModule,
+    RankModule,
+    VerificationRequestModule,
   ],
 })
 export class AppModule {}

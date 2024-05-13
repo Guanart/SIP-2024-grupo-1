@@ -27,7 +27,29 @@ export class UserService {
         player: {
           include: { game: true },
         },
-        wallet: true,
+        wallet: {
+          include: {
+            transactions: true,
+            token_wallet: {
+              include: {
+                token: {
+                  include: {
+                    collection: {
+                      include: {
+                        fundraising: {
+                          include: {
+                            event: true,
+                            player: { include: { user: true } },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 

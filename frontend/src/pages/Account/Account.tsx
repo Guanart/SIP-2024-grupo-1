@@ -15,7 +15,12 @@ import {
 	Button,
 	TextField,
 } from '@mui/material';
-import { BasicModal, Loader } from '../../components';
+import {
+	BasicModal,
+	Loader,
+	MostValuableTokensList,
+	PublicationList,
+} from '../../components';
 import './Account.css';
 
 export const Account = () => {
@@ -358,7 +363,7 @@ export const Account = () => {
           </Box>
         </form>
       </BasicModal>
-
+      
       <BasicModal
         title="Delete account"
         isOpen={isDeleteModalOpen}
@@ -428,6 +433,23 @@ export const Account = () => {
           </Container>
         </>
       )}
-    </PageLayout>
-  );
+
+      {!isLoading && (
+				<>
+					<Container sx={{ mt: '24px' }}>
+						<Typography variant='h6' component='h2'>
+							Most valuable tokens
+						</Typography>
+						<MostValuableTokensList />
+					</Container>
+					<Container sx={{ mt: '24px' }}>
+						<Typography variant='h6' component='h2'>
+							Marketplace
+						</Typography>
+						<PublicationList />
+					</Container>
+				</>
+			)}
+		</PageLayout>
+	);
 };

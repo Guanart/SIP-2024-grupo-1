@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 
 type PageLayoutProps = {
 	children: React.ReactNode;
-	title: string;
+	title?: string;
 };
 
 export const PageLayout: FunctionComponent<PageLayoutProps> = ({
@@ -13,16 +13,18 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 	title,
 }) => {
 	useEffect(() => {
-		document.title = `${title} | LOT`;
+		document.title = title ? `${title} | LOT` : `Home | LOT`;
 	}, [title]);
 
 	return (
 		<>
 			<Header />
-			<main>
-				<Typography variant='h5' component='h2'>
-					{title}
-				</Typography>
+			<main className={`${title ?? 'home'}`}>
+				{title && (
+					<Typography variant='h5' component='h2'>
+						{title}
+					</Typography>
+				)}
 				{children}
 			</main>
 		</>

@@ -229,7 +229,7 @@ export const Fundraising = () => {
 								Token details
 								<Stack sx={{ paddingLeft: '8px' }}>
 									<Typography component='div' variant='body2'>
-										Token ID
+										Collection ID
 										<Typography
 											color='secondary'
 											component='div'
@@ -241,46 +241,6 @@ export const Fundraising = () => {
 											}}
 										>
 											{fundraising.collection.id}
-										</Typography>
-									</Typography>
-									<Typography component='div' variant='body2'>
-										Percentage per token
-										<Typography
-											color='secondary'
-											component='div'
-											variant='body2'
-											sx={{
-												display: 'inline',
-												marginLeft: '6px',
-												fontWeight: 'bold',
-											}}
-										>
-											{
-												fundraising.collection
-													.token_price_percentage
-											}
-											%
-										</Typography>
-									</Typography>
-									<Typography component='div' variant='body2'>
-										Prize per token
-										<Typography
-											color='secondary'
-											component='div'
-											variant='body2'
-											sx={{
-												display: 'inline',
-												marginLeft: '6px',
-												fontWeight: 'bold',
-											}}
-										>
-											Max. U$D{' '}
-											{fundraising.event.prize *
-												(fundraising.prize_percentage /
-													100) *
-												(fundraising.collection
-													.token_price_percentage /
-													100)}
 										</Typography>
 									</Typography>
 									<Typography component='div' variant='body2'>
@@ -302,6 +262,45 @@ export const Fundraising = () => {
 											}
 										</Typography>
 									</Typography>
+									<Typography component='div' variant='body2'>
+										Percentage per token
+										<Typography
+											color='secondary'
+											component='div'
+											variant='body2'
+											sx={{
+												display: 'inline',
+												marginLeft: '6px',
+												fontWeight: 'bold',
+											}}
+										>
+											{
+												fundraising.collection
+													.token_prize_percentage
+											}
+											%
+										</Typography>
+									</Typography>
+									<Typography component='div' variant='body2'>
+										Prize per token
+										<Typography
+											color='secondary'
+											component='div'
+											variant='body2'
+											sx={{
+												display: 'inline',
+												marginLeft: '6px',
+												fontWeight: 'bold',
+											}}
+										>
+											Max. U$D{' '}
+											{fundraising.event.prize *
+												(fundraising.prize_percentage /
+													100) *
+												fundraising.collection
+													.token_prize_percentage}
+										</Typography>
+									</Typography>
 								</Stack>
 							</Typography>
 						</Stack>
@@ -320,21 +319,26 @@ export const Fundraising = () => {
 						spacing='4px'
 					>
 						{user?.sub === fundraising.player.user.auth0_id && (
-							<Button
-								variant='contained'
-								color='secondary'
-								style={{ marginTop: '8px' }}
-								onClick={() =>
-									console.log('Updating fundraising...')
-								}
-								sx={{
-									maxWidth: '250px',
-									display: 'block',
-									paddingY: '12px',
-								}}
+							<Link
+								to={`/fundraising/update/${fundraising.id}`}
+								style={{ textDecoration: 'none' }}
 							>
-								Update your fundraising
-							</Button>
+								<Button
+									variant='contained'
+									color='secondary'
+									style={{ marginTop: '8px' }}
+									onClick={() =>
+										console.log('Updating fundraising...')
+									}
+									sx={{
+										maxWidth: '250px',
+										display: 'block',
+										paddingY: '12px',
+									}}
+								>
+									Update fundraising
+								</Button>
+							</Link>
 						)}
 						{user?.sub !== fundraising.player.user.auth0_id &&
 							!preferenceId && (

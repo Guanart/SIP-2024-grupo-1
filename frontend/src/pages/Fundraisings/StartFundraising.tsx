@@ -79,9 +79,9 @@ export const StartFundraising = () => {
 		const newFundraising = {
 			player_id: currentUser?.player?.id,
 			event_id: eventId,
-			goal_amount: goalAmount,
-			prize_percentage: prizePercentage,
-			initial_price: initialPrice,
+			goal_amount: Number(goalAmount),
+			prize_percentage: Number(prizePercentage),
+			initial_price: Number(initialPrice),
 		};
 
 		try {
@@ -97,9 +97,11 @@ export const StartFundraising = () => {
 			if (response.ok) {
 				const { message, fundraising } = await response.json();
 				console.log(message);
+				console.log(fundraising);
 				navigate(`/fundraising/${fundraising.id}`);
 			}
 		} catch (error) {
+			console.log(error);
 			navigate(`/error`);
 		}
 	}
@@ -256,9 +258,14 @@ export const StartFundraising = () => {
 							label='Goal amount (U$D)'
 							sx={{ maxWidth: '400px', width: '90%' }}
 							type='number'
-							onChange={(event) =>
-								setGoalAmount(Number(event.target.value))
-							}
+							onChange={(event) => {
+								const value = Number(event.target.value);
+								if (value < 0) {
+									setGoalAmount(0);
+								} else {
+									setGoalAmount(event.target.value);
+								}
+							}}
 						/>
 						<TextField
 							id='prize-percentage'
@@ -271,8 +278,10 @@ export const StartFundraising = () => {
 								const value = Number(event.target.value);
 								if (value > 100) {
 									setPrizePercentage(100);
+								} else if (value < 0) {
+									setPrizePercentage(0);
 								} else {
-									setPrizePercentage(value);
+									setPrizePercentage(event.target.value);
 								}
 							}}
 						/>
@@ -282,9 +291,14 @@ export const StartFundraising = () => {
 							label='Token initial price (U$D)'
 							sx={{ maxWidth: '400px', width: '90%' }}
 							type='number'
-							onChange={(event) =>
-								setInitialPrice(Number(event.target.value))
-							}
+							onChange={(event) => {
+								const value = Number(event.target.value);
+								if (value < 0) {
+									setInitialPrice(0);
+								} else {
+									setInitialPrice(event.target.value);
+								}
+							}}
 						/>
 						<Button
 							variant='contained'
@@ -295,7 +309,7 @@ export const StartFundraising = () => {
 								!goalAmount ||
 								!initialPrice ||
 								!eventId ||
-								goalAmount < initialPrice
+								Number(goalAmount) < Number(initialPrice)
 							}
 						>
 							Start fundraising

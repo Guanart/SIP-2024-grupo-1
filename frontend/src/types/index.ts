@@ -6,3 +6,4 @@ export * from './Collection.ts';
 export * from './Event.ts';
 export * from './Player.ts';
 export * from './Game.ts';
+export * from './Token.ts';

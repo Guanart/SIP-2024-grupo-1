@@ -1,3 +1,5 @@
+import { Game } from './Game';
+
 export interface Event {
 	id: number;
 	start_date: Date;
@@ -5,7 +7,7 @@ export interface Event {
 	max_players: number;
 	prize: number;
 	game_id: number;
-	// game: Game;
+	game: Game;
 	name: string;
 	createdAt: Date;
 	updatedAt: Date;

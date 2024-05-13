@@ -1,18 +1,31 @@
 //import { Button, Stack, TextField } from '@mui/material';
-import { Button, Stack, TextField, List, ListItem, ListItemText } from '@mui/material';
+import {
+	Button,
+	Stack,
+	TextField,
+	List,
+	ListItem,
+	ListItemText,
+} from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
-import { Wallet as WalletType } from '../../types';
+import { Token_wallet, Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import AddTransactionButton from './AddTransactionButton'; // Importa el componente
+// import AddTransactionButton from './AddTransactionButton';
+// <AddTransactionButton walletId={wallet.id} />
+import { TokensList } from '../../components/wallet/TokensList';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
+	const [transactions, setTransactions] = useState<TransactionType[] | null>(
+		null
+	);
+	const [tokens, setTokens] = useState<Token_wallet[]>([]);
 	const [cbu, setCbu] = useState<string>('');
 	const [paypalId, setPaypalId] = useState<string>('');
 	const [userId, setUserId] = useState<string>('');
@@ -34,10 +47,11 @@ export const Wallet = () => {
 					setUserId(user.id);
 
 					if (user.wallet) {
+						setTokens(user.wallet.token_wallet);
 						setWallet(user.wallet);
+						setTransactions(user.wallet.transactions);
 						setCbu(user.wallet.cbu);
 						setPaypalId(user.wallet.paypal_id);
-						console.log(user.wallet.transactions)
 					}
 				}
 			} catch (error) {
@@ -93,37 +107,64 @@ export const Wallet = () => {
 		setWallet(data.wallet);
 	}
 
-	const placeholderTransactions = [
-        { id: 1, description: 'Purchase at Store', date: '2024-05-03', amount: '50.00' },
-        { id: 2, description: 'Online subscription', date: '2024-05-02', amount: '15.00' },
-        { id: 3, description: 'ATM Withdrawal', date: '2024-05-01', amount: '100.00' },
-    ];
+	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
+	const getColorByTypeId = (typeId: number) => {
+		switch (typeId) {
+			case 1:
+				return 'rgba(8, 175, 48, 0.8)'; // VERDE
+			case 2:
+				return 'rgba(147, 11, 11, 0.8)'; // ROJO
+			default:
+				return 'gray'; // Color gris como predeterminado si no coincide ningún case
+		}
+	};
 
 	return (
 		<PageLayout title='Wallet'>
-			<Stack direction={{ xs: 'column', md: 'row' }} spacing={8}>
+			{wallet ? (
+				<Typography
+					sx={{
+						minWidth: '400px',
+						fontSize: '18px',
+						marginTop: '8px',
+					}}
+				>
+					Bienvenido!
+				</Typography>
+			) : (
+				<>
+					<Typography
+						sx={{
+							maxWidth: '400px',
+							fontSize: '18px',
+							marginTop: '8px',
+						}}
+					>
+						Looks like you haven't created a wallet yet! Don't
+						worry, it only takes a few moments to set one up
+					</Typography>
+					<Typography
+						sx={{
+							maxWidth: '400px',
+							fontSize: '18px',
+							marginTop: '4px',
+						}}
+					>
+						Please fill out the form below and click the button to
+						create your wallet.
+					</Typography>
+				</>
+			)}
+			<Stack
+				direction={{ xs: 'column', md: 'row' }}
+				sx={{ mt: '16px' }}
+				spacing={20}
+			>
 				<Stack
 					spacing={2}
-					sx={{ mt: '16px', maxWidth: '500px' }}
-					justifyContent='center'
+					sx={{ mt: '16px' }}
+					direction={{ xs: 'column', md: 'row' }}
 				>
-					{wallet ? (
-						<Typography variant='body2'>
-							{JSON.stringify(wallet)}
-						</Typography>
-					) : (
-						<>
-							<Typography sx={{ maxWidth: '400px' }}>
-								Looks like you haven't created a wallet yet!
-								Don't worry, it only takes a few moments to set
-								one up
-							</Typography>
-							<Typography sx={{ maxWidth: '400px' }}>
-								Please fill out the form below and click the
-								button to create your wallet.
-							</Typography>
-						</>
-					)}
 					<TextField
 						disabled
 						id='user-id'
@@ -169,24 +210,50 @@ export const Wallet = () => {
 						</Button>
 					)}
 				</Stack>
-                {/* Section to display list of movements/tokens */}
-                {wallet && (
-                    <Stack spacing={2} sx={{ mt: '16px', maxWidth: '500px' }} justifyContent='center'>
-                        <Typography variant='h6'>Transacciones</Typography>
-						<AddTransactionButton walletId={wallet.id} />
-                        <List>
-                            {placeholderTransactions.map((transaction) => (
-                                <ListItem key={transaction.id}>
-                                    <ListItemText
-                                        primary={`Description: ${transaction.description}`}
-                                        secondary={`Date: ${transaction.date} | Amount: ${transaction.amount}`}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </Stack>
-                )}
 			</Stack>
+			{wallet && (
+				<Stack
+					spacing={2}
+					sx={{
+						mt: '16px',
+						width: '100%',
+					}}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Tokens</Typography>
+					<TokensList tokens={tokens} />
+				</Stack>
+			)}
+
+			{transactions && wallet && (
+				<Stack
+					spacing={2}
+					sx={{ mt: '16px', maxWidth: '500px' }}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Transacciones</Typography>
+					<List>
+						{transactions.map((transaction) => (
+							<ListItem
+								key={transaction.id}
+								sx={{
+									backgroundColor: getColorByTypeId(
+										transaction.type_id
+									),
+									borderRadius: '4px', // Establece el radio de las esquinas a 8px
+									padding: '12px', // Agrega algo de padding para separarlo de los bordes
+									marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
+								}}
+							>
+								<ListItemText
+									primary={`Token: ${transaction.token_id}`}
+									secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
+								/>
+							</ListItem>
+						))}
+					</List>
+				</Stack>
+			)}
 		</PageLayout>
 	);
 };

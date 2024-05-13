@@ -52,4 +52,7 @@ initial_price_input.send_keys("25")
 start_fundraising_button  = driver.find_element(By.XPATH, '//*[@id="root"]/main/div/form/button').click()
 
 
-time.sleep(5)
+# time.sleep(5)
+time.sleep(1)
+
+input("Press Enter to continue...")

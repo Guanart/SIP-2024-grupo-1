@@ -19,7 +19,7 @@ import {
   // import { AuthGuard } from '../auth/auth.guard';
   import { UpdateTransactionDto } from './dto/update-transaction.dto';
   
-  @Controller('user')
+  @Controller('transaction')
   export class TransactionController {
     constructor(private transactionService: TransactionService) {}
   
