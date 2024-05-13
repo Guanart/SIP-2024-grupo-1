@@ -47,6 +47,26 @@ export class SeedController {
         },
       });
 
+      const game1 = await this.prisma.game.create({
+        data: {
+          name: 'Amogus',
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Among_Us.png/375px-Among_Us.png',
+        },
+      });
+
+      
+      const rank1 = await this.prisma.rank.create({
+        data: {
+          description: 'Rango S',
+        },
+      });
+
+      const rank2 = await this.prisma.rank.create({
+        data: {
+          description: 'Rango A',
+        },
+      });
+
       const player = await this.prisma.player.create({
         data: {
           user_id: user.id,

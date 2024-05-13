@@ -16,11 +16,11 @@ export class CreateVerificationRequestDto {
   @IsNotEmpty()
   filepath: string;
 
-  @IsNotEmpty()
-  createdAt: Date;
+  //@IsNotEmpty()
+  createdAt: Date = new Date();
 
   @IsEnum(RequestStatus)
-  status: RequestStatus;
+  status: RequestStatus = RequestStatus.PENDING;
 }
 
 /*model VerificationRequest {
