@@ -4,15 +4,21 @@ import { PrismaService } from '../database/prisma.service';
 import { CreateUserDto } from './dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user-dto';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private walletService: WalletService,
+  ) {}
 
   async create(userData: CreateUserDto): Promise<User> {
     const user = await this.prisma.user.create({
       data: userData,
     });
+
+    await this.walletService.create(user.id);
 
     return user ? User.fromObject(user) : null;
   }
