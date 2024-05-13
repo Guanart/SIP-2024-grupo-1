@@ -17,6 +17,7 @@ import {
 	StartFundraising,
 	UpdateFundraising,
 	RequestForm,
+	CreatePublication,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -53,6 +54,10 @@ const privateRoutes = [
 	{
 		path: `/fundraising/update/:fundraising_id`,
 		element: <UpdateFundraising />,
+	},
+	{
+		path: `/marketplace/publication/create/:token_id`,
+		element: <CreatePublication />,
 	},
 	{
 		path: `/sendPlayerRequest`,

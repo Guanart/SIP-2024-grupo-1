@@ -34,6 +34,8 @@ export class TokenController {
     try {
       const wallet: Wallet = await this.walletService.findOneByUserId(auth0_id);
 
+      console.log(wallet);
+
       if (!wallet) {
         throw new NotFoundException(`Wallet not found`);
       }

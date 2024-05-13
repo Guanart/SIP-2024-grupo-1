@@ -1,12 +1,17 @@
 import { TokenService } from '../../src/token/token.service';
 import { PrismaService } from '../../src/database/prisma.service';
 import { CollectionService } from '../../src/collection/collection.service';
+import { RiskLevel } from '@prisma/client';
 
 jest.mock('../../src/database/prisma.service', () => ({
   PrismaService: jest.fn().mockImplementation(() => ({
     collection: {
       create: jest.fn(),
       update: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    token: {
+      updateMany: jest.fn(),
     },
   })),
 }));
@@ -90,7 +95,109 @@ describe('CollectionService', () => {
 
   describe('update', () => {
     it('should update an existing collection', async () => {
-      expect(1).toEqual(1);
+      const new_goal_amount = 25000;
+      const new_initial_price = 12.5;
+
+      const fundraising = {
+        id: 1,
+        goal_amount: 25000,
+        current_amount: 0,
+        prize_percentage: 40,
+        risk_level: RiskLevel.LOW,
+        active: true,
+        player_id: 1,
+        event_id: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest.spyOn(prisma.collection, 'findUnique').mockResolvedValue({
+        id: 1,
+        token_prize_percentage: 0.004,
+        previous_token_prize_percentage: 0.004,
+        amount_left: 1000,
+        initial_amount: 1000,
+        current_price: 25.0,
+        previous_price: 25.0,
+        fundraising_id: fundraising.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const collection = await prisma.collection.findUnique({
+        where: { fundraising_id: fundraising.id },
+      });
+
+      const compensationRatio = collection.current_price / new_initial_price; // la proporción en este caso es (25 / 12.5) = 2
+
+      const ownedTokens = collection.initial_amount - collection.amount_left;
+      const recalculatedOwnedTokens = ownedTokens * compensationRatio;
+
+      const recalculatedAmount = Math.ceil(new_goal_amount / new_initial_price);
+
+      const recalculatedAmountLeft =
+        recalculatedAmount - recalculatedOwnedTokens;
+
+      const amountOfTokensToBeEmited =
+        recalculatedAmount - collection.initial_amount;
+
+      const recalculated_token_prize_percentage =
+        fundraising.prize_percentage / 100 / recalculatedAmount;
+
+      jest.spyOn(prisma.collection, 'update').mockResolvedValue({
+        id: 1,
+        token_prize_percentage: recalculated_token_prize_percentage,
+        previous_token_prize_percentage: collection.token_prize_percentage,
+        amount_left: recalculatedAmountLeft,
+        initial_amount: recalculatedAmount,
+        current_price: new_initial_price,
+        previous_price: collection.current_price,
+        fundraising_id: fundraising.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      const updatedCollection = await prisma.collection.update({
+        where: {
+          id: collection.id,
+        },
+        data: {
+          initial_amount: recalculatedAmount,
+          amount_left: recalculatedAmountLeft,
+          previous_token_prize_percentage: collection.token_prize_percentage,
+          token_prize_percentage: recalculated_token_prize_percentage,
+          current_price: new_initial_price,
+          previous_price: collection.current_price,
+        },
+      });
+
+      await collectionService.update(
+        new_goal_amount,
+        new_initial_price,
+        fundraising,
+      );
+
+      expect(prisma.token.updateMany).toHaveBeenCalledWith({
+        where: { collection_id: collection.id },
+        data: { price: new_initial_price },
+      });
+
+      expect(tokenService.emitNewTokens).toHaveBeenCalledWith({
+        price: new_initial_price,
+        amount: amountOfTokensToBeEmited,
+        compensation_ratio: compensationRatio,
+        collection_id: collection.id,
+      });
+
+      expect(updatedCollection.amount_left).toBe(recalculatedAmountLeft);
+      expect(updatedCollection.initial_amount).toBe(recalculatedAmount);
+      expect(updatedCollection.token_prize_percentage).toBe(
+        recalculated_token_prize_percentage,
+      );
+      expect(updatedCollection.previous_token_prize_percentage).toBe(
+        collection.token_prize_percentage,
+      );
+      expect(updatedCollection.previous_price).toBe(collection.current_price);
     });
   });
 });

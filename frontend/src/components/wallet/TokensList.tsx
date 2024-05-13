@@ -1,5 +1,6 @@
 import {
 	Avatar,
+	Box,
 	List,
 	ListItem,
 	ListItemAvatar,
@@ -9,7 +10,7 @@ import {
 import { FunctionComponent } from 'react';
 import { Token_wallet } from '../../types';
 import { Link } from 'react-router-dom';
-import { DoubleArrowIcon } from '../../global/icons';
+import { CurrencyExchangeIcon, DoubleArrowIcon } from '../../global/icons';
 
 type TokensListProps = {
 	tokens: Token_wallet[];
@@ -36,7 +37,6 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 			</>
 		);
 	}
-
 
 	return (
 		<List
@@ -74,15 +74,32 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 							marginLeft: '2px',
 						}}
 					/>
-					<Link
-						to={`/fundraising/${token_data.token.collection.fundraising.id}`}
-						style={{
-							textDecoration: 'none',
-							color: '#45FFCA',
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '4px',
 						}}
 					>
-						<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
-					</Link>
+						<Link
+							to={`/fundraising/${token_data.token.collection.fundraising.id}`}
+							style={{
+								textDecoration: 'none',
+								color: '#45FFCA',
+							}}
+						>
+							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
+						</Link>
+						<Link
+							to={`/marketplace/publication/create/${token_data.token.id}`}
+							style={{
+								textDecoration: 'none',
+								color: '#45FFCA',
+							}}
+						>
+							<CurrencyExchangeIcon sx={{ fontSize: '1.3rem' }} />
+						</Link>
+					</Box>
 				</ListItem>
 			))}
 		</List>

@@ -57,7 +57,9 @@ export const Account = () => {
       })
       .then((data) => {
         const { user } = data;
+
         console.log(data);
+
         if (!user) return;
 
         setIsLoading(false);
