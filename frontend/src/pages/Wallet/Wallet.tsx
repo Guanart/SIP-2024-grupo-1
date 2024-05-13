@@ -61,7 +61,7 @@ export const Wallet = () => {
 
 	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
 	const getColorByTypeId: { [key: number]: string } = {
-		1: 'rgba(8, 175, 48, 0.8)',
+		1: '#45FFCA',
 		2: 'rgba(147, 11, 11, 0.8)',
 	};
 
@@ -94,7 +94,7 @@ export const Wallet = () => {
 					sx={{ mt: '16px', width: '100%', maxWidth: '1450px' }}
 					justifyContent='center'
 				>
-					<Typography variant='h6'>Transacciones</Typography>
+					<Typography variant='h6'>Transactions</Typography>
 					{transactions && transactions?.length > 0 ? (
 						<TableContainer>
 							<Table aria-label='a dense table' size='small'>
@@ -143,6 +143,7 @@ export const Wallet = () => {
 													color: getColorByTypeId[
 														transaction.type_id
 													],
+													fontWeight: 'bold',
 												}}
 											>
 												{
