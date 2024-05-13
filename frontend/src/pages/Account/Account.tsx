@@ -35,11 +35,6 @@ export const Account = () => {
   const [updatedUser, setUpdatedUser] = useState<UpdatedUser | null>(null);
   const [biography, setBiography] = useState<string>("");
 
-  // const CLIENT_ID = "3437331959866275"; // app cuenta real
-  const CLIENT_ID = "1517187722603608"; // app cuenta de prueba
-  const REDIRECT_URI =
-    "https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth";
-
   useEffect(() => {
     if (!isAuthenticated) return;
     if (updatedUser) return;
@@ -265,17 +260,7 @@ export const Account = () => {
           </Container>
         )}
       </Container>
-
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() =>
-          (window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&redirect_uri=${REDIRECT_URI}`)
-        }
-      >
-        Autorizar ventas MercadoPago
-      </Button>
-
+      
       <BasicModal
         title="Edit profile"
         isOpen={isEditModalOpen}

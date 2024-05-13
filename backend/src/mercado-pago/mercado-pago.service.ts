@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MercadoPagoConfig, OAuth, Preference } from 'mercadopago';
 import { CreatePreference } from './create-preference.dto';
 import { PrismaService } from 'src/database/prisma.service';
+import { log } from 'console';
 
 @Injectable()
 export class MercadoPagoService {
@@ -89,7 +90,7 @@ export class MercadoPagoService {
         }
     }
 
-    async authorizeSeller(code: string) {
+    async authorizeSeller(code: string, type: string, id: string) {
         const oauth = new OAuth(this.client);
         try {
             const body = {
@@ -104,44 +105,28 @@ export class MercadoPagoService {
             console.log(result);
             const { access_token, public_key, refresh_token } = result;
 
-            // Persistir los datos en player o wallet
-            // const player = await this.prisma.player.findFirst({
-            //     where: {
-            //         // id: 1,
-            //     },
-            //     select: {
-            //         id: true,
-            //     },
-            // });
-
-            // if (player) {    // Si es un player
-            //     await this.prisma.player.update({
-            //         where: {
-            //             id: 1,
-            //         },
-            //         data: {
-            //             access_token,
-            //             public_key,
-            //             // refresh_token,
-            //         },
-            //     });  
-            // } else {    // Si es un wallet
-            //     await this.prisma.wallet.update({
-            //         where: {
-            //             id: 1,
-            //         },
-            //         data: {
-            //             access_token,
-            //             public_key,
-            //             // refresh_token,
-            //         },
-            //     });
-            // }
-            
+            // Guardar tokens
+            const queryMap = {
+                where: {
+                    id: Number(id),
+                },
+                data: {
+                    access_token,
+                    public_key,
+                    // refresh_token,
+                },
+            }
+            let data;
+            if (type == 'player') {
+                data = await this.prisma.player.update(queryMap);
+            } else if (type == 'wallet') {
+                data = await this.prisma.wallet.update(queryMap);
+            }
+            console.log('Tokens guardados');
+            console.log(data);
         } catch (error) {
             console.error('Error creating preference:', error);
             throw new HttpException('Ha ocurrido un error interno en el servidor', HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 }
