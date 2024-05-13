@@ -27,31 +27,31 @@ export class MercadoPagoService {
     }
 
     async createPreference(items: CreatePreference) {
-        const access_token = 'TEST-1000000000000000-000000000000000-000000000000000000-';
-        // const {access_token} = items.type == 'fundraising' ?
-        //     await this.prisma.player.findFirst({
-        //     where: {
-        //         fundraisings: {
-        //             some: {
-        //                 id: items.id,
-        //             },
-        //         },
-        //     },
-        //     select: {
-        //         access_token: true,
-        //     },
-        // }) : await this.prisma.wallet.findFirst({
-        //     where: {
-        //         marketplace_publication: {
-        //             some: {
-        //                 id: items.id,
-        //             },
-        //         },
-        //     },
-        //     select: {
-        //         access_token: true,
-        //     },
-        // });
+        // const access_token = 'TEST-1000000000000000-000000000000000-000000000000000000-';
+        const {access_token} = items.type == 'fundraising' ?
+            await this.prisma.player.findFirst({
+            where: {
+                fundraisings: {
+                    some: {
+                        id: Number(items.id),
+                    },
+                },
+            },
+            select: {
+                access_token: true,
+            },
+        }) : await this.prisma.wallet.findFirst({
+            where: {
+                marketplace_publication: {
+                    some: {
+                        publication_id: Number(items.id),
+                    },
+                },
+            },
+            select: {
+                access_token: true,
+            },
+        });
 
         if (!access_token) {
             throw new HttpException('access_token not found', HttpStatus.NOT_FOUND);
