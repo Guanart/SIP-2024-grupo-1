@@ -1,5 +1,12 @@
-//import { Button, Stack, TextField } from '@mui/material';
-import { Stack, List, ListItem, ListItemText } from '@mui/material';
+import {
+	Table,
+	TableRow,
+	TableHead,
+	TableCell,
+	TableBody,
+	TableContainer,
+	Stack,
+} from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
@@ -9,10 +16,9 @@ import Typography from '@mui/material/Typography';
 import { Token_wallet, Wallet as WalletType } from '../../types';
 import { Transaction as TransactionType } from '../../types';
 import { useNavigate } from 'react-router-dom';
-// import AddTransactionButton from './AddTransactionButton';
-// <AddTransactionButton walletId={wallet.id} />
 import { TokensList } from '../../components/wallet/TokensList';
 import { Loader } from '../../components';
+import './Wallet.css';
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
@@ -54,15 +60,14 @@ export const Wallet = () => {
 	}, [accessToken, isAuthenticated, user, navigate]);
 
 	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
-	const getColorByTypeId = (typeId: number) => {
-		switch (typeId) {
-			case 1:
-				return 'rgba(8, 175, 48, 0.8)'; // VERDE
-			case 2:
-				return 'rgba(147, 11, 11, 0.8)'; // ROJO
-			default:
-				return 'gray'; // Color gris como predeterminado si no coincide ningún case
-		}
+	const getColorByTypeId: { [key: number]: string } = {
+		1: 'rgba(8, 175, 48, 0.8)',
+		2: 'rgba(147, 11, 11, 0.8)',
+	};
+
+	const transactionsType: { [key: number]: string } = {
+		1: 'IN',
+		2: 'OUT',
 	};
 
 	return (
@@ -86,32 +91,97 @@ export const Wallet = () => {
 			{wallet && (
 				<Stack
 					spacing={2}
-					sx={{ mt: '16px', maxWidth: '500px' }}
+					sx={{ mt: '16px', width: '100%', maxWidth: '1450px' }}
 					justifyContent='center'
 				>
 					<Typography variant='h6'>Transacciones</Typography>
 					{transactions && transactions?.length > 0 ? (
-						<List>
-							{transactions.map((transaction) => (
-								<ListItem
-									key={transaction.id}
-									sx={{
-										backgroundColor: getColorByTypeId(
-											transaction.type_id
-										),
-										borderRadius: '4px', // Establece el radio de las esquinas a 8px
-										padding: '12px', // Agrega algo de padding para separarlo de los bordes
-										marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
-									}}
-								>
-									<ListItemText
-										primary={`Token: ${transaction.token_id}`}
-										secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
-									/>
-								</ListItem>
-							))}
-						</List>
+						<TableContainer>
+							<Table aria-label='a dense table' size='small'>
+								<TableHead>
+									<TableRow>
+										<TableCell align='center'>ID</TableCell>
+										<TableCell align='center'>
+											Token ID
+										</TableCell>
+										<TableCell
+											align='center'
+											sx={{ maxWidth: '80px' }}
+										>
+											Type
+										</TableCell>
+										<TableCell
+											align='center'
+											sx={{ maxWidth: '80px' }}
+										>
+											Date
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{transactions.map((transaction) => (
+										<TableRow
+											key={transaction.id}
+											sx={{
+												'&:last-child td, &:last-child th':
+													{ border: 0 },
+											}}
+										>
+											<TableCell
+												align='center'
+												component='th'
+												scope='row'
+											>
+												{transaction.id}
+											</TableCell>
+											<TableCell align='center'>
+												{transaction.token_id}
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													color: getColorByTypeId[
+														transaction.type_id
+													],
+												}}
+											>
+												{
+													transactionsType[
+														transaction.type_id
+													]
+												}
+											</TableCell>
+											<TableCell align='center'>
+												{new Date(
+													transaction.timestamp
+												).toDateString()}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
 					) : (
+						// <List>
+						// 	{transactions.map((transaction) => (
+						// 		<ListItem
+						// 			key={transaction.id}
+						// 			sx={{
+						// 				backgroundColor: getColorByTypeId(
+						// 					transaction.type_id
+						// 				),
+						// 				borderRadius: '4px', // Establece el radio de las esquinas a 8px
+						// 				padding: '12px', // Agrega algo de padding para separarlo de los bordes
+						// 				marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
+						// 			}}
+						// 		>
+						// 			<ListItemText
+						// 				primary={`Token: ${transaction.token_id}`}
+						// 				secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
+						// 			/>
+						// 		</ListItem>
+						// 	))}
+						// </List>
 						<Typography>There is no transactions yet!</Typography>
 					)}
 				</Stack>

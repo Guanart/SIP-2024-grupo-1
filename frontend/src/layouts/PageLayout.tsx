@@ -19,7 +19,7 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 	return (
 		<>
 			<Header />
-			<main className={`${title ?? 'home'}`}>
+			<main className={`${title?.toLocaleLowerCase() ?? 'home'}`}>
 				{title && (
 					<Typography variant='h5' component='h2'>
 						{title}
