@@ -14,7 +14,6 @@ export class MercadoPagoController {
 
   @Post('webhook')
   async handleWebhook(@Body() notification: any) {
-    console.log(notification);
     return this.mercadoPagoService.handleWebhook(notification);
   }
 

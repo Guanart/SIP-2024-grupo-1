@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MercadoPagoConfig, OAuth, Preference } from 'mercadopago';
 import { CreatePreference } from './create-preference.dto';
 import { PrismaService } from 'src/database/prisma.service';
-// import axios from 'axios';
 
 @Injectable()
 export class MercadoPagoService {
@@ -15,11 +14,8 @@ export class MercadoPagoService {
     }
 
     async handleWebhook(notification: any) {
-        // return {
-        //     payment: notification.payment_id,
-        //     status: notification.status,
-        //     merchantOrder: notification.merchant_order_id
-        // };
+        console.log(notification);
+        return notification;
     }
 
     returnFeedback(params: any) {
@@ -27,7 +23,7 @@ export class MercadoPagoService {
     }
 
     async createPreference(items: CreatePreference) {
-        // const access_token = 'TEST-1000000000000000-000000000000000-000000000000000000-';
+        // Buscar el access_token del player o wallet
         const {access_token} = items.type == 'fundraising' ?
             await this.prisma.player.findFirst({
             where: {
@@ -57,7 +53,8 @@ export class MercadoPagoService {
             throw new HttpException('access_token not found', HttpStatus.NOT_FOUND);
         }
 
-        const config = new MercadoPagoConfig({ accessToken: access_token }); // obtenido de app sandbox
+        // Creación del a Preference
+        const config = new MercadoPagoConfig({ accessToken: access_token });
         const preference = new Preference(config);
 
         try {
@@ -93,8 +90,6 @@ export class MercadoPagoService {
     }
 
     async authorizeSeller(code: string) {
-        // Probar este objeto
-        console.log(code);
         const oauth = new OAuth(this.client);
         try {
             const body = {
@@ -108,14 +103,41 @@ export class MercadoPagoService {
             const result = await oauth.create({ body: body });
             console.log(result);
             const { access_token, public_key, refresh_token } = result;
-            // player.access_token = access_token;
-            // player.public_key = public_key;
-            // await player.save();
-            // Persist access_token and public_key in the Player model
-            // player.access_token = access_token;
-            // player.public_key = public_key;
-            // await player.save();
-            return null;
+
+            // Persistir los datos en player o wallet
+            // const player = await this.prisma.player.findFirst({
+            //     where: {
+            //         // id: 1,
+            //     },
+            //     select: {
+            //         id: true,
+            //     },
+            // });
+
+            // if (player) {    // Si es un player
+            //     await this.prisma.player.update({
+            //         where: {
+            //             id: 1,
+            //         },
+            //         data: {
+            //             access_token,
+            //             public_key,
+            //             // refresh_token,
+            //         },
+            //     });  
+            // } else {    // Si es un wallet
+            //     await this.prisma.wallet.update({
+            //         where: {
+            //             id: 1,
+            //         },
+            //         data: {
+            //             access_token,
+            //             public_key,
+            //             // refresh_token,
+            //         },
+            //     });
+            // }
+            
         } catch (error) {
             console.error('Error creating preference:', error);
             throw new HttpException('Ha ocurrido un error interno en el servidor', HttpStatus.INTERNAL_SERVER_ERROR);
