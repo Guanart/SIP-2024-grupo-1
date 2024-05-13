@@ -84,7 +84,7 @@ time.sleep(2)  # Esto es para asegurarme que la página
 token_price_select = driver.find_element(
     By.XPATH, '//*[@id="token-price-select"]').click()
 token_price_select_option = driver.find_element(
-    By.XPATH, '//*[@data-value="12.5"]').click()
+    By.XPATH, '//*[@id=":r9:"]/li[1]').click()
 
 
 update_fundraising_button = driver.find_element(
