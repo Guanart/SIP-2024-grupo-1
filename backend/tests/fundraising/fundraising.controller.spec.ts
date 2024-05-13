@@ -86,7 +86,7 @@ describe('UserController', () => {
   describe('update', () => {
     it('should update an existing fundraising', async () => {
       const updatedFundraising = {
-        goal_amount: 50000,
+        goal_amount: 25000,
         initial_price: 12.5,
       };
 
@@ -102,7 +102,7 @@ describe('UserController', () => {
         .spyOn(fundraisingService, 'updateFundraising')
         .mockResolvedValueOnce({
           id: 1,
-          goal_amount: 50000,
+          goal_amount: 25000,
           collection: { current_price: 12.5 },
         } as Fundraising);
 
@@ -116,7 +116,7 @@ describe('UserController', () => {
           message: `Fundraising 1 updated`,
           updatedFundraising: {
             id: 1,
-            goal_amount: 50000,
+            goal_amount: 25000,
             collection: { current_price: 12.5 },
           },
           fundraising: {

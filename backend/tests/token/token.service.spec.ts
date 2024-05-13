@@ -10,7 +10,7 @@ jest.mock('../../src/database/prisma.service', () => ({
   })),
 }));
 
-describe('CollectionService', () => {
+describe('TokenService', () => {
   let tokenService: TokenService;
   let prisma: PrismaService;
 

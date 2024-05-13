@@ -1,4 +1,5 @@
 import { UserService } from '../../src/user/user.service';
+import { WalletService } from '../../src/wallet/wallet.service';
 import { PrismaService } from '../../src/database/prisma.service';
 
 // Mock de PrismaService para simular su comportamiento
@@ -13,13 +14,21 @@ jest.mock('../../src/database/prisma.service', () => ({
   })),
 }));
 
+jest.mock('../../src/wallet/wallet.service.ts', () => ({
+  WalletService: jest.fn().mockImplementation(() => ({
+    create: jest.fn(),
+  })),
+}));
+
 describe('UserService', () => {
   let userService: UserService;
   let prisma: PrismaService;
+  let walletService: WalletService;
 
   beforeEach(() => {
     prisma = new PrismaService();
-    userService = new UserService(prisma);
+    walletService = new WalletService(prisma);
+    userService = new UserService(prisma, walletService);
   });
 
   afterEach(() => {
@@ -35,7 +44,20 @@ describe('UserService', () => {
         avatar: 'http://your-avatar.com',
       };
 
-      await userService.create(newUser);
+      jest.spyOn(prisma.user, 'create').mockResolvedValue({
+        id: 123,
+        auth0_id: 'auth0|123456',
+        username: 'username',
+        email: 'email@test.com',
+        avatar: 'http://your-avatar.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        active: true,
+      });
+
+      const user = await userService.create(newUser);
+
+      expect(walletService.create).toHaveBeenCalledWith(user.id);
 
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: newUser,

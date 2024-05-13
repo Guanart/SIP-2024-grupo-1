@@ -6,8 +6,6 @@ jest.mock('../../src/database/prisma.service', () => ({
     wallet: {
       create: jest.fn(),
       findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
     },
   })),
 }));
@@ -29,11 +27,9 @@ describe('WalletService', () => {
     it('should create a new wallet for the user', async () => {
       const newWallet = {
         user_id: 1,
-        cbu: 'my_cbu3',
-        paypal_id: 'my_paypal_id3',
       };
 
-      await walletService.create(newWallet);
+      await walletService.create(newWallet.user_id);
 
       expect(prisma.wallet.create).toHaveBeenCalledWith({
         data: newWallet,
@@ -50,27 +46,6 @@ describe('WalletService', () => {
       expect(prisma.wallet.findUnique).toHaveBeenCalledWith({
         where: { id: wallet_id },
         include: expect.any(Object),
-      });
-    });
-  });
-
-  describe('update', () => {
-    it('should update a wallet', async () => {
-      const updatedWallet = {
-        wallet_id: 3,
-        cbu: 'my_cbu3',
-        paypal_id: 'my_paypal_id3',
-      };
-
-      const { wallet_id, cbu, paypal_id } = updatedWallet;
-
-      await walletService.update(updatedWallet);
-
-      expect(prisma.wallet.update).toHaveBeenCalledWith({
-        where: {
-          id: wallet_id,
-        },
-        data: { cbu, paypal_id },
       });
     });
   });
