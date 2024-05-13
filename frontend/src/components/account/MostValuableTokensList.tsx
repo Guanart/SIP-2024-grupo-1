@@ -1,5 +1,6 @@
 import {
 	Avatar,
+	Box,
 	List,
 	ListItem,
 	ListItemAvatar,
@@ -12,7 +13,7 @@ import { useAccessToken } from '../../hooks';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
-import { DoubleArrowIcon } from '../../global/icons';
+import { CurrencyExchangeIcon, DoubleArrowIcon } from '../../global/icons';
 
 export const MostValuableTokensList = () => {
 	const [tokens, setTokens] = useState<Token[]>([]);
@@ -45,12 +46,17 @@ export const MostValuableTokensList = () => {
 
 						setTokens(mostValuableTokens);
 					} else {
+						console.log('error1');
 						navigate('/error/500');
 					}
 				} else {
+					console.log('error2');
+
 					navigate('/error/500');
 				}
 			} catch (error) {
+				console.log('error3');
+				console.log(error);
 				navigate('/error/500');
 			}
 		}
@@ -111,15 +117,32 @@ export const MostValuableTokensList = () => {
 							marginLeft: '2px',
 						}}
 					/>
-					<Link
-						to={`/fundraising/${token.collection.fundraising.id}`}
-						style={{
-							textDecoration: 'none',
-							color: '#45FFCA',
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '4px',
 						}}
 					>
-						<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
-					</Link>
+						<Link
+							to={`/fundraising/${token.id}`}
+							style={{
+								textDecoration: 'none',
+								color: '#45FFCA',
+							}}
+						>
+							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
+						</Link>
+						<Link
+							to={`/marketplace/publication/create/${token.id}`}
+							style={{
+								textDecoration: 'none',
+								color: '#45FFCA',
+							}}
+						>
+							<CurrencyExchangeIcon sx={{ fontSize: '1.3rem' }} />
+						</Link>
+					</Box>
 				</ListItem>
 			))}
 			<Link

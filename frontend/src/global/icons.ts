@@ -8,6 +8,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import MenuIcon from '@mui/icons-material/Menu';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 
 export {
 	HomeIcon,
@@ -20,4 +21,5 @@ export {
 	TrendingUpIcon,
 	InfoIcon,
 	KeyboardBackspaceIcon,
+	CurrencyExchangeIcon,
 };

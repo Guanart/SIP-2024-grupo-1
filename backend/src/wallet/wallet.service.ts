@@ -53,6 +53,9 @@ export class WalletService {
         },
       },
     });
+
+    console.log(wallet);
+
     return wallet ? Wallet.fromObject(wallet) : null;
   }
 }
