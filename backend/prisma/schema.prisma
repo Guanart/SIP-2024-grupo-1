@@ -53,9 +53,11 @@ model Wallet {
   user_id                 Int                       @unique
   user                    User                      @relation(fields: [user_id], references: [id])
   // cbu          String         @unique
-  // paypal_id    String         @unique
+  // paypal_id    String?         @unique
   createdAt               DateTime                  @default(now())
   updatedAt               DateTime                  @updatedAt
+  access_token String?  @unique
+  public_key   String?  @unique
   transactions            Transaction[]
   token_wallet            Token_wallet[]
   marketplace_publication Marketplace_publication[]

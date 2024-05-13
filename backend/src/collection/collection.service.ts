@@ -58,9 +58,8 @@ export class CollectionService {
       where: { fundraising_id: fundraising.id },
     });
 
-    /* Recalcula un proporcional para determinar que cantidad de tokens representa el monto objetivo alcanzado al momento. En caso de cambio de precio
-     Es decir, si se vendieron 10 tokens a U$D 25, luego de la actualización (nuevo precio = U$D 12.5) esos U$D 250 representan 20 tokens. */
-
+    // TODO: Recalcular un proporcional para determinar que cantidad de tokens representa el monto objetivo alcanzado al momento. En caso de cambio de precio
+    // Es decir, si se vendieron 10 tokens a U$D 25, luego de la actualización (nuevo precio = U$D 12.5) esos U$D 250 representan 20 tokens.
     const compensationRatio = collection.current_price / new_initial_price; // la proporción en este caso es (25 / 12.5) = 2
 
     const ownedTokens = collection.initial_amount - collection.amount_left;
@@ -73,8 +72,20 @@ export class CollectionService {
     const amountOfTokensToBeEmited =
       recalculatedAmount - collection.initial_amount;
 
+    console.log('amount should be 1000:', amountOfTokensToBeEmited);
+    console.log('recalculated amount should be 2000: ', recalculatedAmount);
+    console.log(
+      'recalculated amount left should be 1980: ',
+      recalculatedAmountLeft,
+    );
+
     const recalculated_token_prize_percentage =
       fundraising.prize_percentage / 100 / recalculatedAmount;
+
+    console.log(
+      'recalculated token prize percentage should be 0.0002: ',
+      recalculated_token_prize_percentage,
+    );
 
     collection = await this.prisma.collection.update({
       where: {

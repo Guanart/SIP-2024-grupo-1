@@ -44,7 +44,7 @@ const privateRoutes = [
 		element: <Fundraisings />,
 	},
 	{
-		path: `/fundraising/:fundraising_id`,
+		path: `/fundraising/:id`,
 		element: <Fundraising />,
 	},
 	{
