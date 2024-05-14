@@ -47,6 +47,8 @@ export class MarketplacePublicationService {
       },
     });
 
+    console.log(publication);
+
     return publication ? MarketplacePublication.fromObject(publication) : null;
   }
 

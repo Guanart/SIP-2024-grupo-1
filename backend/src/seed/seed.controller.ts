@@ -54,7 +54,6 @@ export class SeedController {
         },
       });
 
-      
       const rank1 = await this.prisma.rank.create({
         data: {
           description: 'Rango S',
@@ -155,6 +154,38 @@ export class SeedController {
             type_id: 1,
           },
         });
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[0].id,
+          price: 10.0,
+          out_wallet_id: wallet2.id,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[1].id,
+          price: 15.0,
+          out_wallet_id: wallet2.id,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[2].id,
+          price: 20.0,
+          out_wallet_id: wallet2.id,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[3].id,
+          price: 25.0,
+          out_wallet_id: wallet2.id,
+        },
       });
 
       return 'Database loaded successfully with test data';

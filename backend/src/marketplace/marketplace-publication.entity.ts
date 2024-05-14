@@ -2,7 +2,7 @@ import { Wallet } from 'src/wallet/wallet.entity';
 import { Token } from 'src/token/token.entity';
 
 export class MarketplacePublication {
-  id: number;
+  publication_id: number;
   price: number;
   active: boolean;
   date: Date;
@@ -13,7 +13,7 @@ export class MarketplacePublication {
   token?: Token;
 
   public constructor(
-    id: number,
+    publication_id: number,
     price: number,
     active: boolean,
     token_id: number,
@@ -22,7 +22,7 @@ export class MarketplacePublication {
     in_wallet?: Wallet,
     token?: Token,
   ) {
-    this.id = id;
+    this.publication_id = publication_id;
     this.price = price;
     this.active = active;
     this.token_id = token_id;
@@ -36,7 +36,7 @@ export class MarketplacePublication {
     [key: string]: unknown;
   }): MarketplacePublication {
     const {
-      id,
+      publication_id,
       price,
       active,
       token_id,
@@ -46,13 +46,13 @@ export class MarketplacePublication {
       token,
     } = object;
 
-    if (!id) throw 'ID property is required';
+    if (!publication_id) throw 'Publication ID property is required';
     if (!price) throw 'Price property is required';
     if (!token_id) throw 'Token ID property is required';
     if (!out_wallet_id) throw 'Out wallet ID  property is required';
 
     const marketplacePublication = new MarketplacePublication(
-      id as number,
+      publication_id as number,
       price as number,
       active as boolean,
       token_id as number,
