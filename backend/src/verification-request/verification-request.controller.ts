@@ -23,15 +23,21 @@ export class VerificationRequestController {
     // @UseGuards(AuthGuard, PermissionsGuard)
     // @SetMetadata('permissions', ['create:Users'])
     @Post()
-    async create(@Body() newVerificationRequest: CreateVerificationRequestDto): Promise<string> {
+    async create(
+      @Body() newVerificationRequest: CreateVerificationRequestDto,
+    ): Promise<string> {
       try {
-        const verificationRequest: VerificationRequest = await this.verificationRequestService.create(newVerificationRequest);
+        const verificationRequest =
+          await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
   
+        console.log(verificationRequest);
         if (!verificationRequest) {
           throw new BadRequestException();
         }
+  
         return JSON.stringify({
-          message: `Verification Request ${newVerificationRequest.user_id} created`,
+          message: `Verification Request ${verificationRequest.id} created`,
+          verificationRequest,
         });
       } catch (exception) {
         if (exception instanceof BadRequestException) {
@@ -45,10 +51,12 @@ export class VerificationRequestController {
     //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
     // @UseGuards(AuthGuard, PermissionsGuard)
     // @SetMetadata('permissions', ['read:users'])
-    @Get('/:auth0_id')
+    
+    /*
+    @Get("user-id")
     async findOne(
-      @Param('wallet_id') user_id: number,
-      @Param('token_id') createdAt: Date, 
+      @Param('user_id') user_id: number,
+      @Param('createdAt') createdAt: Date, 
     ): Promise<string> {
       try {
         const verificationRequest: VerificationRequest = await this.verificationRequestService.findOne(user_id, createdAt);
@@ -69,10 +77,21 @@ export class VerificationRequestController {
         }
       }
     }
+    */
+    
+
+    @Get()
+    async getAllRequests() {
+      const verificationRequest = await this.verificationRequestService.getAllRequests();
+      return JSON.stringify({
+        verificationRequest
+      });
+    }
   
     //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
     // @UseGuards(AuthGuard, PermissionsGuard)
     // @SetMetadata('permissions', ['update:users'])
+    /*
     @Put('/')
     async update(@Body() updatedVerificationRequest: UpdateVerificationRequestDto): Promise<string> {
       try {
@@ -107,4 +126,5 @@ export class VerificationRequestController {
         }
       }
     }
+    */
   }
