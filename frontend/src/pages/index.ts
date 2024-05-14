@@ -1,5 +1,5 @@
 export * from './Home/Home';
-export * from './About';
+export * from './Help';
 export * from './Trending';
 export * from './Fundraisings/Fundraisings';
 export * from './Fundraisings/Fundraising';
@@ -12,5 +12,6 @@ export * from './Marketplace/CreatePublication';
 export * from './Marketplace/MarketplacePublication';
 export * from './Account/Account';
 export * from './Login/Login';
+export * from './TermsConditions';
 export * from './SendPlayerRequest/RequestForm';
 export * from './SendPlayerRequest/RequestSuccess';

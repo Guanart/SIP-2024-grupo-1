@@ -4,7 +4,7 @@ import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import './global/index.css';
 import {
-	About,
+	Help,
 	Home,
 	Marketplace,
 	Trending,
@@ -20,6 +20,7 @@ import {
 	RequestSuccess,
 	CreatePublication,
 	MarketplacePublication,
+	TermsConditions,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -69,7 +70,7 @@ const privateRoutes = [
 	{
 		path: `/requestSuccess`,
 		element: <RequestSuccess />,
-	}
+	},
 ];
 
 const publicRoutes = [
@@ -78,8 +79,12 @@ const publicRoutes = [
 		element: <Home />,
 	},
 	{
-		path: '/about',
-		element: <About />,
+		path: '/help',
+		element: <Help />,
+	},
+	{
+		path: '/terms',
+		element: <TermsConditions />,
 	},
 	{
 		path: '/login',

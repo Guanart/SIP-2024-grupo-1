@@ -33,8 +33,8 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 	const items = [
 		{ text: 'Home', href: '/', icon: <HomeIcon />, isProtected: false },
 		{
-			text: 'About',
-			href: '/about',
+			text: 'Help',
+			href: '/help',
 			icon: <InfoIcon />,
 			isProtected: false,
 		},

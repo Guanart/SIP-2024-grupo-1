@@ -24,7 +24,7 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 					title?.toLocaleLowerCase().replace(' ', '_') ?? 'home'
 				}`}
 			>
-				{title && (
+				{title?.toLocaleLowerCase() !== 'help' && (
 					<Typography variant='h5' component='h2'>
 						{title}
 					</Typography>
