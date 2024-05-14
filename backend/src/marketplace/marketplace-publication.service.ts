@@ -19,7 +19,20 @@ export class MarketplacePublicationService {
         active: true,
       },
       include: {
-        token: true,
+        token: {
+          include: {
+            collection: {
+              include: {
+                fundraising: {
+                  include: {
+                    player: { include: { user: true, game: true } },
+                    event: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         out_wallet: {
           include: { user: true },
         },
@@ -40,7 +53,20 @@ export class MarketplacePublicationService {
         active: true,
       },
       include: {
-        token: true,
+        token: {
+          include: {
+            collection: {
+              include: {
+                fundraising: {
+                  include: {
+                    player: { include: { user: true, game: true } },
+                    event: true,
+                  },
+                },
+              },
+            },
+          },
+        },
         out_wallet: {
           include: { user: true },
         },

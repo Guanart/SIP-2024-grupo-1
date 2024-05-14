@@ -15,6 +15,7 @@ export class MarketplacePublication {
   public constructor(
     publication_id: number,
     price: number,
+    date: Date,
     active: boolean,
     token_id: number,
     out_wallet_id: number,
@@ -25,6 +26,7 @@ export class MarketplacePublication {
     this.publication_id = publication_id;
     this.price = price;
     this.active = active;
+    this.date = date;
     this.token_id = token_id;
     this.out_wallet_id = out_wallet_id;
     this.out_wallet = out_wallet;
@@ -38,6 +40,7 @@ export class MarketplacePublication {
     const {
       publication_id,
       price,
+      date,
       active,
       token_id,
       out_wallet_id,
@@ -54,6 +57,7 @@ export class MarketplacePublication {
     const marketplacePublication = new MarketplacePublication(
       publication_id as number,
       price as number,
+      date as Date,
       active as boolean,
       token_id as number,
       out_wallet_id as number,

@@ -28,6 +28,15 @@ export class SeedController {
         },
       });
 
+      const user3 = await this.prisma.user.create({
+        data: {
+          email: 'juanperez@lot.com',
+          auth0_id: 'auth0|66436a7b4d1c357206d6c3c4',
+          username: 'Juan Perez',
+          avatar: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
+        },
+      });
+
       await this.prisma.wallet.create({
         data: {
           user_id: user.id,
@@ -37,6 +46,12 @@ export class SeedController {
       const wallet2 = await this.prisma.wallet.create({
         data: {
           user_id: user2.id,
+        },
+      });
+
+      const wallet3 = await this.prisma.wallet.create({
+        data: {
+          user_id: user3.id,
         },
       });
 
@@ -137,23 +152,46 @@ export class SeedController {
         take: 5,
       });
 
-      tokens.forEach(async (token) => {
+      // tokens.forEach(async (token) => {
+      //   await this.prisma.token_wallet.create({
+      //     data: {
+      //       token_id: token.id,
+      //       wallet_id: wallet2.id,
+      //     },
+      //   });
+      // });
+
+      for (let i = 0; i < 4; i++) {
+        const token = tokens[i];
         await this.prisma.token_wallet.create({
           data: {
             token_id: token.id,
             wallet_id: wallet2.id,
           },
         });
-      });
 
-      tokens.forEach(async (token) => {
-        await this.prisma.transaction.createMany({
+        await this.prisma.transaction.create({
           data: {
             wallet_id: wallet2.id,
             token_id: token.id,
             type_id: 1,
           },
         });
+      }
+
+      await this.prisma.token_wallet.create({
+        data: {
+          token_id: tokens[4].id,
+          wallet_id: wallet3.id,
+        },
+      });
+
+      await this.prisma.transaction.create({
+        data: {
+          token_id: tokens[4].id,
+          wallet_id: wallet3.id,
+          type_id: 1,
+        },
       });
 
       await this.prisma.marketplace_publication.create({
@@ -185,6 +223,14 @@ export class SeedController {
           token_id: tokens[3].id,
           price: 25.0,
           out_wallet_id: wallet2.id,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[4].id,
+          price: 50.0,
+          out_wallet_id: wallet3.id,
         },
       });
 
