@@ -8,6 +8,9 @@ import { fetchWithAuth } from '../../../utils/fetchWithAuth';
 import { useAccessToken } from '../../../hooks';
 import { Link } from 'react-router-dom';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export function Header() {
 	const { isAuthenticated, user } = useAuth0();
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -21,7 +24,7 @@ export function Header() {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user.sub}`,
 				});
 
 				const data = await response.json();
