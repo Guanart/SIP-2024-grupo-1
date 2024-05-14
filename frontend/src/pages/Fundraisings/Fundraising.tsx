@@ -280,7 +280,7 @@ export const Fundraising = () => {
 										</Typography>
 									</Typography>
 									<Typography component='div' variant='body2'>
-										Reward per token
+										Revenue per token
 										<Typography
 											color='secondary'
 											component='div'
@@ -325,9 +325,6 @@ export const Fundraising = () => {
 									variant='contained'
 									color='secondary'
 									style={{ marginTop: '8px' }}
-									onClick={() =>
-										console.log('Updating fundraising...')
-									}
 									sx={{
 										maxWidth: '250px',
 										display: 'block',

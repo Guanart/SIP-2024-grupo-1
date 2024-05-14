@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { MarketplacePublication } from '../../types';
 import { Loader, MarketplaceCard } from '../../components';
+import './Marketplace.css';
 
 export const Marketplace = () => {
 	const { accessToken } = useAccessToken();
@@ -74,7 +75,7 @@ export const Marketplace = () => {
 					<Stack
 						spacing={1}
 						mt={2}
-						direction={{ xs: 'column-reverse', md: 'row' }}
+						direction={{ xs: 'column', md: 'row' }}
 					>
 						<TextField
 							autoComplete='off'
@@ -103,6 +104,7 @@ export const Marketplace = () => {
 								setMin('');
 								setMax('');
 							}}
+							sx={{ maxWidth: '200px' }}
 						>
 							Clear
 						</Button>

@@ -106,7 +106,7 @@ export const MarketplaceCard: FunctionComponent<MarketplaceCardProps> = ({
 					</Typography>
 				</Typography>
 				<Typography component='div'>
-					Reward
+					Revenue
 					<Typography
 						color='secondary'
 						component='div'
@@ -142,20 +142,30 @@ export const MarketplaceCard: FunctionComponent<MarketplaceCardProps> = ({
 				<Link
 					to={`/marketplace/publication/${publication.publication_id}`}
 				>
-					<Button
-						disabled={
-							user?.sub === publication.out_wallet.user?.auth0_id
-						}
-						variant='contained'
-						color='secondary'
-						sx={{
-							position: 'absolute',
-							right: '16px',
-							bottom: '16px',
-						}}
-					>
-						Buy now
-					</Button>
+					{user?.sub !== publication.out_wallet.user?.auth0_id ? (
+						<Button
+							variant='contained'
+							color='secondary'
+							sx={{
+								position: 'absolute',
+								right: '16px',
+								bottom: '16px',
+							}}
+						>
+							Buy now
+						</Button>
+					) : (
+						<Button
+							color='secondary'
+							sx={{
+								position: 'absolute',
+								right: '16px',
+								bottom: '16px',
+							}}
+						>
+							View details
+						</Button>
+					)}
 				</Link>
 			</CardActions>
 		</Card>
