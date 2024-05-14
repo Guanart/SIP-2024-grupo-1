@@ -13,3 +13,4 @@ export * from './Marketplace/MarketplacePublication';
 export * from './Account/Account';
 export * from './Login/Login';
 export * from './SendPlayerRequest/RequestForm';
+export * from './SendPlayerRequest/RequestSuccess';

@@ -16,12 +16,11 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import './RequestForm.css';
+import { User } from '../../types';
 import { Game } from '../../types';
 import { Rank } from '../../types';
 
 export const RequestForm = () => {
-    const [userId, setUserId] = useState<string>('');
-
     //const [gameId, setGameId] = useState<string>('');
     //const [rankId, setRankId] = useState('');
 
@@ -32,6 +31,9 @@ export const RequestForm = () => {
     const [selectedRank, setSelectedRank] = useState<Rank | null>(ranks.length > 0 ? ranks[0] : null);
 
     const { user, isAuthenticated } = useAuth0();
+	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [userId, setUserId] = useState<string>('');
+
 	const { accessToken } = useAccessToken();
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
 	const navigate = useNavigate();
@@ -39,6 +41,22 @@ export const RequestForm = () => {
 	const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
 
 	useEffect(() => {
+		async function getUser() {
+			try {
+				let response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `http://localhost:3000/user/${user?.sub}`,
+				});
+
+				if (response.ok) {
+					const { user } = await response.json();
+					setCurrentUser(user);
+				}
+			} catch (error) {
+			navigate(`/error/500`);
+			}
+		}
 		async function getGames() {
 			try {
 				const response = await fetchWithAuth({
@@ -72,7 +90,8 @@ export const RequestForm = () => {
         
 		if (!user) return;
 		if (!accessToken) return;
-        setUserId(user.id);
+        //setUserId(currentUser.id);
+		getUser();
 		getGames();
 		getRanks();
 	}, [accessToken, isAuthenticated, user]);
@@ -99,37 +118,36 @@ export const RequestForm = () => {
     
         try {
             // Realiza la solicitud POST al backend
-
-            const response = await fetchWithAuth({
-                isAuthenticated: true,
-                accessToken,
-                url:  `http://localhost:3000/verification-request`, // Reemplaza con la URL de tu API
-                method: 'POST',
-                data: {  
-                    user_id: userId,
-                    game: selectedGame,
-                    rank: selectedRank,
-                    filepath: "path-to-file",  //Deberia enviar el archivo, y manejarlo en el back
-                },
-            });
-            if (response.ok) {
-                // Manejar respuesta de éxito
-                console.log('Formulario enviado con éxito.');
-                // Redireccionar a otra página si es necesario
-                navigate('/success');
-            } else {
-                // Manejar errores
-                console.error('Error al enviar el formulario:', response.statusText);
-                navigate('/error/500');
-            }
-        } catch (error) {
-            console.error('Error al enviar la solicitud:', error);
-            navigate('/error/500');
-        }
+			//const date = new Date();
+			const newVerificationRequest = {
+				user_id: currentUser?.id,
+				game_id: selectedGame?.id,
+				rank_id: selectedRank?.id,
+				filepath:"path-to-file",
+				//createdAt: date,
+				//status: RequestStatus.PENDING,
+			};
+			const response = await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://localhost:3000/verification-request`,
+				method: 'POST',
+				data: newVerificationRequest,
+			});
+	
+			if (response.ok) {
+				const { message, newVerificationRequest } = await response.json();
+				console.log(message);
+				navigate(`/requestSuccess`);
+			}
+		} catch (error) {
+			console.log(error);
+			navigate(`/error`);
+		}
     };
 
 	return (
-		<PageLayout title='requestForm '>
+		<PageLayout title='requestform'>
 			<Box className='requestFormBackground'>
 				<Box className='form-container'>
 					<Typography

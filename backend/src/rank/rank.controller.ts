@@ -24,7 +24,7 @@ export class RankController {
   // @SetMetadata('permissions', ['read:tokens'])
   @Get()
   async getAllRanks() {
-    const ranks = await this.rankService.getAllGames();
+    const ranks = await this.rankService.getAllRanks();
     return JSON.stringify({
       ranks,
     });

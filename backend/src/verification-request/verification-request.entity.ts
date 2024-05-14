@@ -7,7 +7,7 @@ export class VerificationRequest {
   user?: User;
   game?: Game;
   status: RequestStatus;
-  rank: string;
+  rank?: string;
   filepath: string;
   createdAt: Date;
 
@@ -32,10 +32,7 @@ export class VerificationRequest {
     const {id,user,game,status,rank,filepath,createdAt} = object;
 
     if (!id) throw 'ID property is required';
-    if (!user) throw 'User property is required';
-    if (!game) throw 'Game property is required';
     if (!status) throw 'Status property is required';
-    if (!rank) throw 'Rank property is required';
     if (!filepath) throw 'status property is required';
     if (!createdAt) throw 'status property is required';
 
