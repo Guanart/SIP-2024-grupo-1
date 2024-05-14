@@ -14,6 +14,7 @@ import { TokenModule } from './token/token.module';
 import { GameModule } from './game/game.module';
 import { RankModule } from './rank/rank.module';
 import { VerificationRequestModule } from './verification-request/verification-request.module';
+import { MarketplacePublicationModule } from './marketplace/marketplace-publication.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { VerificationRequestModule } from './verification-request/verification-r
     GameModule,
     RankModule,
     VerificationRequestModule,
+    MarketplacePublicationModule,
   ],
 })
 export class AppModule {}
