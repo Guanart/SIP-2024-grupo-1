@@ -17,8 +17,10 @@ import { Fundraising as FundraisingType } from '../../types';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyboardBackspaceIcon } from '../../global/icons';
 
-const REACT_APP_API_URL =
-	'http://localhost:3000/mercado-pago/create-preference';
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
+const REACT_APP_API_URL = `http://${HOST}:${PORT}/mercado-pago/create-preference`;
 const REACT_APP_MP_PUBLIC_KEY = 'APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b'; // vendedor 3 en app sandbox
 const REACT_APP_PREFERENCE_TYPE = 'fundraising';
 
@@ -37,7 +39,7 @@ export const Fundraising = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/fundraising/${id}`,
+					url: `http://${HOST}:${PORT}/fundraising/${id}`,
 				});
 
 				if (response.ok) {

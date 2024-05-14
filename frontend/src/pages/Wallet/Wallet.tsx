@@ -21,168 +21,192 @@ import { TokensList } from '../../components/wallet/TokensList';
 import { Loader } from '../../components';
 import './Wallet.css';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const Wallet = () => {
-  const [wallet, setWallet] = useState<WalletType | null>(null);
-  const [transactions, setTransactions] = useState<TransactionType[] | null>(
-    null
-  );
-  const [tokens, setTokens] = useState<Token_wallet[]>([]);
-  const { accessToken } = useAccessToken();
-  const { user, isAuthenticated } = useAuth0();
-  const navigate = useNavigate();
+	const [wallet, setWallet] = useState<WalletType | null>(null);
+	const [transactions, setTransactions] = useState<TransactionType[] | null>(
+		null
+	);
+	const [tokens, setTokens] = useState<Token_wallet[]>([]);
+	const { accessToken } = useAccessToken();
+	const { user, isAuthenticated } = useAuth0();
+	const navigate = useNavigate();
 
-  useEffect(() => {
-    async function getUserWallet(user: User) {
-      try {
-        const response = await fetchWithAuth({
-          isAuthenticated,
-          accessToken,
-          url: `http://localhost:3000/user/${user?.sub}`,
-        });
+	useEffect(() => {
+		async function getUserWallet(user: User) {
+			try {
+				const response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `http://${HOST}:${PORT}:3000/user/${user?.sub}`,
+				});
 
-        if (response.ok) {
-          const { user } = await response.json();
+				if (response.ok) {
+					const { user } = await response.json();
 
-          if (user.wallet) {
-            setTokens(user.wallet.token_wallet);
-            setWallet(user.wallet);
-            setTransactions(user.wallet.transactions);
-          }
-        }
-      } catch (error) {
-        navigate("/error/500");
-      }
-    }
+					if (user.wallet) {
+						setTokens(user.wallet.token_wallet);
+						setWallet(user.wallet);
+						setTransactions(user.wallet.transactions);
+					}
+				}
+			} catch (error) {
+				navigate('/error/500');
+			}
+		}
 
-    if (!user) return;
-    if (!accessToken) return;
+		if (!user) return;
+		if (!accessToken) return;
 
-    getUserWallet(user);
-  }, [accessToken, isAuthenticated, user, navigate]);
+		getUserWallet(user);
+	}, [accessToken, isAuthenticated, user, navigate]);
 
-  // ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
-  const getColorByTypeId: { [key: number]: string } = {
-    1: "#45FFCA",
-    2: "rgba(147, 11, 11, 0.8)",
-  };
+	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
+	const getColorByTypeId: { [key: number]: string } = {
+		1: '#45FFCA',
+		2: 'rgba(147, 11, 11, 0.8)',
+	};
 
-  const transactionsType: { [key: number]: string } = {
-    1: "IN",
-    2: "OUT",
-  };
+	const transactionsType: { [key: number]: string } = {
+		1: 'IN',
+		2: 'OUT',
+	};
 
-  // const CLIENT_ID = "3437331959866275"; // app cuenta real
-  const CLIENT_ID = "1517187722603608"; // app cuenta de prueba
-  const REDIRECT_URI =
-    "https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth";
+	// const CLIENT_ID = "3437331959866275"; // app cuenta real
+	const CLIENT_ID = '1517187722603608'; // app cuenta de prueba
+	const REDIRECT_URI =
+		'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
 
-  return (
-    <PageLayout title="Wallet">
-      {!wallet && <Loader />}
-      {wallet && (
-        <Button
-          variant="contained"
-          color="primary"
-          // El state es inseguro
-          onClick={() =>
-            (window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=wallet-${wallet.id}&redirect_uri=${REDIRECT_URI}`)
-          }
-        >
-          Autorizar ventas desde MercadoPago
-        </Button>
-      )}
-      {wallet && (
-        <Stack
-          spacing={2}
-          sx={{
-            mt: "16px",
-            width: "100%",
-          }}
-          justifyContent="center"
-        >
-          <Typography variant="h6">Tokens</Typography>
-          <TokensList tokens={tokens} />
-        </Stack>
-      )}
+	return (
+		<PageLayout title='Wallet'>
+			{!wallet && <Loader />}
+			{wallet && (
+				<Button
+					variant='contained'
+					color='primary'
+					// El state es inseguro
+					onClick={() =>
+						(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=wallet-${wallet.id}&redirect_uri=${REDIRECT_URI}`)
+					}
+				>
+					Autorizar ventas desde MercadoPago
+				</Button>
+			)}
+			{wallet && (
+				<Stack
+					spacing={2}
+					sx={{
+						mt: '16px',
+						width: '100%',
+					}}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Tokens</Typography>
+					<TokensList tokens={tokens} />
+				</Stack>
+			)}
 
-      {wallet && (
-        <Stack
-          spacing={2}
-          sx={{ mt: "16px", width: "100%", maxWidth: "1450px" }}
-          justifyContent="center"
-        >
-          <Typography variant="h6">Transactions</Typography>
-          {transactions && transactions?.length > 0 ? (
-            <TableContainer>
-              <Table aria-label="a dense table" size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">ID</TableCell>
-                    <TableCell align="center">Token ID</TableCell>
-                    <TableCell align="center" sx={{ maxWidth: "80px" }}>
-                      Type
-                    </TableCell>
-                    <TableCell align="center" sx={{ maxWidth: "80px" }}>
-                      Date
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow
-                      key={transaction.id}
-                      sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
-                      }}
-                    >
-                      <TableCell align="center" component="th" scope="row">
-                        {transaction.id}
-                      </TableCell>
-                      <TableCell align="center">
-                        {transaction.token_id}
-                      </TableCell>
-                      <TableCell
-                        align="center"
-                        sx={{
-                          color: getColorByTypeId[transaction.type_id],
-                          fontWeight: "bold",
-                        }}
-                      >
-                        {transactionsType[transaction.type_id]}
-                      </TableCell>
-                      <TableCell align="center">
-                        {new Date(transaction.timestamp).toDateString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            // <List>
-            // 	{transactions.map((transaction) => (
-            // 		<ListItem
-            // 			key={transaction.id}
-            // 			sx={{
-            // 				backgroundColor: getColorByTypeId(
-            // 					transaction.type_id
-            // 				),
-            // 				borderRadius: '4px', // Establece el radio de las esquinas a 8px
-            // 				padding: '12px', // Agrega algo de padding para separarlo de los bordes
-            // 				marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
-            // 			}}
-            // 		>
-            // 			<ListItemText
-            // 				primary={`Token: ${transaction.token_id}`}
-            // 				secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
-            // 			/>
-            // 		</ListItem>
-            // 	))}
-            // </List>
-            <Typography>There is no transactions yet!</Typography>
-          )}
-        </Stack>
-      )}
-    </PageLayout>
-  );
+			{wallet && (
+				<Stack
+					spacing={2}
+					sx={{ mt: '16px', width: '100%', maxWidth: '1450px' }}
+					justifyContent='center'
+				>
+					<Typography variant='h6'>Transactions</Typography>
+					{transactions && transactions?.length > 0 ? (
+						<TableContainer>
+							<Table aria-label='a dense table' size='small'>
+								<TableHead>
+									<TableRow>
+										<TableCell align='center'>ID</TableCell>
+										<TableCell align='center'>
+											Token ID
+										</TableCell>
+										<TableCell
+											align='center'
+											sx={{ maxWidth: '80px' }}
+										>
+											Type
+										</TableCell>
+										<TableCell
+											align='center'
+											sx={{ maxWidth: '80px' }}
+										>
+											Date
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{transactions.map((transaction) => (
+										<TableRow
+											key={transaction.id}
+											sx={{
+												'&:last-child td, &:last-child th':
+													{ border: 0 },
+											}}
+										>
+											<TableCell
+												align='center'
+												component='th'
+												scope='row'
+											>
+												{transaction.id}
+											</TableCell>
+											<TableCell align='center'>
+												{transaction.token_id}
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													color: getColorByTypeId[
+														transaction.type_id
+													],
+													fontWeight: 'bold',
+												}}
+											>
+												{
+													transactionsType[
+														transaction.type_id
+													]
+												}
+											</TableCell>
+											<TableCell align='center'>
+												{new Date(
+													transaction.timestamp
+												).toDateString()}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					) : (
+						// <List>
+						// 	{transactions.map((transaction) => (
+						// 		<ListItem
+						// 			key={transaction.id}
+						// 			sx={{
+						// 				backgroundColor: getColorByTypeId(
+						// 					transaction.type_id
+						// 				),
+						// 				borderRadius: '4px', // Establece el radio de las esquinas a 8px
+						// 				padding: '12px', // Agrega algo de padding para separarlo de los bordes
+						// 				marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
+						// 			}}
+						// 		>
+						// 			<ListItemText
+						// 				primary={`Token: ${transaction.token_id}`}
+						// 				secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
+						// 			/>
+						// 		</ListItem>
+						// 	))}
+						// </List>
+						<Typography>There is no transactions yet!</Typography>
+					)}
+				</Stack>
+			)}
+		</PageLayout>
+	);
 };

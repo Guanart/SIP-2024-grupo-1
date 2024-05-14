@@ -13,6 +13,8 @@ interface Token {
 	role: string;
 }
 
+const AUTH0_AUDIENCE = import.meta.env.APP_AUTH0_AUDIENCE;
+
 export function useAccessToken(): Token {
 	const { getAccessTokenSilently, isAuthenticated, isLoading } = useAuth0();
 	const [accessToken, setAccessToken] = useState<string>('');
@@ -27,7 +29,7 @@ export function useAccessToken(): Token {
 			try {
 				const token = await getAccessTokenSilently({
 					authorizationParams: {
-						audience: `http://my-secure-api.com`,
+						audience: AUTH0_AUDIENCE,
 						scope: 'read:current_user',
 					},
 				});

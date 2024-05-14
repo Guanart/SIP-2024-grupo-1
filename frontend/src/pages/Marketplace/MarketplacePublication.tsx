@@ -12,10 +12,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyboardBackspaceIcon } from '../../global/icons';
 import './Marketplace.css';
 
-const REACT_APP_API_URL =
-	'http://localhost:3000/mercado-pago/create-preference';
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+const REACT_APP_API_URL = `http://${HOST}:${PORT}/mercado-pago/create-preference`;
 const REACT_APP_MP_PUBLIC_KEY = 'APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b'; // vendedor 3 en app sandbox
-const REACT_APP_PREFERENCE_TYPE = 'marketplace'; //! Me guié por la preferencia que se crea en la fundraising. Puse marketplace, pero no sé bien cual sería el tipo.
+const REACT_APP_PREFERENCE_TYPE = 'marketplace'; //! Me guié por la preferencia que se crea en la fundraising
 
 export const MarketplacePublication = () => {
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
@@ -32,7 +33,7 @@ export const MarketplacePublication = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/marketplace/${publication_id}`,
+					url: `http://${HOST}:${PORT}/marketplace/${publication_id}`,
 				});
 
 				if (response.ok) {

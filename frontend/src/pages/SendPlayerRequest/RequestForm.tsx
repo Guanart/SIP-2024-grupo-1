@@ -19,19 +19,26 @@ import './RequestForm.css';
 import { Game } from '../../types';
 import { Rank } from '../../types';
 
-export const RequestForm = () => {
-    const [userId, setUserId] = useState<string>('');
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
 
-    //const [gameId, setGameId] = useState<string>('');
-    //const [rankId, setRankId] = useState('');
+export const RequestForm = () => {
+	const [userId, setUserId] = useState<string>('');
+
+	//const [gameId, setGameId] = useState<string>('');
+	//const [rankId, setRankId] = useState('');
 
 	const [games, setGames] = useState<Game[]>([]);
 	const [ranks, setRanks] = useState<Rank[]>([]);
 
-    const [selectedGame, setSelectedGame] = useState<Game | null>(games.length > 0 ? games[0] : null);
-    const [selectedRank, setSelectedRank] = useState<Rank | null>(ranks.length > 0 ? ranks[0] : null);
+	const [selectedGame, setSelectedGame] = useState<Game | null>(
+		games.length > 0 ? games[0] : null
+	);
+	const [selectedRank, setSelectedRank] = useState<Rank | null>(
+		ranks.length > 0 ? ranks[0] : null
+	);
 
-    const { user, isAuthenticated } = useAuth0();
+	const { user, isAuthenticated } = useAuth0();
 	const { accessToken } = useAccessToken();
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
 	const navigate = useNavigate();
@@ -44,7 +51,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/game`,
+					url: `http://${HOST}:${PORT}/game`,
 				});
 				if (response.ok) {
 					const { games } = await response.json();
@@ -59,7 +66,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/rank`,
+					url: `http://${HOST}:${PORT}/rank`,
 				});
 				if (response.ok) {
 					const { ranks } = await response.json();
@@ -69,10 +76,10 @@ export const RequestForm = () => {
 				console.log(error);
 			}
 		}
-        
+
 		if (!user) return;
 		if (!accessToken) return;
-        setUserId(user.id);
+		setUserId(user.id);
 		getGames();
 		getRanks();
 	}, [accessToken, isAuthenticated, user]);
@@ -85,48 +92,51 @@ export const RequestForm = () => {
 		}
 	};
 
-    // Manejador de envío del formulario
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    
-        // Crea un objeto FormData para enviar los datos del formulario
-        const formData = new FormData();
-        
-        // Verifica si pdfFile es diferente de null antes de agregarlo a FormData
-        if (pdfFile) {
-            formData.append('document', pdfFile);
-        }
-    
-        try {
-            // Realiza la solicitud POST al backend
+	// Manejador de envío del formulario
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
 
-            const response = await fetchWithAuth({
-                isAuthenticated: true,
-                accessToken,
-                url:  `http://localhost:3000/verification-request`, // Reemplaza con la URL de tu API
-                method: 'POST',
-                data: {  
-                    user_id: userId,
-                    game: selectedGame,
-                    rank: selectedRank,
-                    filepath: "path-to-file",  //Deberia enviar el archivo, y manejarlo en el back
-                },
-            });
-            if (response.ok) {
-                // Manejar respuesta de éxito
-                console.log('Formulario enviado con éxito.');
-                // Redireccionar a otra página si es necesario
-                navigate('/success');
-            } else {
-                // Manejar errores
-                console.error('Error al enviar el formulario:', response.statusText);
-                navigate('/error/500');
-            }
-        } catch (error) {
-            console.error('Error al enviar la solicitud:', error);
-            navigate('/error/500');
-        }
-    };
+		// Crea un objeto FormData para enviar los datos del formulario
+		const formData = new FormData();
+
+		// Verifica si pdfFile es diferente de null antes de agregarlo a FormData
+		if (pdfFile) {
+			formData.append('document', pdfFile);
+		}
+
+		try {
+			// Realiza la solicitud POST al backend
+
+			const response = await fetchWithAuth({
+				isAuthenticated: true,
+				accessToken,
+				url: `http://${HOST}:${PORT}/verification-request`, // Reemplaza con la URL de tu API
+				method: 'POST',
+				data: {
+					user_id: userId,
+					game: selectedGame,
+					rank: selectedRank,
+					filepath: 'path-to-file', //Deberia enviar el archivo, y manejarlo en el back
+				},
+			});
+			if (response.ok) {
+				// Manejar respuesta de éxito
+				console.log('Formulario enviado con éxito.');
+				// Redireccionar a otra página si es necesario
+				navigate('/success');
+			} else {
+				// Manejar errores
+				console.error(
+					'Error al enviar el formulario:',
+					response.statusText
+				);
+				navigate('/error/500');
+			}
+		} catch (error) {
+			console.error('Error al enviar la solicitud:', error);
+			navigate('/error/500');
+		}
+	};
 
 	return (
 		<PageLayout title='requestForm '>
@@ -150,10 +160,9 @@ export const RequestForm = () => {
 						registrada su solicitud, nuestros administradores la
 						verificaran lo antes posible!
 					</Typography>
-                    <form onSubmit={handleSubmit}>
-                        <Stack spacing={2}>
-
-                            {/* Lista desplegable para seleccionar el rango */}
+					<form onSubmit={handleSubmit}>
+						<Stack spacing={2}>
+							{/* Lista desplegable para seleccionar el rango */}
 							<FormControl fullWidth>
 								<InputLabel id='rank-label'> Rango </InputLabel>
 								<Select
@@ -161,22 +170,35 @@ export const RequestForm = () => {
 									id='rank-select'
 									required
 									fullWidth
-									value={selectedRank ? selectedRank.description : ''}
+									value={
+										selectedRank
+											? selectedRank.description
+											: ''
+									}
 									onChange={(event) => {
-										const rankDescription = event.target.value as string;
-										const selectedRank = ranks.find(rank => rank.description === rankDescription);
+										const rankDescription = event.target
+											.value as string;
+										const selectedRank = ranks.find(
+											(rank) =>
+												rank.description ===
+												rankDescription
+										);
 										setSelectedRank(selectedRank || null);
 									}}
 								>
 									{ranks.length > 0 ? (
 										ranks.map((rankItem, index) => (
-											<MenuItem key={index} value={rankItem.description}>
+											<MenuItem
+												key={index}
+												value={rankItem.description}
+											>
 												{rankItem.description}
 											</MenuItem>
 										))
 									) : (
 										<MenuItem disabled>
-											No hay rangos disponibles por el momento
+											No hay rangos disponibles por el
+											momento
 										</MenuItem>
 									)}
 								</Select>
@@ -190,22 +212,31 @@ export const RequestForm = () => {
 									id='game-select'
 									required
 									fullWidth
-									value={selectedGame ? selectedGame.name : ''}
+									value={
+										selectedGame ? selectedGame.name : ''
+									}
 									onChange={(event) => {
-										const gameName = event.target.value as string;
-										const selectedGame = games.find(game => game.name === gameName);
+										const gameName = event.target
+											.value as string;
+										const selectedGame = games.find(
+											(game) => game.name === gameName
+										);
 										setSelectedGame(selectedGame || null);
 									}}
 								>
 									{games.length > 0 ? (
 										games.map((gameItem, index) => (
-											<MenuItem key={index} value={gameItem.name}>
+											<MenuItem
+												key={index}
+												value={gameItem.name}
+											>
 												{gameItem.name}
 											</MenuItem>
 										))
 									) : (
 										<MenuItem disabled>
-											No hay juegos disponibles por el momento
+											No hay juegos disponibles por el
+											momento
 										</MenuItem>
 									)}
 								</Select>

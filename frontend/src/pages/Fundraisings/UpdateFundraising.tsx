@@ -21,6 +21,9 @@ import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Loader } from '../../components';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const UpdateFundraising = () => {
 	const { user, isAuthenticated } = useAuth0();
 	const { accessToken } = useAccessToken();
@@ -38,14 +41,14 @@ export const UpdateFundraising = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user?.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://localhost:3000/fundraising/${fundraising_id}`,
+						url: `http://${HOST}:${PORT}/fundraising/${fundraising_id}`,
 					});
 
 					if (response.ok) {
@@ -97,7 +100,7 @@ export const UpdateFundraising = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://localhost:3000/fundraising/${fundraising_id}`,
+				url: `http://${HOST}:${PORT}/fundraising/${fundraising_id}`,
 				method: 'PUT',
 				data: updatedFundraising,
 			});

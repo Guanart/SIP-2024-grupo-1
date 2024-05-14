@@ -8,6 +8,9 @@ import { MarketplacePublication } from '../../types';
 import { Loader, MarketplaceCard } from '../../components';
 import './Marketplace.css';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const Marketplace = () => {
 	const { accessToken } = useAccessToken();
 	const [publications, setPublications] = useState<MarketplacePublication[]>(
@@ -28,7 +31,7 @@ export const Marketplace = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/marketplace`,
+					url: `http://${HOST}:${PORT}/marketplace`,
 				});
 
 				if (response.ok) {

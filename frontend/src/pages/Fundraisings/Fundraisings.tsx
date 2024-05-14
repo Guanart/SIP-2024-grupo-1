@@ -9,6 +9,9 @@ import { Fundraising } from '../../types';
 import { Loader } from '../../components';
 import { Link } from 'react-router-dom';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const Fundraisings = () => {
 	const { accessToken, role } = useAccessToken();
 	const [fundraisings, setFundraisings] = useState<Fundraising[]>([]);
@@ -26,7 +29,7 @@ export const Fundraisings = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/fundraising`,
+					url: `http://${HOST}:${PORT}/fundraising`,
 				});
 
 				if (response.ok) {

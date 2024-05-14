@@ -8,6 +8,9 @@ import { useTheme } from '@mui/material';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const Home = () => {
 	const { user, isAuthenticated } = useAuth0();
 	const { accessToken } = useAccessToken();
@@ -20,7 +23,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user.sub}`,
 				});
 			} catch (error) {
 				const account = {
@@ -33,7 +36,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/`,
+					url: `http://${HOST}:${PORT}/user/`,
 					method: 'POST',
 					data: account,
 				});

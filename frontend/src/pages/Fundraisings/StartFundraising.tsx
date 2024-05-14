@@ -23,6 +23,9 @@ import { Loader } from '../../components';
 import { User } from '../../types';
 import { Container } from '@mui/material';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const StartFundraising = () => {
 	const [events, setEvents] = useState<Event[]>([]);
 	const { user, isAuthenticated } = useAuth0();
@@ -41,7 +44,7 @@ export const StartFundraising = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user?.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -52,7 +55,7 @@ export const StartFundraising = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://localhost:3000/event/${user.player.game.id}`,
+						url: `http://${HOST}:${PORT}/event/${user.player.game.id}`,
 					});
 
 					if (response.ok) {
@@ -89,7 +92,7 @@ export const StartFundraising = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://localhost:3000/fundraising`,
+				url: `http://${HOST}:${PORT}/fundraising`,
 				method: 'POST',
 				data: newFundraising,
 			});

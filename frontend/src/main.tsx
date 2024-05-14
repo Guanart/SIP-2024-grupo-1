@@ -24,9 +24,6 @@ import { theme } from './global/theme.ts';
 import { Protected } from './components';
 import { ThemeProvider } from '@mui/material';
 
-const AUTH0_DOMAIN = 'dev-f57qs7dbi1xcl5kj.us.auth0.com';
-const AUTH0_CLIENT_ID = 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl';
-
 const privateRoutes = [
 	{
 		path: `/account/:auth0_id`,
@@ -98,6 +95,10 @@ const publicRoutes = [
 	},
 ];
 
+const AUTH0_AUDIENCE = import.meta.env.APP_AUTH0_AUDIENCE;
+const AUTH0_DOMAIN = import.meta.env.APP_AUTH0_DOMAIN;
+const AUTH0_CLIENT_ID = import.meta.env.APP_AUTH0_CLIENT_ID;
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<ThemeProvider theme={theme}>
@@ -108,7 +109,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 					// useRefreshTokens={true} Remuevo esta opción porque al recargar la página te desloguea y tenes que volver a iniciar sesión
 					authorizationParams={{
 						redirect_uri: window.location.origin,
-						audience: 'http://my-secure-api.com',
+						audience: AUTH0_AUDIENCE,
 						scope: 'read:current_user profile email offline_access ',
 					}}
 				>
