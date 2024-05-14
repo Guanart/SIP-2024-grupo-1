@@ -11,3 +11,7 @@
 p {
 	color: white;
 }
+
+label {
+	background-color: transparent !important;
+}
