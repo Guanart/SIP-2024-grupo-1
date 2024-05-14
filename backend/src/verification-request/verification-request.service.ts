@@ -9,22 +9,54 @@ export class VerificationRequestService {
 
     constructor(private prisma: PrismaService) {}
   
-    async create(verificationRequestData: CreateVerificationRequestDto): Promise<VerificationRequest> {
+    async createVerificationRequest(newVerificationRequest: CreateVerificationRequestDto) {
+      const {
+        user_id,
+        game_id,
+        rank_id,
+        filepath,
+        createdAt,
+        status,
+      } = newVerificationRequest;
+
       const verificationRequest = await this.prisma.verificationRequest.create({
-          data: verificationRequestData,
+        data: {
+          user_id,
+          game_id,
+          rank_id,
+          filepath,
+          createdAt,
+          status,
+        },
       });
       return verificationRequest ? VerificationRequest.fromObject(verificationRequest) : null;
     }
-  
-    async findOne(user_id: number, createdAt: Date): Promise<VerificationRequest> {
-      const verificationRequest = await this.prisma.verificationRequest.findUnique({
+
+    async getAllRequests(): Promise<VerificationRequest[]> {
+      const verificationRequests = await this.prisma.verificationRequest.findMany({
         where: {
-          id: user_id,
-          createdAt,
+        },
+        include: {
+          user: true,
+          game: true,
+          rank: true,
         },
       });
-      return VerificationRequest ? VerificationRequest.fromObject(verificationRequest) : null;
-    }
+      console.log(verificationRequests);
+      return verificationRequests.map(verificationRequest => VerificationRequest.fromObject(verificationRequest));
+  }
+
+  /*
+  async findOne(user_id: number , createdAt: Date): Promise<VerificationRequest[]> {
+    const verificationRequest = await this.prisma.verificationRequest.findUnique({
+        where: {
+          user_id: user_id, 
+          createdAt: createdAt,
+        },
+    });
+    return verificationRequests.map(verificationRequest => VerificationRequest.fromObject(verificationRequest));
+}
+*/
     
     async update({id,status}: UpdateVerificationRequestDto): Promise<VerificationRequest> {
       const updatedVerificationRequest = await this.prisma.verificationRequest.update({

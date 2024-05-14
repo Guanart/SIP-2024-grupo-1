@@ -42,7 +42,7 @@ export class RankService {
     return rank ? Rank.fromObject(rank) : null;
   }
 
-  async getAllGames(): Promise<Rank[]> {
+  async getAllRanks(): Promise<Rank[]> {
     const ranks = await this.prisma.rank.findMany({
         where: {
         },

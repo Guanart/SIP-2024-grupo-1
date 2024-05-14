@@ -17,6 +17,7 @@ import {
 	StartFundraising,
 	UpdateFundraising,
 	RequestForm,
+	RequestSuccess,
 	CreatePublication,
 	MarketplacePublication,
 } from './pages';
@@ -68,6 +69,10 @@ const privateRoutes = [
 		path: `/sendPlayerRequest`,
 		element: <RequestForm />,
 	},
+	{
+		path: `/requestSuccess`,
+		element: <RequestSuccess />,
+	}
 ];
 
 const publicRoutes = [
