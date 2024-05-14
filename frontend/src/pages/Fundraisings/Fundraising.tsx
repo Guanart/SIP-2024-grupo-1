@@ -17,9 +17,10 @@ import { Fundraising as FundraisingType } from '../../types';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KeyboardBackspaceIcon } from '../../global/icons';
 
-const REACT_APP_API_URL = "http://localhost:3000/mercado-pago/create-preference";
-const REACT_APP_MP_PUBLIC_KEY = "APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b";	// vendedor 3 en app sandbox
-const REACT_APP_PREFERENCE_TYPE = "fundraising";
+const REACT_APP_API_URL =
+	'http://localhost:3000/mercado-pago/create-preference';
+const REACT_APP_MP_PUBLIC_KEY = 'APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b'; // vendedor 3 en app sandbox
+const REACT_APP_PREFERENCE_TYPE = 'fundraising';
 
 export const Fundraising = () => {
 	const [amount, setAmount] = useState<number>(1);
@@ -56,12 +57,9 @@ export const Fundraising = () => {
 		getFundraisings();
 	}, [accessToken, isAuthenticated, user, id, navigate]);
 
-	initMercadoPago(
-    REACT_APP_MP_PUBLIC_KEY,
-    {
-      locale: "es-AR",
-    }
-  );
+	initMercadoPago(REACT_APP_MP_PUBLIC_KEY, {
+		locale: 'es-AR',
+	});
 
 	function handleAmountChange(value: string) {
 		const nextAmount: number = parseInt(value.trim()) ?? 1;
@@ -81,7 +79,7 @@ export const Fundraising = () => {
 					quantity: amount,
 					unit_price: fundraising.collection.current_price,
 					type: REACT_APP_PREFERENCE_TYPE,
-					id: id
+					id: id,
 				});
 				return response.data.id;
 			}
@@ -282,7 +280,7 @@ export const Fundraising = () => {
 										</Typography>
 									</Typography>
 									<Typography component='div' variant='body2'>
-										Prize per token
+										Reward per token
 										<Typography
 											color='secondary'
 											component='div'

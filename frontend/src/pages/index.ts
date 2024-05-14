@@ -9,6 +9,7 @@ export * from './Wallet/Wallet';
 export * from './Error';
 export * from './Marketplace/Marketplace';
 export * from './Marketplace/CreatePublication';
+export * from './Marketplace/MarketplacePublication';
 export * from './Account/Account';
 export * from './Login/Login';
 export * from './SendPlayerRequest/RequestForm';

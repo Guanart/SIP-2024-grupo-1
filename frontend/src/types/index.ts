@@ -8,3 +8,4 @@ export * from './Player.ts';
 export * from './Game.ts';
 export * from './Token.ts';
 export * from './Rank.ts';
+export * from './MarketplacePublication.ts';

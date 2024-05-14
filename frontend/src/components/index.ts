@@ -11,6 +11,7 @@ import { Menu } from './layout/Menu/Menu';
 import { FundraisingCard } from './fundraisings/FundraisingCard';
 import { PublicationList } from './account/PublicationList';
 import { TokensList } from './wallet/TokensList';
+import { MarketplaceCard } from './marketplace/MarketplaceCard';
 
 export {
 	LogoutButton,
@@ -26,4 +27,5 @@ export {
 	MostValuableTokensList,
 	PublicationList,
 	TokensList,
+	MarketplaceCard,
 };
