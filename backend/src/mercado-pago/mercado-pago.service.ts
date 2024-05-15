@@ -25,36 +25,50 @@ export class MercadoPagoService {
 
     async createPreference(items: CreatePreference) {
         // Buscar el access_token del player o wallet
-        const {access_token} = items.type == 'fundraising' ?
-            await this.prisma.player.findFirst({
-            where: {
-                fundraisings: {
-                    some: {
-                        id: Number(items.id),
+        const typeToQueryMap = {
+            fundraising: async (id: number) => {
+                const player = await this.prisma.player.findFirst({
+                    where: {
+                        fundraisings: {
+                            some: {
+                                id,
+                            },
+                        },
                     },
-                },
-            },
-            select: {
-                access_token: true,
-            },
-        }) : await this.prisma.wallet.findFirst({
-            where: {
-                marketplace_publication: {
-                    some: {
-                        publication_id: Number(items.id),
+                    select: {
+                        access_token: true,
                     },
-                },
+                });
+                return player?.access_token || null;
             },
-            select: {
-                access_token: true,
+            marketplace: async (id: number) => {
+                const wallet = await this.prisma.wallet.findFirst({
+                    where: {
+                        marketplace_publication: {
+                            some: {
+                                publication_id: id,
+                            },
+                        },
+                    },
+                    select: {
+                        access_token: true,
+                    },
+                });
+                return wallet?.access_token || null;
             },
-        });
+        };
 
+        const queryFunction = typeToQueryMap[items.type];
+        if (!queryFunction) {
+            throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
+        }
+
+        const access_token = await queryFunction(Number(items.id));
         if (!access_token) {
             throw new HttpException('access_token not found', HttpStatus.NOT_FOUND);
         }
 
-        // Creación del a Preference
+        // Creación de la Preference
         const config = new MercadoPagoConfig({ accessToken: access_token });
         const preference = new Preference(config);
 
