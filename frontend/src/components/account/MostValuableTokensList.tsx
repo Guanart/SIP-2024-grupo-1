@@ -46,16 +46,12 @@ export const MostValuableTokensList = () => {
 
 						setTokens(mostValuableTokens);
 					} else {
-						console.log('error1');
 						navigate('/error/500');
 					}
 				} else {
-					console.log('error2');
-
 					navigate('/error/500');
 				}
 			} catch (error) {
-				console.log('error3');
 				console.log(error);
 				navigate('/error/500');
 			}
