@@ -418,29 +418,6 @@ export const Account = () => {
 				<>
 					<Container sx={{ mt: '24px' }}>
 						<Typography variant='h6' component='h2'>
-							Tokens
-						</Typography>
-						<p>
-							Acá pensaba mostrar los 5 tokens más valiosos o algo
-							por el estilo
-						</p>
-					</Container>
-					<Container sx={{ mt: '24px' }}>
-						<Typography variant='h6' component='h2'>
-							Marketplace
-						</Typography>
-						<p>
-							Acá pensaba mostrar las últimas 5 publicaciones del
-							Marketplace
-						</p>
-					</Container>
-				</>
-			)}
-
-			{!isLoading && (
-				<>
-					<Container sx={{ mt: '24px' }}>
-						<Typography variant='h6' component='h2'>
 							Most valuable tokens
 						</Typography>
 						<MostValuableTokensList />
