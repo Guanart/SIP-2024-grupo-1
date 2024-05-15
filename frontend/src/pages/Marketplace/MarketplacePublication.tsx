@@ -86,6 +86,21 @@ export const MarketplacePublication = () => {
 		}
 	};
 
+	const handleDeletePublication = async () => {
+		const response = await fetchWithAuth({
+			isAuthenticated,
+			accessToken,
+			url: `http://${HOST}:${PORT}/marketplace/${publication_id}`,
+			method: 'DELETE',
+		});
+
+		if (response.ok) {
+			navigate('/marketplace');
+		} else {
+			navigate('/error');
+		}
+	};
+
 	return (
 		<PageLayout title='Marketplace publication'>
 			<Link to={`/marketplace`}>
@@ -237,11 +252,7 @@ export const MarketplacePublication = () => {
 								variant='contained'
 								color='error'
 								style={{ marginTop: '16px' }}
-								onClick={() =>
-									console.log(
-										'Deleting marketplace publication...'
-									)
-								}
+								onClick={() => handleDeletePublication()}
 								sx={{
 									maxWidth: '250px',
 									display: 'block',
