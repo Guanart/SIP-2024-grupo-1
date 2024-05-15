@@ -40,13 +40,14 @@ export const Wallet = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}:3000/user/${user?.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
 					const { user } = await response.json();
 
 					if (user.wallet) {
+						console.log(user.wallet);
 						setTokens(user.wallet.token_wallet);
 						setWallet(user.wallet);
 						setTransactions(user.wallet.transactions);
