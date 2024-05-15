@@ -87,7 +87,7 @@ export const MostValuableTokensList = () => {
 	return (
 		<List sx={{ width: '100%', maxWidth: 360 }}>
 			{tokens.map((token) => (
-				<ListItem>
+				<ListItem key={token.id}>
 					<ListItemAvatar>
 						<Avatar
 							sx={{
