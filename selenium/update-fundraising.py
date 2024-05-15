@@ -22,7 +22,6 @@ password_input.send_keys("Admin123")
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
-# time.sleep(5)
 time.sleep(2)
 
 # Abro el menú de navegación
@@ -36,7 +35,7 @@ account_page_link = driver.find_element(
 
 account_page_link.click()
 
-time.sleep(5)
+time.sleep(15)
 
 logout_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button').click()
@@ -66,33 +65,32 @@ fundraisings_page_link = driver.find_element(
 ActionChains(driver).move_to_element(fundraisings_page_link).perform()
 fundraisings_page_link.click()
 
-time.sleep(2)  # Esto es para asegurarme que la página
+time.sleep(5)  # Esto es para asegurarme que la página
 
 view_details_link = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div/div[2]/div/div[3]/a/button')
 ActionChains(driver).move_to_element(view_details_link).perform()
 view_details_link.click()
 
-time.sleep(2)  # Esto es para asegurarme que la página
+time.sleep(15)  # Esto es para asegurarme que la página
 
 update_fundraising_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div[2]/a/button').click()
 
-time.sleep(2)  # Esto es para asegurarme que la página
+time.sleep(5)  # Esto es para asegurarme que la página
 
 
 token_price_select = driver.find_element(
     By.XPATH, '//*[@id="token-price-select"]').click()
 token_price_select_option = driver.find_element(
-    By.XPATH, '//*[@id=":r9:"]/li[1]').click()
+    By.XPATH, '//*[@id=":r9:"]/li[2]').click()
 
+time.sleep(2)
 
 update_fundraising_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div/form/button').click()
 
-
-# time.sleep(5)
-time.sleep(3)
+time.sleep(15)
 
 logout_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button').click()
@@ -111,7 +109,6 @@ password_input.send_keys("Admin123")
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
-# time.sleep(5)
 time.sleep(2)
 
 # Abro el menú de navegación
@@ -125,6 +122,5 @@ account_page_link = driver.find_element(
 
 account_page_link.click()
 
-time.sleep(3)
-
-input("Press Enter to continue...")
+print("Done")
+time.sleep(10)
