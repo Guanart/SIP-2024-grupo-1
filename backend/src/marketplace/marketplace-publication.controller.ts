@@ -24,54 +24,6 @@ export class MarketplacePublicationController {
   ) {}
 
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['create:publications'])
-  // @Post()
-  // async createMarketplacePublication(
-  //   @Body() newPublication: CreateMarketplacePublicationDto,
-  // ): Promise<string> {
-  // TODO: Implementar
-  //   try {
-  //   const publication =
-  //     await this.marketplacePublicationService.createMarketplacePublication(
-  //       newPublication,
-  //     );
-  //   if (!publication) {
-  //     throw new BadRequestException();
-  //   }
-  //   return JSON.stringify({
-  //     message: `Fundraising ${fundraising.id} created`,
-  //     fundraising,
-  //   });
-  //   } catch (exception) {
-  //     if (exception instanceof BadRequestException) {
-  //       throw exception;
-  //     } else {
-  //       throw new InternalServerErrorException('Internal Server Error');
-  //     }
-  //   }
-  // }
-  // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['delete:publications'])
-  // @Delete('/:publication_id')
-  // async deleteMarketplacePublication(
-  //   @Param('publication_id') publication_id: string,
-  // ): Promise<string> {
-  // TODO: Implementar
-  // try {
-  // } catch (exception) {
-  //   if (exception instanceof BadRequestException) {
-  //     throw exception;
-  //   }
-  //   if (exception instanceof NotFoundException) {
-  //     throw exception;
-  //   } else {
-  //     console.log(exception);
-  //     throw new InternalServerErrorException('Internal Server Error');
-  //   }
-  // }
-  // }
-
-  // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['read:publications'])
   @Get()
   async getAllMarketplacePublications() {
@@ -81,6 +33,31 @@ export class MarketplacePublicationController {
     return JSON.stringify({
       publications,
     });
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['read:publications'])
+  @Get('/user/:wallet_id')
+  async getUserActiveMarketplacePublications(
+    @Param('wallet_id') wallet_id: string,
+  ) {
+    try {
+      const publications =
+        await this.marketplacePublicationService.getUserActiveMarketplacePublications(
+          Number(wallet_id),
+        );
+
+      return JSON.stringify({
+        message: `Marketplace publications found`,
+        publications,
+      });
+    } catch (exception) {
+      if (exception instanceof NotFoundException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
   }
 
   // @UseGuards(AuthGuard, PermissionsGuard)
@@ -114,6 +91,8 @@ export class MarketplacePublicationController {
     }
   }
 
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['delete:publications'])
   @Delete('/:publication_id')
   async deleteMarkplacePublicationById(
     @Param('publication_id') publication_id: string,
@@ -130,12 +109,14 @@ export class MarketplacePublicationController {
         );
       }
 
-      await this.marketplacePublicationService.deleteMarketplacePublication(Number(publication_id));
+      await this.marketplacePublicationService.deleteMarketplacePublication(
+        Number(publication_id),
+      );
 
       return JSON.stringify({
         message: `Marketplace publication ${publication_id} deleted`,
       });
-    } catch (exception){
+    } catch (exception) {
       if (exception instanceof BadRequestException) {
         throw exception;
       }
@@ -148,22 +129,24 @@ export class MarketplacePublicationController {
     }
   }
 
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['create:publications'])
   @Post()
   async createMarketplacePublication(
     @Body() newPublication: CreateMarketplacePublicationDto,
   ): Promise<string> {
     try {
-    const publication =
-      await this.marketplacePublicationService.createMarketplacePublication(
-        newPublication,
-      );
-    if (!publication) {
-      throw new BadRequestException();
-    }
-    return JSON.stringify({
-      message: `Publication ${publication.publication_id} created`,
-      publication,
-    });
+      const publication =
+        await this.marketplacePublicationService.createMarketplacePublication(
+          newPublication,
+        );
+      if (!publication) {
+        throw new BadRequestException();
+      }
+      return JSON.stringify({
+        message: `Publication ${publication.publication_id} created`,
+        publication,
+      });
     } catch (exception) {
       if (exception instanceof BadRequestException) {
         throw exception;
@@ -173,15 +156,19 @@ export class MarketplacePublicationController {
     }
   }
 
-  @Post("buy/:publication_id/:wallet_id")
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['buy:tokens'])
+  @Post('buy/:publication_id/:wallet_id')
   async buyMarketplacePublication(
     @Param('publication_id') publication_id: string,
     @Param('wallet_id') wallet_id: string, //wallet_id es wallet de comprador
-  ): Promise<string>{
-    try{
-      const publication = await this.marketplacePublicationService.buyMarketplacePublication(
-        Number(publication_id), Number(wallet_id)
-      )
+  ): Promise<string> {
+    try {
+      const publication =
+        await this.marketplacePublicationService.buyMarketplacePublication(
+          Number(publication_id),
+          Number(wallet_id),
+        );
 
       if (!publication) {
         throw new NotFoundException(
@@ -193,8 +180,7 @@ export class MarketplacePublicationController {
         message: `Publication ${publication.publication_id} bought`,
         publication,
       });
-
-    } catch (exception){
+    } catch (exception) {
       if (exception instanceof NotFoundException) {
         throw exception;
       } else {

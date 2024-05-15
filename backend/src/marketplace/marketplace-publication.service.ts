@@ -10,19 +10,18 @@ export class MarketplacePublicationService {
   async createMarketplacePublication(
     newPublication: CreateMarketplacePublicationDto,
   ) {
-    const {
-      price,
-      out_wallet_id,
-      token_id,
-    } = newPublication;
-    const marketplace_publication = await this.prisma.marketplace_publication.create({
-      data: {
-        price,
-        out_wallet_id,
-        token_id,
-      },
-    });
-    return marketplace_publication ? MarketplacePublication.fromObject(marketplace_publication) : null;
+    const { price, out_wallet_id, token_id } = newPublication;
+    const marketplace_publication =
+      await this.prisma.marketplace_publication.create({
+        data: {
+          price,
+          out_wallet_id,
+          token_id,
+        },
+      });
+    return marketplace_publication
+      ? MarketplacePublication.fromObject(marketplace_publication)
+      : null;
   }
 
   async getAllMarketplacePublications() {
@@ -85,9 +84,41 @@ export class MarketplacePublicationService {
       },
     });
 
-    console.log(publication);
-
     return publication ? MarketplacePublication.fromObject(publication) : null;
+  }
+
+  async getUserActiveMarketplacePublications(wallet_id: number) {
+    const publications = await this.prisma.marketplace_publication.findMany({
+      where: {
+        out_wallet_id: wallet_id,
+        active: true,
+      },
+      include: {
+        token: {
+          include: {
+            collection: {
+              include: {
+                fundraising: {
+                  include: {
+                    player: { include: { user: true, game: true } },
+                    event: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        out_wallet: {
+          include: { user: true },
+        },
+      },
+    });
+
+    return publications
+      ? publications.map((publication) =>
+          MarketplacePublication.fromObject(publication),
+        )
+      : [];
   }
 
   async deleteMarketplacePublication(publication_id: number) {
@@ -117,30 +148,34 @@ export class MarketplacePublicationService {
           },
         },
       });
-  
+
       console.log(publication);
-  
-      return publication ? MarketplacePublication.fromObject(publication) : null;
+
+      return publication
+        ? MarketplacePublication.fromObject(publication)
+        : null;
     } catch (error) {
       throw new Error('Internal Server Error');
     }
-    
   }
 
-  async buyMarketplacePublication (publication_id: number, wallet_id: number) {
-    const marketplace_publication = await this.prisma.marketplace_publication.update({
-      where: { publication_id: publication_id },
-      data: {
-        active: false,
-      },
-    });
+  async buyMarketplacePublication(publication_id: number, wallet_id: number) {
+    const marketplace_publication =
+      await this.prisma.marketplace_publication.update({
+        where: { publication_id: publication_id },
+        data: {
+          active: false,
+        },
+      });
 
-    const in_wallet = await this.prisma.in_wallet.create({
+    await this.prisma.in_wallet.create({
       data: {
         publication_id: publication_id,
-        wallet_id: wallet_id
-      }
+        wallet_id: wallet_id,
+      },
     });
-    return marketplace_publication ? MarketplacePublication.fromObject(marketplace_publication) : null;
+    return marketplace_publication
+      ? MarketplacePublication.fromObject(marketplace_publication)
+      : null;
   }
 }
