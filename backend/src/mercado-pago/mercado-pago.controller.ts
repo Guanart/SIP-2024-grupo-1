@@ -17,6 +17,21 @@ export class MercadoPagoController {
 
   @Post('webhook')
   async handleWebhook(@Body() notification: any) {
+    /*
+    notification puede ser diferente, según el tipo de webhook. Este sería el ejemplo de un pago completado:
+    {
+      action: 'payment.created',
+      api_version: 'v1',
+      data: { id: '1323264955' },
+      date_created: '2024-05-17T17:01:08Z',
+      id: 113394882032,
+      live_mode: false,
+      type: 'payment',
+      user_id: '1796421005'
+    }
+
+    hace un método que maneje este 
+    */
     return this.mercadoPagoService.handleWebhook(notification);
   }
 

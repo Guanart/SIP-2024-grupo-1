@@ -59,9 +59,11 @@ export const Fundraising = () => {
 		getFundraisings();
 	}, [accessToken, isAuthenticated, user, id, navigate]);
 
-	initMercadoPago(REACT_APP_MP_PUBLIC_KEY, {
-		locale: 'es-AR',
-	});
+	if (fundraising && fundraising.player.public_key) {
+		initMercadoPago(fundraising.player.public_key, {
+			locale: 'es-AR',
+		});
+	}
 
 	function handleAmountChange(value: string) {
 		const nextAmount: number = parseInt(value.trim()) ?? 1;
