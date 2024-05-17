@@ -17,10 +17,12 @@ email_input.send_keys("ricardomilos@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
+time.sleep(2)
+
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
-time.sleep(2)
+time.sleep(3)
 
 logout_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button')

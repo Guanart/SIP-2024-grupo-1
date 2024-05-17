@@ -19,6 +19,8 @@ email_input.send_keys("ricardomilos@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
+time.sleep(2)
+
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
@@ -35,21 +37,25 @@ account_page_link = driver.find_element(
 
 account_page_link.click()
 
-time.sleep(15)
+time.sleep(10)
 
 logout_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button').click()
 
+time.sleep(2)
+
+
 # Inicio sesión con una cuenta de jugador
 login_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
-
 
 email_input = driver.find_element(By.XPATH, '//*[@id="username"]')
 email_input.send_keys("johndoe@lot.com")
 
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
+
+time.sleep(2)
 
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
@@ -79,9 +85,11 @@ update_fundraising_button = driver.find_element(
 
 time.sleep(5)  # Esto es para asegurarme que la página
 
-
 token_price_select = driver.find_element(
     By.XPATH, '//*[@id="token-price-select"]').click()
+
+time.sleep(1)
+
 token_price_select_option = driver.find_element(
     By.XPATH, '//*[@id=":r9:"]/li[2]').click()
 
@@ -95,16 +103,19 @@ time.sleep(15)
 logout_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button').click()
 
+time.sleep(2)
+
 # Inicio sesión con una cuenta de usuario
 login_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/div/button[1]').click()
-
 
 email_input = driver.find_element(By.XPATH, '//*[@id="username"]')
 email_input.send_keys("ricardomilos@lot.com")
 
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
+
+time.sleep(2)
 
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
@@ -123,4 +134,4 @@ account_page_link = driver.find_element(
 account_page_link.click()
 
 print("Done")
-time.sleep(10)
+time.sleep(20)

@@ -160,7 +160,7 @@ export const CreatePublication = () => {
 							disabled={true}
 						/>
 						<TextField
-							id='goal-amount'
+							id='publication-price'
 							value={price}
 							label='Price'
 							sx={{ maxWidth: '500px', width: '90%' }}

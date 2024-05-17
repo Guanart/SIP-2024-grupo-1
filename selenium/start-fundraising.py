@@ -19,6 +19,8 @@ email_input.send_keys("johndoe@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
+time.sleep(2)
+
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
@@ -46,19 +48,26 @@ events_select = driver.find_element(
     By.XPATH, '//*[@id="event-select"]').click()
 event_option = driver.find_element(By.XPATH, '//*[@id="1"]').click()
 
+time.sleep(1)
+
 goal_amount_input = driver.find_element(By.XPATH, '//*[@id="goal-amount"]')
 goal_amount_input.send_keys("100000")
+
+time.sleep(1)
 
 prize_percentage_input = driver.find_element(
     By.XPATH, '//*[@id="prize-percentage"]')
 prize_percentage_input.send_keys("45")
 
+time.sleep(1)
+
 initial_price_input = driver.find_element(By.XPATH, '//*[@id="initial-price"]')
 initial_price_input.send_keys("25")
 
+time.sleep(2)
+
 start_fundraising_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div/form/button').click()
-
 
 print("Done")
 time.sleep(10)

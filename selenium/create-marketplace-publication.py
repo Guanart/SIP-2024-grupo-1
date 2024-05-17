@@ -27,13 +27,35 @@ submit_button = driver.find_element(
 # Abro el menú de navegación
 open_menu_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/button').click()
+
 time.sleep(2)  # Esto es para asegurarme que el menú carga correctamente
 
-# Navego a la página de perfil del usuario
-marketplace_page_link = driver.find_element(
-    By.XPATH, '/html/body/div[2]/div[3]/div/ul/a[5]')
-ActionChains(driver).move_to_element(marketplace_page_link).perform()
-marketplace_page_link.click()
+
+wallet_page_link = driver.find_element(
+    By.XPATH, '/html/body/div[2]/div[3]/div/ul/a[4]')
+ActionChains(driver).move_to_element(wallet_page_link).perform()
+
+wallet_page_link.click()
+
+time.sleep(3)
+
+create_publication_page_link = driver.find_element(
+    By.XPATH, '//*[@id="root"]/main/div[1]/ul/li[2]/div[3]/a[2]')
+ActionChains(driver).move_to_element(create_publication_page_link).perform()
+create_publication_page_link.click()
+
+time.sleep(5)
+
+email_input = driver.find_element(By.XPATH, '//*[@id="publication-price"]')
+email_input.send_keys("100")
+
+time.sleep(3)
+
+
+create_publication_button = driver.find_element(
+    By.XPATH, '//*[@id = "root"]/main/div/div/form/button')
+
+create_publication_button.click()
 
 print("Done")
 time.sleep(10)
