@@ -73,13 +73,43 @@ export class MarketplacePublicationController {
         );
 
       if (!publication) {
-        throw new NotFoundException(
-          `Marketplace publication ${publication_id} not found`,
-        );
+        return JSON.stringify({
+          message: `Marketplace publication not ${publication_id} found`,
+          publication: null,
+        });
       }
 
       return JSON.stringify({
         message: `Marketplace publication ${publication_id} found`,
+        publication,
+      });
+    } catch (exception) {
+      if (exception instanceof NotFoundException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['read:publications'])
+  @Get('/token/:token_id')
+  async getMarkplacePublicationByTokenId(@Param('token_id') token_id: string) {
+    try {
+      const publication =
+        await this.marketplacePublicationService.getMarketplacePublicationByTokenId(
+          Number(token_id),
+        );
+
+      if (!publication) {
+        throw new NotFoundException(
+          `Marketplace publication for token ${token_id} not found`,
+        );
+      }
+
+      return JSON.stringify({
+        message: `Marketplace publication for token ${token_id} found`,
         publication,
       });
     } catch (exception) {

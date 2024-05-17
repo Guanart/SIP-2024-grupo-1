@@ -87,6 +87,38 @@ export class MarketplacePublicationService {
     return publication ? MarketplacePublication.fromObject(publication) : null;
   }
 
+  async getMarketplacePublicationByTokenId(token_id: number) {
+    const publication = await this.prisma.marketplace_publication.findMany({
+      where: {
+        token_id,
+        active: true,
+      },
+      include: {
+        token: {
+          include: {
+            collection: {
+              include: {
+                fundraising: {
+                  include: {
+                    player: { include: { user: true, game: true } },
+                    event: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        out_wallet: {
+          include: { user: true },
+        },
+      },
+    });
+
+    return publication.length > 0
+      ? MarketplacePublication.fromObject(publication[0])
+      : null;
+  }
+
   async getUserActiveMarketplacePublications(wallet_id: number) {
     const publications = await this.prisma.marketplace_publication.findMany({
       where: {
