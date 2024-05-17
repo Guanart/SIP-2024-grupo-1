@@ -17,15 +17,23 @@ export class MercadoPagoService {
     this.prisma = new PrismaService();
   }
 
-  async handleWebhook(notification: any) {
-    console.log(notification);
-    return notification;
-  }
+  // async handleWebhook(notification: any) {
+  //   console.log('Processing notification:', notification);
 
-  returnFeedback(params: any) {
-    throw new Error('Method not implemented.');
-  }
+  //   const { id, status } = notification;
 
+  //   if (status === 'approved') {
+  //     // await this.prisma.fundraising.update({
+  //     //   where: { },
+  //     //   data: { }, 
+  //     // });
+  //   }
+
+  //   return notification;
+  // }
+
+  
+  // CREAR PREFERENCIA PARA MARKETPLACE Y FUNDRAISING
   async createPreference(items: CreatePreference) {
     // Buscar el access_token del player o wallet
     const typeToQueryMap = {
@@ -89,13 +97,14 @@ export class MercadoPagoService {
           },
         ],
         back_urls: {
-          success: process.env.APP_URL + '/' + items.type,
+          success: process.env.APP_URL + '/' + items.type + '/',
           pending: process.env.APP_URL + '/' + items.type,
           failure: process.env.APP_URL + '/' + items.type,
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
         marketplace_fee: 10,
+        notification_url: process.env.APP_URL + '/mercado-pago/webhook',
       };
 
       const result = await preference.create({ body });
@@ -110,6 +119,8 @@ export class MercadoPagoService {
     }
   }
 
+
+  // AUTORIZAR CUENTA DE MERCADOPAGO DE VENDEDOR (PLAYER O WALLET)
   async authorizeSeller(code: string, type: string, id: string) {
     const oauth = new OAuth(this.client);
     try {
@@ -151,5 +162,15 @@ export class MercadoPagoService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  handlePayment(notification: any, type: string) {
+    if (type === 'fundraising') {
+
+      // 
+    } else if (type === 'marketplace') {
+      // Manejar el pago de una reventa
+    }
+    return true;
   }
 }

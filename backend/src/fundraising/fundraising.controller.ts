@@ -8,18 +8,21 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  Res,
   // SetMetadata,
   // UseGuards,
 } from '@nestjs/common';
 import { FundraisingService } from './fundraising.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
 import { UpdateFundraisingDto } from './dto/update-fundraising.dto';
+import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
 // import { PermissionsGuard } from 'src/auth/permissions.guard';
 // import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('fundraising')
 export class FundraisingController {
-  constructor(private readonly fundraisingService: FundraisingService) {}
+  constructor(private readonly fundraisingService: FundraisingService, private mercadoPagoService: MercadoPagoService) {}
 
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['create:fundraisings'])
@@ -141,4 +144,16 @@ export class FundraisingController {
   //     const preferenceId = await this.fundraisingService.generateMercadoPagoPreference(Number(collectionId), amount);
   //     return { preferenceId };
   // }
+
+  @Post('webhook')
+  async handleWebhook(@Req() req: Request, @Res() res: Response) {
+    const notification = req.body;
+    const ok = await this.mercadoPagoService.handlePayment(notification, 'fundraising');
+    if (ok) {
+      return {
+        message: "Su pago ha sido procesado exitosamente. ¡Gracias por su colaboración!" 
+      }
+    }
+  }
+  
 }
