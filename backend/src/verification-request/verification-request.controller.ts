@@ -10,11 +10,18 @@ import {
     BadRequestException,
     Put,
     InternalServerErrorException,
+    UseInterceptors,
+    UploadedFile,
   } from '@nestjs/common';
   import { VerificationRequestService } from './verification-request.service';
   import { VerificationRequest } from './verification-request.entity';
   import { CreateVerificationRequestDto } from './dto';
   import { UpdateVerificationRequestDto } from './dto/update-verificationRequest.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from '../config/multer.config';
+import { ParseJsonPipe } from '../pipes/parse-json.pipe';
+import { join } from 'path';
+import { promises as fs } from 'fs';
 
 @Controller('verification-request')
 export class VerificationRequestController {
@@ -23,23 +30,51 @@ export class VerificationRequestController {
     // @UseGuards(AuthGuard, PermissionsGuard)
     // @SetMetadata('permissions', ['create:Users'])
     @Post()
+    @UseInterceptors(FileInterceptor('file'))
     async create(
-      @Body() newVerificationRequest: CreateVerificationRequestDto,
-    ): Promise<string> {
-      try {
-        const verificationRequest =
-          await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
+      @UploadedFile() file: Express.Multer.File,
+      @Body('verificationRequest') verificationRequestString: string,
+    ) {
+      console.log('Received file:', file);
+      console.log('Received verificationRequest:', verificationRequestString);
   
-        console.log(verificationRequest);
+      const newVerificationRequest = JSON.parse(verificationRequestString);
+  
+      if (!file) {
+        throw new BadRequestException('File is required');
+      }
+  
+      // Define the directory to save the uploaded files
+      const uploadDir = join(__dirname, '..', 'uploads');
+      console.log('Upload directory:', uploadDir);
+  
+      try {
+        const verificationRequest = await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
+
+        // Ensure the upload directory exists
+        await fs.mkdir(uploadDir, { recursive: true });
+  
+        const fileExtension = file.originalname.split('.').pop();
+
+        // Define the full path to save the file
+        const filePath = join(uploadDir, `${verificationRequest.id}.${fileExtension}`);
+  
+        // Save the file to the server
+        await fs.writeFile(filePath, file.buffer);
+  
+        // Update the filepath property in the newVerificationRequest
+        verificationRequest.filepath = filePath;
+        await this.verificationRequestService.updateVerificationRequestFilepath(verificationRequest.id, filePath);
+
         if (!verificationRequest) {
           throw new BadRequestException();
         }
-  
-        return JSON.stringify({
+        return {
           message: `Verification Request ${verificationRequest.id} created`,
           verificationRequest,
-        });
+        };
       } catch (exception) {
+        console.error('Exception:', exception);
         if (exception instanceof BadRequestException) {
           throw exception;
         } else {
