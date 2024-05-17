@@ -1,6 +1,7 @@
 @media screen and (max-width: 500px) {
 	main.marketplace_publication,
-	main.marketplace {
+	main.marketplace,
+	main.create_marketplace {
 		padding-left: 1.5rem;
 		padding-right: 1.5rem;
 	}
@@ -8,7 +9,8 @@
 
 @media screen and (max-width: 400px) {
 	main.marketplace_publication,
-	main.marketplace {
+	main.marketplace,
+	main.create_marketplace {
 		padding-right: 1rem;
 		padding-left: 1rem;
 	}

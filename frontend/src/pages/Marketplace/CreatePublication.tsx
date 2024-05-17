@@ -1,7 +1,7 @@
 import { PageLayout } from '../../layouts/PageLayout';
 import { FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, TextField } from '@mui/material';
+import { Button, Stack, TextField, Typography, Box } from '@mui/material';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -104,59 +104,88 @@ export const CreatePublication = () => {
 
 	return (
 		<PageLayout title='Create marketplace publication'>
-			<form
-				onSubmit={(event) => handleCreatePublication(event)}
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '16px',
-					minWidth: '400px',
-					marginTop: '8px',
-					...(window.innerWidth <= 900 && {
-						marginTop: '0px', // Cambiar el marginTop para pantallas pequeñas
-					}),
-				}}
+			<Stack
+				direction={{ sx: 'column', md: 'row' }}
+				spacing={{ sx: 4, md: 12 }}
 			>
-				<TextField
-					id='publication-token-id'
-					value={tokenId}
-					label='Token ID'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					disabled={true}
-				/>
-				<TextField
-					id='publication-wallet-id'
-					value={walletId}
-					label='Your wallet ID'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					type='number'
-					disabled={true}
-				/>
-				<TextField
-					id='goal-amount'
-					value={price}
-					label='Price'
-					sx={{ maxWidth: '400px', width: '90%' }}
-					type='number'
-					onChange={(event) => {
-						const value = Number(event.target.value);
-						if (value < 0) {
-							setPrice(0);
-						} else {
-							setPrice(event.target.value);
-						}
+				<img
+					style={{
+						marginTop: '12px',
+						marginBottom: '24px',
+						maxWidth: '300px',
 					}}
+					src='/assets/images/create-publication.png'
+					alt='Valorant character'
 				/>
-				<Button
-					variant='contained'
-					color='secondary'
-					type='submit'
-					disabled={!price || price === '0'}
-					sx={{ maxWidth: '400px', width: '90%' }}
+				<Box
+					sx={{
+						display: 'flex',
+						gap: '16px',
+						flexDirection: 'column',
+					}}
 				>
-					Create publication
-				</Button>
-			</form>
+					<Typography
+						variant='h6'
+						color='secondary'
+						sx={{ maxWidth: '500px' }}
+					>
+						Publish your token on our secure marketplace
+					</Typography>
+					<form
+						onSubmit={(event) => handleCreatePublication(event)}
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '16px',
+							minWidth: '300px',
+							marginTop: '8px',
+							...(window.innerWidth <= 900 && {
+								marginTop: '0px', // Cambiar el marginTop para pantallas pequeñas
+							}),
+						}}
+					>
+						<TextField
+							id='publication-token-id'
+							value={tokenId}
+							label='Token ID'
+							sx={{ maxWidth: '500px', width: '90%' }}
+							disabled={true}
+						/>
+						<TextField
+							id='publication-wallet-id'
+							value={walletId}
+							label='Your wallet ID'
+							sx={{ maxWidth: '500px', width: '90%' }}
+							type='number'
+							disabled={true}
+						/>
+						<TextField
+							id='goal-amount'
+							value={price}
+							label='Price'
+							sx={{ maxWidth: '500px', width: '90%' }}
+							type='number'
+							onChange={(event) => {
+								const value = Number(event.target.value);
+								if (value < 0) {
+									setPrice(0);
+								} else {
+									setPrice(event.target.value);
+								}
+							}}
+						/>
+						<Button
+							variant='contained'
+							color='secondary'
+							type='submit'
+							disabled={!price || price === '0'}
+							sx={{ maxWidth: '500px', width: '90%' }}
+						>
+							Create publication
+						</Button>
+					</form>
+				</Box>
+			</Stack>
 		</PageLayout>
 	);
 };
