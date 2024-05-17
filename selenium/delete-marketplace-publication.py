@@ -19,6 +19,8 @@ email_input.send_keys("ricardomilos@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
+time.sleep(2)
+
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
@@ -39,12 +41,10 @@ time.sleep(3)
 publication_view_details_link = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div/div[2]/div[1]/div[4]/a/button').click()
 
-
-time.sleep(5)
+time.sleep(3)
 
 delete_publication_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div/div[1]/button').click()
-
 
 print("Done")
 time.sleep(10)

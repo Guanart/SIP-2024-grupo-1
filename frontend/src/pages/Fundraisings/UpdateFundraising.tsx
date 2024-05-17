@@ -88,7 +88,6 @@ export const UpdateFundraising = () => {
 	}, [fundraising]);
 
 	async function handleUpdateFundraising(event: FormEvent) {
-		console.log('Updating fundraising...');
 		event.preventDefault();
 
 		const updatedFundraising = {

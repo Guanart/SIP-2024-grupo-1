@@ -19,6 +19,8 @@ email_input.send_keys("johndoe@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
+time.sleep(2)
+
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
 
@@ -32,6 +34,8 @@ account_page_link = driver.find_element(
     By.XPATH, '/html/body/div[2]/div[3]/div/ul/a[3]')
 ActionChains(driver).move_to_element(account_page_link).perform()
 account_page_link.click()
+
+time.sleep(2)
 
 # Actualizo el username
 edit_profile_button = driver.find_element(
@@ -49,6 +53,8 @@ biography_input.send_keys(Keys.DELETE)
 username_input.send_keys("Mariano")
 biography_input.send_keys(
     "Profesor de Seminario de Integración Profesional en la UNLu")
+
+time.sleep(2)
 
 save_changes_button = driver.find_element(
     By.XPATH, '/html/body/div[2]/div[3]/form/div[5]/button[1]').click()

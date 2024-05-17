@@ -11,5 +11,6 @@ export interface Player {
 	active: boolean;
 	createdAt: Date;
 	updatedAt: Date;
+	public_key: string;
 	user: User;
 }

@@ -80,6 +80,7 @@ export class FundraisingService {
         collection: true,
         event: true,
         player: {
+          // PROBLEMA DE SEGURIDAD: se envía el access_token del player al frontend (excluirlo con select: {})
           include: { user: true, game: true },
         },
       },

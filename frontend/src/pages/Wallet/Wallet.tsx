@@ -92,9 +92,19 @@ export const Wallet = () => {
 						(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=wallet-${wallet.id}&redirect_uri=${REDIRECT_URI}`)
 					}
 				>
-					Autorizar ventas desde MercadoPago
+					Autorizar ventas desde MercadoPago para Wallet (Marketplace)
 				</Button>
 			)}
+				<Button
+					variant='contained'
+					color='primary'
+					// El state es inseguro
+					onClick={() =>
+						(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=player-1&redirect_uri=${REDIRECT_URI}`)
+					}
+				>
+					Autorizar ventas desde MercadoPago para Player 1
+				</Button>
 			{wallet && (
 				<Stack
 					spacing={2}
