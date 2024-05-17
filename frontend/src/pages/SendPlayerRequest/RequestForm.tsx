@@ -19,6 +19,7 @@ import './RequestForm.css';
 import { User } from '../../types';
 import { Game } from '../../types';
 import { Rank } from '../../types';
+import axios from 'axios';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -120,36 +121,31 @@ export const RequestForm = () => {
 
 		// Verifica si pdfFile es diferente de null antes de agregarlo a FormData
 		if (pdfFile) {
-			formData.append('document', pdfFile);
+			formData.append('file', pdfFile);
 		}
 
 		try {
 			// Realiza la solicitud POST al backend
-			//const date = new Date();
 			const newVerificationRequest = {
 				user_id: currentUser?.id,
 				game_id: selectedGame?.id,
 				rank_id: selectedRank?.id,
 				filepath: 'path-to-file',
-				//createdAt: date,
-				//status: RequestStatus.PENDING,
 			};
-			const response = await fetchWithAuth({
-				isAuthenticated,
-				accessToken,
-				url: `http://localhost:3000/verification-request`,
-				method: 'POST',
-				data: newVerificationRequest,
-			});
 
-			if (response.ok) {
-				const { message, newVerificationRequest } =
-					await response.json();
-				console.log(message);
-				navigate(`/requestSuccess`);
-			}
+			formData.append('verificationRequest', JSON.stringify(newVerificationRequest));
+			const url = `http://localhost:3000/verification-request`;
+			const config = {
+				headers: {
+					'content-type': 'multipart/form-data',
+				},
+			};
+			axios.post(url, formData, config).then((response) => {
+					console.log(response.data);
+					navigate(`/requestSuccess`);
+				  });
 		} catch (error) {
-			console.log(error);
+			console.log(error + "hola, soy del front" + "Llegamos aca porque no hay respuesta :/");
 			navigate(`/error`);
 		}
 	};
