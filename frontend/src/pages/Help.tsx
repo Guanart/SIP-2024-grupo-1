@@ -89,7 +89,11 @@ export const Help = () => {
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel1-content'
 						id='panel1-header'
-						sx={{ fontSize: '18px', paddingY: '8px' }}
+						sx={{
+							color: '#45FFCA',
+							fontSize: '18px',
+							paddingY: '8px',
+						}}
 					>
 						What is a fundraising token?
 					</AccordionSummary>
@@ -106,7 +110,11 @@ export const Help = () => {
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel2-content'
 						id='panel2-header'
-						sx={{ fontSize: '18px', paddingY: '8px' }}
+						sx={{
+							color: '#45FFCA',
+							fontSize: '18px',
+							paddingY: '8px',
+						}}
 					>
 						How do I create a token?
 					</AccordionSummary>
@@ -122,7 +130,11 @@ export const Help = () => {
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel2-content'
 						id='panel2-header'
-						sx={{ fontSize: '18px', paddingY: '8px' }}
+						sx={{
+							color: '#45FFCA',
+							fontSize: '18px',
+							paddingY: '8px',
+						}}
 					>
 						How do commissions work when buying and selling tokens
 						on the platform?
@@ -149,7 +161,11 @@ export const Help = () => {
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel3-content'
 						id='panel3-header'
-						sx={{ fontSize: '18px', paddingY: '8px' }}
+						sx={{
+							color: '#45FFCA',
+							fontSize: '18px',
+							paddingY: '8px',
+						}}
 					>
 						What are the benefits of buying a token?
 					</AccordionSummary>
@@ -168,7 +184,11 @@ export const Help = () => {
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel4-content'
 						id='panel4-header'
-						sx={{ fontSize: '18px', paddingY: '8px' }}
+						sx={{
+							color: '#45FFCA',
+							fontSize: '18px',
+							paddingY: '8px',
+						}}
 					>
 						What support options are available?
 					</AccordionSummary>
