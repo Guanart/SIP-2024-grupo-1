@@ -84,7 +84,7 @@ export const Help = () => {
 				>
 					Frequently asked questions
 				</Typography>
-				<Accordion>
+				<Accordion defaultExpanded>
 					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel1-content'
@@ -94,9 +94,11 @@ export const Help = () => {
 						What is a fundraising token?
 					</AccordionSummary>
 					<AccordionDetails>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						Suspendisse malesuada lacus ex, sit amet blandit leo
-						lobortis eget.
+						A fundraising token is a digital unit that is issued
+						when a player initiates a fundraising campaign. The
+						token of a collection represents a % of the prize given
+						by the player at the end of the tournament he/she
+						registered for.
 					</AccordionDetails>
 				</Accordion>
 				<Accordion>
@@ -109,12 +111,40 @@ export const Help = () => {
 						How do I create a token?
 					</AccordionSummary>
 					<AccordionDetails>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						Suspendisse malesuada lacus ex, sit amet blandit leo
-						lobortis eget.
+						To create tokens you must be a verified user (player)
+						within the platform. This enables you to start
+						fundraising campaigns, which implies the creation of a
+						collection of tokens.
 					</AccordionDetails>
 				</Accordion>
-				<Accordion defaultExpanded>
+				<Accordion>
+					<AccordionSummary
+						expandIcon={<ExpandMoreIcon />}
+						aria-controls='panel2-content'
+						id='panel2-header'
+						sx={{ fontSize: '18px', paddingY: '8px' }}
+					>
+						How do commissions work when buying and selling tokens
+						on the platform?
+					</AccordionSummary>
+					<AccordionDetails>
+						<Typography>
+							Users have the ability to make purchase and sale
+							transactions within the platform, where transactions
+							through Mercado Pago are between the two people
+							involved directly.
+						</Typography>
+						<Typography sx={{ marginTop: '8px' }}>
+							However, in order to cover operational costs and
+							maintain the operation of the platform, we apply a
+							commission (%) on each transaction made. This
+							commission is automatically deducted from the total
+							amount withdrawn before the money is transferred
+							between users' accounts.
+						</Typography>
+					</AccordionDetails>
+				</Accordion>
+				<Accordion>
 					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel3-content'
@@ -124,12 +154,16 @@ export const Help = () => {
 						What are the benefits of buying a token?
 					</AccordionSummary>
 					<AccordionDetails>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						Suspendisse malesuada lacus ex, sit amet blandit leo
-						lobortis eget.
+						The benefits of buying a token include the possibility
+						of earning a certain profit in case the player
+						initiating the collection manages to win prizes in the
+						tournament. On the other hand, it gives you the
+						possibility to sell the token on the marketplace at any
+						price you wish and perhaps make a profit in this way as
+						well.
 					</AccordionDetails>
 				</Accordion>
-				<Accordion defaultExpanded>
+				<Accordion>
 					<AccordionSummary
 						expandIcon={<ExpandMoreIcon />}
 						aria-controls='panel4-content'
@@ -139,9 +173,8 @@ export const Help = () => {
 						What support options are available?
 					</AccordionSummary>
 					<AccordionDetails>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-						Suspendisse malesuada lacus ex, sit amet blandit leo
-						lobortis eget.
+						For any questions or problems you may have, you can
+						contact our support team at lot@support.com.
 					</AccordionDetails>
 				</Accordion>
 			</Container>
