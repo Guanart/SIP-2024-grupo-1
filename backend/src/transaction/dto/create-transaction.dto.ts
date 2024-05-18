@@ -1,3 +1,4 @@
+import { TransactionType } from '@prisma/client';
 import {IsNotEmpty} from 'class-validator';
 
 export class CreateTransactionDto {
@@ -6,7 +7,7 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   token_id: number;
   @IsNotEmpty()
-  type_id: number;
+  type: TransactionType;
   @IsNotEmpty()
   timestamp: Date;
 }

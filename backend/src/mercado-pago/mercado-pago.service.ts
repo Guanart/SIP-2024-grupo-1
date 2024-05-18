@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { MercadoPagoConfig, OAuth, Preference } from 'mercadopago';
+import { MercadoPagoConfig, OAuth, Preference, Payment } from 'mercadopago';
 import { CreatePreference } from './create-preference.dto';
 import { PrismaService } from '../database/prisma.service';
 import { log } from 'console';
+import { TransactionType } from '@prisma/client';
 
 @Injectable()
 export class MercadoPagoService {
@@ -32,7 +33,7 @@ export class MercadoPagoService {
   //   return notification;
   // }
 
-  
+
   // CREAR PREFERENCIA PARA MARKETPLACE Y FUNDRAISING
   async createPreference(items: CreatePreference) {
     // Buscar el access_token del player o wallet
@@ -97,14 +98,15 @@ export class MercadoPagoService {
           },
         ],
         back_urls: {
-          success: process.env.APP_URL + '/' + items.type + '/',
-          pending: process.env.APP_URL + '/' + items.type,
-          failure: process.env.APP_URL + '/' + items.type,
+          // success: process.env.APP_URL + '/' + items.type + '/',
+          // pending: process.env.APP_URL + '/' + items.type,
+          // failure: process.env.APP_URL + '/' + items.type,
+          success: 'http://localhost:5173/' + items.type + '/',
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
-        marketplace_fee: 10,
-        notification_url: process.env.APP_URL + '/mercado-pago/webhook',
+        marketplace_fee: 10,    // TODO: Cambiar por el porcentaje que se quiera cobrar
+        // notification_url: process.env.APP_URL + `/mercado-pago/webhook?type=${items.type}&comprador=${}`,
       };
 
       const result = await preference.create({ body });
@@ -164,12 +166,82 @@ export class MercadoPagoService {
     }
   }
 
-  handlePayment(notification: any, type: string) {
-    if (type === 'fundraising') {
+  async handlePayment(notification: any) {
+    // Obtener el payment
+    const payment = new Payment(this.client);
+    const paymentId = notification.data.id;
+    const data = await payment.get({ id: paymentId });
+    console.log('Payment received:', data);
 
-      // 
-    } else if (type === 'marketplace') {
-      // Manejar el pago de una reventa
+    /*
+      token: {
+        "category_id": "fundraising",
+        "description": null,
+        "id": "fundraising-1",
+        "picture_url": null,
+        "quantity": "1",
+        "title": "John Doe | Supermagic (1)",
+        "unit_price": "25"
+      }
+    */
+    
+    // Actualizar balance del player
+      // const player = await this.prisma.player.findFirst({
+      //   where: {
+      //     fundraisings: {
+      //       some: {
+      //         id: fundraisingId,
+      //       },
+      //     },
+      //   },
+      //   select: {
+      //     id: true,
+      //   },
+      // });
+
+      // if (!player) {
+      //   return false;
+      // }
+      // const amount = data.transaction_amount;
+      // const newBalance = player.balance + amount;
+
+      // await this.prisma.player.update({
+      //   where: { id: player.id },
+      //   data: { balance: newBalance },
+      // });
+
+    const item = data.additional_info.items[0];
+    if (item.category_id === 'fundraising') {
+      const fundraisingId = item.id.split('-')[1];
+
+      // Necesito buscar primero la fundraising
+      const fundraising = await this.prisma.fundraising.findFirst({
+        where: {
+          id: Number(fundraisingId),
+        },
+        select: {
+          collection: true,
+        }
+      });
+      
+      // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
+      const token = await this.prisma.token.findFirst({
+        where: {
+          collection_id: fundraising.collection.id,
+        },
+      });
+
+      // Persistir transacción en Wallet comprador
+      await this.prisma.transaction.create({
+        data: {
+          wallet_id: 1,
+          token_id: token.id,
+          type: TransactionType.BUY,
+        },
+      });
+
+    } else if (item.category_id === 'marketplace') {
+
     }
     return true;
   }

@@ -16,10 +16,18 @@ export class MercadoPagoController {
   }
 
   @Post('webhook')
-  async handleWebhook(@Req() req: Request, @Res() res: Response) {
-    const notification = req.body;
-    console.log('Processing notification:', notification);
-    // await this.mercadoPagoService.handleWebhook(notification);
+  async handleWebhook(@Body() body, @Res() res: Response) {
+    const notification = body;
+    console.log('Notification received:', notification);
+    
+    if (notification.action == 'payment.created') {
+      const ok = await this.mercadoPagoService.handlePayment(notification);
+      if (ok) {
+        return {
+          message: "Su pago ha sido procesado exitosamente. ¡Gracias por su colaboración!"
+        }
+      }
+    }
   }
 
   // Cuando el usuario no autorizar y selecciona "por ahora no", es redireccionado a /mercado-pago/oauth?error=access_denied

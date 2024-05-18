@@ -3,6 +3,7 @@ import { Transaction} from './transaction.entity';
 import { PrismaService } from '../database/prisma.service';
 import { CreateTransactionDto } from './dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { TransactionType } from '@prisma/client';
 
 @Injectable()
 export class TransactionService {
@@ -16,12 +17,12 @@ export class TransactionService {
     return transaction ? Transaction.fromObject(transaction) : null;
 }
 
-  async findOne(wallet_id: number,token_id: number, type_id: number, timestamp: Date): Promise<Transaction> {
+  async findOne(wallet_id: number,token_id: number, type: TransactionType, timestamp: Date): Promise<Transaction> {
     const transaction = await this.prisma.transaction.findUnique({
       where: {
         id: wallet_id,
         token_id,
-        type_id,
+        type,
         timestamp,
       },
     });
@@ -30,12 +31,12 @@ export class TransactionService {
   }
 
   
-  async update({wallet_id,token_id, type_id, timestamp}: UpdateTransactionDto): Promise<Transaction> {
+  async update({wallet_id,token_id, type, timestamp}: UpdateTransactionDto): Promise<Transaction> {
     const updatedTransaction = await this.prisma.transaction.update({
       where: {
-        id: wallet_id,token_id, type_id, timestamp,
+        id: wallet_id,token_id, type, timestamp,
       },
-      data: { wallet_id,token_id, type_id, timestamp },
+      data: { wallet_id,token_id, type, timestamp },
     });
 
     // TODO: actualizar relación USER_COUNTRY

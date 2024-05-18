@@ -143,17 +143,5 @@ export class FundraisingController {
   //     const amount = 2000; // Get the token amount through your application's logic
   //     const preferenceId = await this.fundraisingService.generateMercadoPagoPreference(Number(collectionId), amount);
   //     return { preferenceId };
-  // }
-
-  @Post('webhook')
-  async handleWebhook(@Req() req: Request, @Res() res: Response) {
-    const notification = req.body;
-    const ok = await this.mercadoPagoService.handlePayment(notification, 'fundraising');
-    if (ok) {
-      return {
-        message: "Su pago ha sido procesado exitosamente. ¡Gracias por su colaboración!" 
-      }
-    }
-  }
-  
+  // }  
 }

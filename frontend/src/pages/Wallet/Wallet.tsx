@@ -172,14 +172,14 @@ export const Wallet = () => {
 												align='center'
 												sx={{
 													color: getColorByTypeId[
-														transaction.type_id
+														transaction.type
 													],
 													fontWeight: 'bold',
 												}}
 											>
 												{
 													transactionsType[
-														transaction.type_id
+														transaction.type
 													]
 												}
 											</TableCell>

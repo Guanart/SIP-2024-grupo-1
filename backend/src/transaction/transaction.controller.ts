@@ -18,6 +18,7 @@ import {
   // import { PermissionsGuard } from '../auth/permissions.guard';
   // import { AuthGuard } from '../auth/auth.guard';
   import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { TransactionType } from '@prisma/client';
   
   @Controller('transaction')
   export class TransactionController {
@@ -54,18 +55,18 @@ import {
     async findOne(
       @Param('wallet_id') wallet_id: number,
       @Param('token_id') token_id: number, 
-      @Param('type_id') type_id: number, 
+      @Param('type') type: TransactionType, 
       @Param('timestamp') timestamp: Date
     ): Promise<string> {
       try {
-        const transaction: Transaction = await this.transactionService.findOne(wallet_id,token_id, type_id, timestamp);
+        const transaction: Transaction = await this.transactionService.findOne(wallet_id,token_id, type, timestamp);
   
         if (!transaction) {
-          throw new NotFoundException(`Transaction ${wallet_id}, ${token_id}, ${type_id}, ${timestamp} not found`);
+          throw new NotFoundException(`Transaction ${wallet_id}, ${token_id}, ${type}, ${timestamp} not found`);
         }
   
         return JSON.stringify({
-          message: `Transaction ${wallet_id}, ${token_id}, ${type_id}, ${timestamp}  found`,
+          message: `Transaction ${wallet_id}, ${token_id}, ${type}, ${timestamp}  found`,
           transaction,
         });
       } catch (exception) {
@@ -86,7 +87,7 @@ import {
         let transaction: Transaction = await this.transactionService.findOne(
           updatedTransaction.wallet_id,
           updatedTransaction.token_id,
-          updatedTransaction.type_id,
+          updatedTransaction.type,
           updatedTransaction.timestamp,
         );
   
@@ -94,7 +95,7 @@ import {
           throw new NotFoundException(`Transaction 
           ${updatedTransaction.wallet_id}, 
           ${updatedTransaction.token_id},
-          ${updatedTransaction.type_id}, 
+          ${updatedTransaction.type}, 
           ${updatedTransaction.timestamp} not found`);
         }
   
@@ -108,7 +109,7 @@ import {
           message: `Transaction 
           ${updatedTransaction.wallet_id}, 
           ${updatedTransaction.token_id},
-          ${updatedTransaction.type_id}, 
+          ${updatedTransaction.type}, 
           ${updatedTransaction.timestamp} updated`,
         });
       } catch (exception) {
