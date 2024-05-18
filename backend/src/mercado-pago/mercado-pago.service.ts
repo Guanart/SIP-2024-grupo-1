@@ -102,6 +102,8 @@ export class MercadoPagoService {
           // pending: process.env.APP_URL + '/' + items.type,
           // failure: process.env.APP_URL + '/' + items.type,
           success: 'http://localhost:5173/' + items.type + '/',
+          pending: 'http://localhost:5173/' + items.type + '/',
+          failure: 'http://localhost:5173/' + items.type + '/',
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
@@ -110,7 +112,8 @@ export class MercadoPagoService {
       };
 
       const result = await preference.create({ body });
-      console.log(result);
+      
+      console.log('\nPreference created:\n', result);
       return { id: result.id }; // Le retorna al front el id de la preference, para mostrar el botón de MP
     } catch (error) {
       console.error('Error creating preference:', error);
@@ -135,7 +138,7 @@ export class MercadoPagoService {
         // test_token: true     // no usarlo
       };
       const result = await oauth.create({ body: body });
-      console.log(result);
+      console.log(`\nOAuth result:\n`, result);
       const { access_token, public_key, refresh_token } = result;
 
       // Guardar tokens
@@ -155,8 +158,7 @@ export class MercadoPagoService {
       } else if (type == 'wallet') {
         data = await this.prisma.wallet.update(queryMap);
       }
-      console.log('Tokens guardados');
-      console.log(data);
+      console.log(`\nTokens guardados. Vendedor autorizado`, data);
     } catch (error) {
       console.error('Error creating preference:', error);
       throw new HttpException(
@@ -171,7 +173,7 @@ export class MercadoPagoService {
     const payment = new Payment(this.client);
     const paymentId = notification.data.id;
     const data = await payment.get({ id: paymentId });
-    console.log('Payment received:', data);
+    console.log('\nPayment received:\n', data);
 
     /*
       token: {
@@ -225,21 +227,41 @@ export class MercadoPagoService {
       });
       
       // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
+      // Necesito un token que no tenga token_wallet ni Marketplace_publication asociados
       const token = await this.prisma.token.findFirst({
         where: {
           collection_id: fundraising.collection.id,
+          token_wallet: {
+            none: {},
+          },
+          Marketplace_publication: {
+            none: {},
+          },
         },
       });
 
-      // Persistir transacción en Wallet comprador
-      await this.prisma.transaction.create({
+      // Persistir transacción en Wallet comprador, y asociarle el token a la wallet con un token_wallet
+      const walletId = 2; // TODO: Hardcodeado ricardomilos@lot.com
+      const tokenId = token.id;
+
+      // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
+      const transaction = await this.prisma.transaction.create({
         data: {
-          wallet_id: 1,
-          token_id: token.id,
+          wallet_id: walletId,
+          token_id: tokenId,
           type: TransactionType.BUY,
         },
       });
 
+      // Create a new token_wallet entry to associate the token with the wallet
+      await this.prisma.token_wallet.create({
+        data: {
+          token_id: tokenId,
+          wallet_id: walletId,
+        },
+      });
+
+      console.log(`\nFundraising transaction with id ${transaction.id} processed successfully\n`, transaction);
     } else if (item.category_id === 'marketplace') {
 
     }

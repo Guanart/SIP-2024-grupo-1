@@ -18,15 +18,10 @@ export class MercadoPagoController {
   @Post('webhook')
   async handleWebhook(@Body() body, @Res() res: Response) {
     const notification = body;
-    console.log('Notification received:', notification);
+    console.log('\nNotification received:\n', notification);
     
     if (notification.action == 'payment.created') {
-      const ok = await this.mercadoPagoService.handlePayment(notification);
-      if (ok) {
-        return {
-          message: "Su pago ha sido procesado exitosamente. ¡Gracias por su colaboración!"
-        }
-      }
+      await this.mercadoPagoService.handlePayment(notification);
     }
   }
 
