@@ -72,7 +72,13 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 			text: 'Player Request',
 			href: '/sendPlayerRequest',
 			icon: <AssignmentTurnedInIcon />,
-			isProtected: false,
+			isProtected: true,
+		},
+		{
+			text: 'All Players Requests',
+			href: '/allPlayersRequests',
+			icon: <AssignmentTurnedInIcon />,
+			isProtected: true,
 		},
 	];
 

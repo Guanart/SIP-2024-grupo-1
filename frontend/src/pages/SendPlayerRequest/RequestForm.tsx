@@ -40,7 +40,6 @@ export const RequestForm = () => {
 
 	const { user, isAuthenticated } = useAuth0();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	const [userId, setUserId] = useState<string>('');
 
 	const { accessToken } = useAccessToken();
 	const [pdfFile, setPdfFile] = useState<File | null>(null);

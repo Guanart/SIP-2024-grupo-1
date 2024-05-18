@@ -1,165 +1,138 @@
 import {
-    Controller,
-    Get,
-    Post,
-    NotFoundException,
-    Param,
-    Body,
-    // UseGuards,
-    // SetMetadata,
-    BadRequestException,
-    Put,
-    InternalServerErrorException,
-    UseInterceptors,
-    UploadedFile,
-  } from '@nestjs/common';
-  import { VerificationRequestService } from './verification-request.service';
-  import { VerificationRequest } from './verification-request.entity';
-  import { CreateVerificationRequestDto } from './dto';
-  import { UpdateVerificationRequestDto } from './dto/update-verificationRequest.dto';
+  Controller,
+  Get,
+  Post,
+  NotFoundException,
+  Param,
+  Body,
+  BadRequestException,
+  Put,
+  InternalServerErrorException,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+  StreamableFile,
+  Patch,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { VerificationRequestService } from './verification-request.service';
+import { VerificationRequest } from './verification-request.entity';
+import { CreateVerificationRequestDto } from './dto';
+import { UpdateVerificationRequestDto } from './dto/update-verificationRequest.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from '../config/multer.config';
-import { ParseJsonPipe } from '../pipes/parse-json.pipe';
 import { join } from 'path';
-import { promises as fs } from 'fs';
+import { promises as fs, createReadStream } from 'fs';
 
 @Controller('verification-request')
 export class VerificationRequestController {
-    constructor(private verificationRequestService: VerificationRequestService) {}
-    //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
-    // @UseGuards(AuthGuard, PermissionsGuard)
-    // @SetMetadata('permissions', ['create:Users'])
-    @Post()
-    @UseInterceptors(FileInterceptor('file'))
-    async create(
-      @UploadedFile() file: Express.Multer.File,
-      @Body('verificationRequest') verificationRequestString: string,
-    ) {
-      console.log('Received file:', file);
-      console.log('Received verificationRequest:', verificationRequestString);
-  
-      const newVerificationRequest = JSON.parse(verificationRequestString);
-  
-      if (!file) {
-        throw new BadRequestException('File is required');
+  constructor(private verificationRequestService: VerificationRequestService) {}
+
+  @Post()
+  @UseInterceptors(FileInterceptor('file'))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('verificationRequest') verificationRequestString: string,
+  ) {
+    const newVerificationRequest = JSON.parse(verificationRequestString);
+
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+
+    const uploadDir = join(__dirname, '..', 'uploads');
+    try {
+      const verificationRequest = await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
+
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      const fileExtension = file.originalname.split('.').pop();
+      const filePath = join(uploadDir, `${verificationRequest.id}.${fileExtension}`);
+      await fs.writeFile(filePath, file.buffer);
+
+      verificationRequest.filepath = filePath;
+      await this.verificationRequestService.updateVerificationRequestFilepath(verificationRequest.id, filePath);
+
+      if (!verificationRequest) {
+        throw new BadRequestException();
       }
-  
-      // Define the directory to save the uploaded files
-      const uploadDir = join(__dirname, '..', 'uploads');
-      console.log('Upload directory:', uploadDir);
-  
-      try {
-        const verificationRequest = await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
-
-        // Ensure the upload directory exists
-        await fs.mkdir(uploadDir, { recursive: true });
-  
-        const fileExtension = file.originalname.split('.').pop();
-
-        // Define the full path to save the file
-        const filePath = join(uploadDir, `${verificationRequest.id}.${fileExtension}`);
-  
-        // Save the file to the server
-        await fs.writeFile(filePath, file.buffer);
-  
-        // Update the filepath property in the newVerificationRequest
-        verificationRequest.filepath = filePath;
-        await this.verificationRequestService.updateVerificationRequestFilepath(verificationRequest.id, filePath);
-
-        if (!verificationRequest) {
-          throw new BadRequestException();
-        }
-        return {
-          message: `Verification Request ${verificationRequest.id} created`,
-          verificationRequest,
-        };
-      } catch (exception) {
-        console.error('Exception:', exception);
-        if (exception instanceof BadRequestException) {
-          throw exception;
-        } else {
-          throw new InternalServerErrorException('Internal Server Error');
-        }
+      return {
+        message: `Verification Request ${verificationRequest.id} created`,
+        verificationRequest,
+      };
+    } catch (exception) {
+      console.error('Exception:', exception);
+      if (exception instanceof BadRequestException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
       }
     }
-  
-    //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
-    // @UseGuards(AuthGuard, PermissionsGuard)
-    // @SetMetadata('permissions', ['read:users'])
-    
-    /*
-    @Get("user-id")
-    async findOne(
-      @Param('user_id') user_id: number,
-      @Param('createdAt') createdAt: Date, 
-    ): Promise<string> {
-      try {
-        const verificationRequest: VerificationRequest = await this.verificationRequestService.findOne(user_id, createdAt);
-  
-        if (!verificationRequest) {
-          throw new NotFoundException(`Verification Request ${user_id}, ${createdAt} not found`);
-        }
-  
-        return JSON.stringify({
-          message: `Transaction ${user_id}, ${createdAt} found`,
-          verificationRequest,
-        });
-      } catch (exception) {
-        if (exception instanceof NotFoundException) {
-          throw exception;
-        } else {
-          throw new InternalServerErrorException('Internal Server Error');
-        }
-      }
-    }
-    */
-    
-
-    @Get()
-    async getAllRequests() {
-      const verificationRequest = await this.verificationRequestService.getAllRequests();
-      return JSON.stringify({
-        verificationRequest
-      });
-    }
-  
-    //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
-    // @UseGuards(AuthGuard, PermissionsGuard)
-    // @SetMetadata('permissions', ['update:users'])
-    /*
-    @Put('/')
-    async update(@Body() updatedVerificationRequest: UpdateVerificationRequestDto): Promise<string> {
-      try {
-        let verificationRequest: VerificationRequest = await this.verificationRequestService.findOne(
-          updatedVerificationRequest.user_id,
-          updatedVerificationRequest.createdAt,
-        );
-  
-        if (!verificationRequest) {
-          throw new NotFoundException(`Transaction 
-          ${updatedVerificationRequest.id} not found`);
-        }
-  
-        verificationRequest = await this.verificationRequestService.update(updatedVerificationRequest);
-  
-        if (!verificationRequest) {
-          throw new BadRequestException();
-        }
-  
-        return JSON.stringify({
-          message: `Transaction 
-          ${updatedVerificationRequest.id} updated`,
-        });
-      } catch (exception) {
-        if (
-          exception instanceof NotFoundException ||
-          exception instanceof BadRequestException
-        ) {
-          throw exception;
-        } else {
-          throw new InternalServerErrorException('Internal Server Error');
-        }
-      }
-    }
-    */
   }
+
+  @Get()
+  async getAllRequests() {
+    const verificationRequest = await this.verificationRequestService.getAllRequests();
+    return {
+      verificationRequest
+    };
+  }
+
+  @Get('file/:id')
+  async getFile(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const numericId = parseInt(id, 10);
+      if (isNaN(numericId)) {
+        throw new BadRequestException('Invalid ID format');
+      }
+
+      const verificationRequest = await this.verificationRequestService.findById(numericId);
+
+      if (!verificationRequest) {
+        throw new NotFoundException(`Verification Request ${id} not found`);
+      }
+
+      const filePath = verificationRequest.filepath;
+      const file = createReadStream(filePath);
+
+      res.set({
+        'Content-Type': 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${numericId}.${filePath.split('.').pop()}"`,
+      });
+
+      file.pipe(res);
+    } catch (error) {
+      console.error('Error:', error);
+      throw new InternalServerErrorException('Could not download file');
+    }
+  }
+
+  @Patch(':id')
+  async updateRequestStatus(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateVerificationRequestDto
+  ) {
+    const numericId = parseInt(id, 10);
+    if (isNaN(numericId)) {
+      throw new BadRequestException('Invalid ID format');
+    }
+
+    try {
+      const updatedVerificationRequest = await this.verificationRequestService.updateVerificationRequestStatus({
+        id: numericId,
+        status: updateDto.status,
+      });
+
+      if (!updatedVerificationRequest) {
+        throw new NotFoundException(`Verification Request ${id} not found`);
+      }
+      console.log(updatedVerificationRequest);
+      return {
+        message: `Verification Request ${id} updated to ${updateDto.status}`,
+        updatedVerificationRequest,
+      };
+    } catch (error) {
+      console.error('Error:', error);
+      throw new InternalServerErrorException('Could not update request status');
+    }
+  }
+}

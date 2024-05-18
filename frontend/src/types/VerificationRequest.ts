@@ -3,10 +3,13 @@ import { Rank } from "./Rank";
 import { User } from "./User";
 
 export interface VerificationRequest {
+    id?: number;
 	user: User;
     game: Game;
     rank: Rank;
-    filepath: string;
+    createdAt?: Date;
+    //status?: string;
+    
 }
 
 /*

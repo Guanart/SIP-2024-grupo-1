@@ -15,3 +15,4 @@ export * from './Login/Login';
 export * from './TermsConditions';
 export * from './SendPlayerRequest/RequestForm';
 export * from './SendPlayerRequest/RequestSuccess';
+export * from './AllPlayersRequests/AllPlayersRequests';

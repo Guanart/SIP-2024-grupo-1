@@ -5,7 +5,13 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe(
+    {
+    transform: true, // Habilita la transformación de los datos entrantes
+    whitelist: true, // Elimina los valores no incluidos en las clases DTO
+    forbidNonWhitelisted: true, // Lanza un error si se encuentran valores no permitidos
+    }
+  ));
   app.enableCors();
 
   // Swagger

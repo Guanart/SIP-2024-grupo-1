@@ -49,17 +49,23 @@ export class VerificationRequestService {
         rank: true,
       },
     });
-    console.log(verificationRequests);
     return verificationRequests.map(verificationRequest => VerificationRequest.fromObject(verificationRequest));
   }
 
-  async update({id, status}: UpdateVerificationRequestDto): Promise<VerificationRequest> {
+  async findById(id: number): Promise<VerificationRequest | null> {
+    const verificationRequest = await this.prisma.verificationRequest.findUnique({
+      where: { id },
+    });
+    return verificationRequest ? VerificationRequest.fromObject(verificationRequest) : null;
+  }
+
+  async updateVerificationRequestStatus(updateDto: UpdateVerificationRequestDto): Promise<VerificationRequest | null> {
+    const { id, status } = updateDto;
     const updatedVerificationRequest = await this.prisma.verificationRequest.update({
-      where: {
-        id: id,
-      },
+      where: { id },
       data: { status },
     });
     return updatedVerificationRequest ? VerificationRequest.fromObject(updatedVerificationRequest) : null;
   }
+  
 }

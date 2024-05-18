@@ -21,6 +21,7 @@ import {
 	CreatePublication,
 	MarketplacePublication,
 	TermsConditions,
+	AllPlayersRequests,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -70,6 +71,10 @@ const privateRoutes = [
 	{
 		path: `/requestSuccess`,
 		element: <RequestSuccess />,
+	},
+	{
+		path: `/allPlayersRequests`,
+		element: <AllPlayersRequests />,
 	},
 ];
 
