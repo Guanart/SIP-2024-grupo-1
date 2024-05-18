@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, Param, Res } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Res, Req } from '@nestjs/common';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { MercadoPagoService } from './mercado-pago.service';
@@ -16,8 +16,10 @@ export class MercadoPagoController {
   }
 
   @Post('webhook')
-  async handleWebhook(@Body() notification: any) {
-    return this.mercadoPagoService.handleWebhook(notification);
+  async handleWebhook(@Req() req: Request, @Res() res: Response) {
+    const notification = req.body;
+    console.log('Processing notification:', notification);
+    // await this.mercadoPagoService.handleWebhook(notification);
   }
 
   // Cuando el usuario no autorizar y selecciona "por ahora no", es redireccionado a /mercado-pago/oauth?error=access_denied
@@ -32,10 +34,5 @@ export class MercadoPagoController {
 
     this.mercadoPagoService.authorizeSeller(code, type, id);
     return { url: `${process.env.REACT_APP_URL}/${type}`, statusCode: 302, status: 'ok' };
-  }
-
-  @Get('feedback')
-  async returnFeedback(@Query() params: any) {
-    return this.mercadoPagoService.returnFeedback(params);
   }
 }

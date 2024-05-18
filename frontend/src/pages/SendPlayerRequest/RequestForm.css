@@ -49,7 +49,7 @@ main.requestform {
 }
 
 label {
-	background-color: #272727; /* Fondo blanco con transparencia */
+	background-color: #272727 !important; /* Fondo blanco con transparencia */
 }
 
 span {
