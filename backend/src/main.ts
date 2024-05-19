@@ -5,20 +5,22 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe(
-    {
-    transform: true, // Habilita la transformación de los datos entrantes
-    whitelist: true, // Elimina los valores no incluidos en las clases DTO
-    forbidNonWhitelisted: true, // Lanza un error si se encuentran valores no permitidos
-    }
-  ));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true, // Habilita la transformación de los datos entrantes
+      whitelist: true, // Elimina los valores no incluidos en las clases DTO
+      forbidNonWhitelisted: true, // Lanza un error si se encuentran valores no permitidos
+    }),
+  );
   app.enableCors();
 
   // Swagger
   // Use DocumentBuilder to create a new Swagger document configuration
   const config = new DocumentBuilder()
     .setTitle('League of Token API')
-    .setDescription("This is the League of Token API. It provides service to React frontend app, and uses Auth0 and MercadoPago services")
+    .setDescription(
+      'This is the League of Token API. It provides service to React frontend app, and uses Auth0 and MercadoPago services',
+    )
     .setVersion('0.1')
     .build(); // Build the document
   // Create a Swagger document using the application instance and the document configuration
@@ -28,7 +30,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors();
-  
+
   // Init
   await app.listen(process.env.PORT);
 }

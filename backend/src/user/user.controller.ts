@@ -26,7 +26,7 @@ export class UserController {
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['create:Users'])
+  // @SetMetadata('permissions', ['create:users'])
   @Post()
   async create(@Body() newUser: CreateUserDto): Promise<string> {
     try {

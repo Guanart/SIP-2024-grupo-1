@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { PageLayout } from '../layouts/PageLayout';
+import { PageLayout } from '../../layouts/PageLayout';
 import { Button, List, ListItem, ListItemText } from '@mui/material';
 //import { useNavigate } from 'react-router-dom';
-import { useAccessToken } from '../hooks';
-import { fetchWithAuth } from '../utils/fetchWithAuth';
+import { useAccessToken } from '../../hooks';
+import { fetchWithAuth } from '../../utils/fetchWithAuth';
 //import useMediaQuery from '@mui/material/useMediaQuery';
 //import { User } from '../../types';
-import { VerificationRequest } from '../types/VerificationRequest';
+import { VerificationRequest } from '../../types/VerificationRequest';
 import axios from 'axios';
-import { KeyboardBackspaceIcon } from '../global/icons';
+import { KeyboardBackspaceIcon } from '../../global/icons';
 import { Link } from 'react-router-dom';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;

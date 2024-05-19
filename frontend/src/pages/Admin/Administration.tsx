@@ -1,5 +1,5 @@
 import { Button, Box, Stack, Typography } from '@mui/material';
-import { PageLayout } from '../layouts/PageLayout';
+import { PageLayout } from '../../layouts/PageLayout';
 import { Link } from 'react-router-dom';
 
 export const Administration = () => {
