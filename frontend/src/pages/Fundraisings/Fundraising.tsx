@@ -27,7 +27,7 @@ const REACT_APP_PREFERENCE_TYPE = 'fundraising';
 export const Fundraising = () => {
 	const [amount, setAmount] = useState<number>(1);
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
-	const { accessToken } = useAccessToken();
+	const { accessToken, role } = useAccessToken();
 	const [fundraising, setFundraising] = useState<FundraisingType>();
 	const { user, isAuthenticated } = useAuth0();
 	const { id } = useParams();
@@ -340,7 +340,8 @@ export const Fundraising = () => {
 							</Link>
 						)}
 						{user?.sub !== fundraising.player.user.auth0_id &&
-							!preferenceId && (
+							!preferenceId &&
+							role !== 'admin' && (
 								<>
 									<TextField
 										id='outlined-number'

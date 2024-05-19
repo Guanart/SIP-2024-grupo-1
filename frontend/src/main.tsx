@@ -7,7 +7,6 @@ import {
 	Help,
 	Home,
 	Marketplace,
-	Trending,
 	Wallet,
 	Login,
 	Error,
@@ -21,7 +20,10 @@ import {
 	CreatePublication,
 	MarketplacePublication,
 	TermsConditions,
-	AllPlayersRequests,
+	VerificationRequests,
+	Administration,
+	Events,
+	Games,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -73,8 +75,20 @@ const privateRoutes = [
 		element: <RequestSuccess />,
 	},
 	{
-		path: `/allPlayersRequests`,
-		element: <AllPlayersRequests />,
+		path: `/requests`,
+		element: <VerificationRequests />,
+	},
+	{
+		path: `/events`,
+		element: <Events />,
+	},
+	{
+		path: `/games`,
+		element: <Games />,
+	},
+	{
+		path: '/administration',
+		element: <Administration />,
 	},
 ];
 
@@ -96,10 +110,6 @@ const publicRoutes = [
 		element: <Login />,
 	},
 
-	{
-		path: '/trending',
-		element: <Trending />,
-	},
 	{
 		path: '/error/:code',
 		element: <Error />,

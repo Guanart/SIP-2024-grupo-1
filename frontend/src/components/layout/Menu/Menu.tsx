@@ -17,10 +17,10 @@ import {
 	TokenIcon,
 	EmojiEventsIcon,
 	HomeIcon,
-	TrendingUpIcon,
 } from '../../../global/icons';
 import { Link } from 'react-router-dom';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import { useAccessToken } from '../../../hooks';
 
 type MenuProps = {
 	isOpen: boolean;
@@ -29,56 +29,64 @@ type MenuProps = {
 
 export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 	const { isAuthenticated, user } = useAuth0();
+	const { role } = useAccessToken();
 
 	const items = [
-		{ text: 'Home', href: '/', icon: <HomeIcon />, isProtected: false },
+		{
+			text: 'Home',
+			href: '/',
+			icon: <HomeIcon />,
+			isProtected: false,
+			allowed: [],
+		},
 		{
 			text: 'Help',
 			href: '/help',
 			icon: <InfoIcon />,
 			isProtected: false,
+			allowed: [],
 		},
 		{
 			text: 'Account',
 			href: `/account/${user?.sub}`,
 			icon: <AccountCircleIcon />,
 			isProtected: true,
+			allowed: ['user', 'player', 'admin'],
 		},
 		{
 			text: 'Wallet',
 			href: '/wallet',
 			icon: <WalletIcon />,
 			isProtected: true,
+			allowed: ['user', 'player'],
 		},
 		{
 			text: 'Marketplace',
 			href: '/marketplace',
 			icon: <TokenIcon />,
 			isProtected: false,
+			allowed: [],
 		},
 		{
 			text: 'Fundraisings',
 			href: '/fundraisings',
 			icon: <EmojiEventsIcon />,
 			isProtected: false,
-		},
-		{
-			text: 'Trending',
-			href: '/trending',
-			icon: <TrendingUpIcon />,
-			isProtected: false,
+			allowed: [],
 		},
 		{
 			text: 'Player Request',
 			href: '/sendPlayerRequest',
 			icon: <AssignmentTurnedInIcon />,
 			isProtected: true,
+			allowed: ['user'],
 		},
 		{
-			text: 'All Players Requests',
-			href: '/allPlayersRequests',
+			text: 'Administation',
+			href: '/administration',
 			icon: <AssignmentTurnedInIcon />,
 			isProtected: true,
+			allowed: ['admin'],
 		},
 	];
 
@@ -86,7 +94,7 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 		<Drawer anchor='left' open={isOpen} onClose={toggleMenu}>
 			<Box sx={{ width: 250 }} role='presentation' onClick={toggleMenu}>
 				<List>
-					{items.map(({ text, href, icon, isProtected }) => {
+					{items.map(({ text, href, icon, isProtected, allowed }) => {
 						return !isProtected ? (
 							<Link
 								to={href}
@@ -104,7 +112,7 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 								</ListItem>
 							</Link>
 						) : (
-							isAuthenticated && (
+							isAuthenticated && allowed.indexOf(role) > -1 && (
 								<Link
 									to={href}
 									style={{

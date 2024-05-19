@@ -20,7 +20,7 @@ const REACT_APP_PREFERENCE_TYPE = 'marketplace'; //! Me guié por la preferencia
 
 export const MarketplacePublication = () => {
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
-	const { accessToken } = useAccessToken();
+	const { accessToken, role } = useAccessToken();
 	const [marketplacePublication, setMarketplacePublication] =
 		useState<MarketplacePublicationType>();
 	const { user, isAuthenticated } = useAuth0();
@@ -264,7 +264,8 @@ export const MarketplacePublication = () => {
 						)}
 						{user?.sub !==
 							marketplacePublication.out_wallet.user?.auth0_id &&
-							!preferenceId && (
+							!preferenceId &&
+							role !== 'admin' && (
 								<Button
 									variant='contained'
 									color='secondary'
