@@ -185,26 +185,6 @@ export const Wallet = () => {
 							</Table>
 						</TableContainer>
 					) : (
-						// <List>
-						// 	{transactions.map((transaction) => (
-						// 		<ListItem
-						// 			key={transaction.id}
-						// 			sx={{
-						// 				backgroundColor: getColorByTypeId(
-						// 					transaction.type_id
-						// 				),
-						// 				borderRadius: '4px', // Establece el radio de las esquinas a 8px
-						// 				padding: '12px', // Agrega algo de padding para separarlo de los bordes
-						// 				marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
-						// 			}}
-						// 		>
-						// 			<ListItemText
-						// 				primary={`Token: ${transaction.token_id}`}
-						// 				secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
-						// 			/>
-						// 		</ListItem>
-						// 	))}
-						// </List>
 						<Typography>There is no transactions yet!</Typography>
 					)}
 				</Stack>
