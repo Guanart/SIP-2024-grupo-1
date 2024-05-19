@@ -38,14 +38,58 @@ export const Administration = () => {
 					</Button>
 				</Link>
 			</Stack>
-			<Box sx={{ marginTop: '18px' }}>
-				<Typography variant='h6'>¿Estadisticas?</Typography>
-				<p>
-					Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-					Dolorem nobis aut aliquam corrupti eveniet voluptatum odit
-					minus alias neque natus ab, id iure debitis! Nulla pariatur
-					inventore nihil nisi impedit.
-				</p>
+			<Box
+				sx={{
+					marginTop: '32px',
+					display: 'flex',
+					flexDirection: 'column',
+					gap: '24px',
+				}}
+			>
+				<Box sx={{ maxWidth: '800px' }}>
+					<Typography variant='h6' color='secondary'>
+						Active fundraisings
+					</Typography>
+					<p>
+						Lorem ipsum, dolor sit amet consectetur adipisicing
+						elit. Dolorem nobis aut aliquam corrupti eveniet
+						voluptatum odit minus alias neque natus ab, id iure
+						debitis! Nulla pariatur inventore nihil nisi impedit.
+					</p>
+				</Box>
+				<Box sx={{ maxWidth: '800px' }}>
+					<Typography variant='h6' color='secondary'>
+						Verified players
+					</Typography>
+					<p>
+						Lorem ipsum, dolor sit amet consectetur adipisicing
+						elit. Dolorem nobis aut aliquam corrupti eveniet
+						voluptatum odit minus alias neque natus ab, id iure
+						debitis! Nulla pariatur inventore nihil nisi impedit.
+					</p>
+				</Box>
+				<Box sx={{ maxWidth: '800px' }}>
+					<Typography variant='h6' color='secondary'>
+						Tokens sold
+					</Typography>
+					<p>
+						Lorem ipsum, dolor sit amet consectetur adipisicing
+						elit. Dolorem nobis aut aliquam corrupti eveniet
+						voluptatum odit minus alias neque natus ab, id iure
+						debitis! Nulla pariatur inventore nihil nisi impedit.
+					</p>
+				</Box>
+				<Box sx={{ maxWidth: '800px' }}>
+					<Typography variant='h6' color='secondary'>
+						Platform transactions
+					</Typography>
+					<p>
+						Lorem ipsum, dolor sit amet consectetur adipisicing
+						elit. Dolorem nobis aut aliquam corrupti eveniet
+						voluptatum odit minus alias neque natus ab, id iure
+						debitis! Nulla pariatur inventore nihil nisi impedit.
+					</p>
+				</Box>
 			</Box>
 		</PageLayout>
 	);
