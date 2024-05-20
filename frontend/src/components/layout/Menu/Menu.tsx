@@ -82,7 +82,7 @@ export const Menu: FunctionComponent<MenuProps> = ({ isOpen, toggleMenu }) => {
 			allowed: ['user'],
 		},
 		{
-			text: 'Administation',
+			text: 'Administration',
 			href: '/administration',
 			icon: <AssignmentTurnedInIcon />,
 			isProtected: true,
