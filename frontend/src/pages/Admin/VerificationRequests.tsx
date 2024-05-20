@@ -263,15 +263,15 @@ export const VerificationRequests = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color='error'>
-            Cancel
-          </Button>
           <Button
             onClick={confirmAction === 'ACCEPT' ? handleAccept : handleReject}
             color='success'
             autoFocus
           >
             Confirm
+          </Button>
+		  <Button onClick={handleCloseDialog} color='error'>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
