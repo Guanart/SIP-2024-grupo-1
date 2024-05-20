@@ -167,7 +167,6 @@ export const Administration = () => {
 							</Typography>
 						</Box>
 						<PieChart
-							className='fundraisings-chart'
 							series={[
 								{
 									data: [
@@ -221,7 +220,6 @@ export const Administration = () => {
 							</Typography>
 						</Box>
 						<PieChart
-							className='fundraisings-chart'
 							series={[
 								{
 									data: [
@@ -276,7 +274,6 @@ export const Administration = () => {
 							</Typography>
 						</Box>
 						<PieChart
-							className='fundraisings-chart'
 							series={[
 								{
 									data: [
