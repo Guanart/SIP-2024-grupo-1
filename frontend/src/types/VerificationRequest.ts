@@ -8,7 +8,7 @@ export interface VerificationRequest {
     game: Game;
     rank: Rank;
     createdAt?: Date;
-    //status?: string;
+    status?: string;
     
 }
 
