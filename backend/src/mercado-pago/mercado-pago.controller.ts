@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Get, Query, Param, Res, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Res, Req, HttpStatus } from '@nestjs/common';
 import { PermissionsGuard } from '../auth/permissions.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { MercadoPagoService } from './mercado-pago.service';
 import { CreatePreference } from './create-preference.dto';
 import { Redirect } from '@nestjs/common';
+import { Response } from 'express';
 
 @Controller('mercado-pago')
 export class MercadoPagoController {
@@ -23,6 +24,8 @@ export class MercadoPagoController {
     if (notification.action == 'payment.created') {
       await this.mercadoPagoService.handlePayment(notification);
     }
+
+    res.status(HttpStatus.CREATED).send('OK');
   }
 
   // Cuando el usuario no autorizar y selecciona "por ahora no", es redireccionado a /mercado-pago/oauth?error=access_denied
