@@ -63,6 +63,11 @@ export class VerificationRequestService {
     const { id, status } = updateDto;
     const updatedVerificationRequest = await this.prisma.verificationRequest.update({
       where: { id },
+      include: {
+        user: true,
+        game: true,
+        rank: true,
+      },
       data: { status },
     });
     return updatedVerificationRequest ? VerificationRequest.fromObject(updatedVerificationRequest) : null;

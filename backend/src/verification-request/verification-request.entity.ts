@@ -1,13 +1,13 @@
 import { User } from '../user/user.entity';
 import { Game } from '../game/game.entity';
-import { RequestStatus } from '@prisma/client';
+import { Rank, RequestStatus } from '@prisma/client';
 export class VerificationRequest {
 
   id: number;
   user?: User;
   game?: Game;
   status: RequestStatus;
-  rank?: string;
+  rank?: Rank;
   filepath: string;
   createdAt: Date;
 
@@ -16,7 +16,7 @@ export class VerificationRequest {
     user: User,
     game: Game,
     status: RequestStatus,
-    rank: string,
+    rank: Rank,
     filepath: string,
     createdAt: Date) {
       this.id = id;
@@ -36,7 +36,7 @@ export class VerificationRequest {
     if (!filepath) throw 'status property is required';
     if (!createdAt) throw 'status property is required';
 
-    const verificationRequest = new VerificationRequest(id as number, user as User, game as Game, status as RequestStatus, rank as string, filepath as string, createdAt as Date);
+    const verificationRequest = new VerificationRequest(id as number, user as User, game as Game, status as RequestStatus, rank as Rank, filepath as string, createdAt as Date);
 
     return verificationRequest;
   }

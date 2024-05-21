@@ -22,10 +22,11 @@ import { UpdateVerificationRequestDto } from './dto/update-verificationRequest.d
 import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { promises as fs, createReadStream } from 'fs';
+import { PrismaService } from '../database/prisma.service';
 
 @Controller('verification-request')
 export class VerificationRequestController {
-  constructor(private verificationRequestService: VerificationRequestService) {}
+  constructor(private verificationRequestService: VerificationRequestService, private prisma: PrismaService) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -125,6 +126,21 @@ export class VerificationRequestController {
       if (!updatedVerificationRequest) {
         throw new NotFoundException(`Verification Request ${id} not found`);
       }
+      else {
+        console.log("Hola, yo soy el consolelog: " + JSON.stringify(updatedVerificationRequest.user) + ",,,etc:" + JSON.stringify(updatedVerificationRequest));
+        const player = await this.prisma.player.create({
+          data: {
+            user_id: updatedVerificationRequest.user.id,
+            biography:
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+            ranking: updatedVerificationRequest.rank.id,
+            game_id: updatedVerificationRequest.game.id,
+            public_key: '',
+            access_token: '',
+          },
+        });
+      }
+
       console.log(updatedVerificationRequest);
       return {
         message: `Verification Request ${id} updated to ${updateDto.status}`,
