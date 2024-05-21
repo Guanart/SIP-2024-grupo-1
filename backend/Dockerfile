@@ -28,7 +28,7 @@ COPY --from=build /app/package*.json ./
 # Ensure Prisma schema is included
 COPY --from=build /app/prisma ./prisma
 
-COPY .env.docker .env
+COPY .env .env
 
 EXPOSE 3000
 CMD ["npm", "run", "start:prod"]
