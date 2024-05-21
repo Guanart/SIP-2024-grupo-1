@@ -79,11 +79,13 @@ export const Fundraising = () => {
 			if (fundraising) {
 				console.log(fundraising);
 				const response = await axios.post(REACT_APP_API_URL, {
+					id: id,
+					seller_wallet_id: fundraising.player.user.wallet?.id,
+					buyer_wallet_id: user?.sub, // wallet id del usuario que compra
 					title: `${fundraising.player.user.username} | ${fundraising.event.name} (${amount})`,
 					quantity: amount,
 					unit_price: fundraising.collection.current_price,
 					type: REACT_APP_PREFERENCE_TYPE,
-					id: id,
 				});
 				return response.data.id;
 			}

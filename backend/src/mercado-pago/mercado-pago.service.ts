@@ -75,7 +75,7 @@ export class MercadoPagoService {
         expires: false,
         items: [
           {
-            id: `${items.type}-${items.wallet_id}-${items.id}`,
+            id: `${items.buyer_wallet_id}-${items.seller_wallet_id}-${items.id}`,
             title: items.title,
             quantity: items.quantity,
             unit_price: items.unit_price,
@@ -175,7 +175,7 @@ export class MercadoPagoService {
 
 
 async function persistFundraisingTransaction(data: PaymentResponse, item: Items) {
-  const { _, wallet_id, fundraisingId } = item.id.split('-');
+  const { wallet_id, seller_wallet_id, fundraisingId } = item.id.split('-');
 
   // Buscar primero la fundraising
   const fundraising = await this.prisma.fundraising.findFirst({
@@ -244,16 +244,16 @@ async function persistFundraisingTransaction(data: PaymentResponse, item: Items)
 
 async function persistMarketplaceTransaction(data: PaymentResponse, item: Items) {
   // Obtener las wallets involucradas en la transacción
-  const [walletId1, walletId2, publicationId] = item.id.split('-').slice(1);
+  const [buyer_wallet_id, seller_wallet_id, publicationId] = item.id.split('-').slice(1);
 
   // Buscar las wallets
   const [wallet1, wallet2] = await Promise.all([
-    this.prisma.wallet.findUnique({ where: { id: walletId1 } }),
-    this.prisma.wallet.findUnique({ where: { id: walletId2 } }),
+    this.prisma.wallet.findUnique({ where: { id: buyer_wallet_id } }),
+    this.prisma.wallet.findUnique({ where: { id: seller_wallet_id } }),
   ]);
 
   // Verificar si las wallets existen
-  if (!wallet1 || !wallet2) {
+  if (!buyer_wallet_id || !seller_wallet_id) {
     console.log(`\nOne or both wallets not found\n`);
     return `\nOne or both wallets not found\n`;
   }
@@ -265,7 +265,7 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
         {
           token_wallet: {
             some: {
-              wallet_id: walletId1,
+              wallet_id: seller_wallet_id,
             },
           },
         },
@@ -282,8 +282,8 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
 
   // Verificar si hay un token disponible
   if (!token) {
-    console.log(`\nWallet with id ${walletId1} or marketplace publication with id ${publicationId} doesn't have any token\n`);
-    return `\nWallet with id ${walletId1} or marketplace publication with id ${publicationId} doesn't have any token\n`;
+    console.log(`\nWallet with id ${seller_wallet_id} or marketplace publication with id ${publicationId} doesn't have any token\n`);
+    return `\nWallet with id ${seller_wallet_id} or marketplace publication with id ${publicationId} doesn't have any token\n`;
   }
 
   // Mover el token de la primera wallet a la segunda wallet
@@ -291,7 +291,7 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
     this.prisma.token_wallet.delete({
       where: {
         wallet_id_token_id: {
-          wallet_id: walletId1,
+          wallet_id: seller_wallet_id,
           token_id: token.id,
         },
       },
@@ -299,7 +299,7 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
     this.prisma.token_wallet.create({
       data: {
         token_id: token.id,
-        wallet_id: walletId2,
+        wallet_id: buyer_wallet_id,
       },
     }),
   ]);
@@ -307,7 +307,7 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
   // Persistir la transacción en ambas wallets
   const transaction1 = await this.prisma.transaction.create({
     data: {
-      wallet_id: walletId1,
+      wallet_id: buyer_wallet_id,
       token_id: token.id,
       type: TransactionType.BUY,
     },
@@ -315,7 +315,7 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
 
   const transaction2 = await this.prisma.transaction.create({
     data: {
-      wallet_id: walletId2,
+      wallet_id: seller_wallet_id,
       token_id: token.id,
       type: TransactionType.SELL,
     },
