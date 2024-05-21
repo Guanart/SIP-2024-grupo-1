@@ -23,10 +23,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { join } from 'path';
 import { promises as fs, createReadStream } from 'fs';
 import { PrismaService } from '../database/prisma.service';
+import { Auth0Service } from 'src/auth/auth.service';
 
 @Controller('verification-request')
 export class VerificationRequestController {
-  constructor(private verificationRequestService: VerificationRequestService, private prisma: PrismaService) {}
+  constructor(
+    private verificationRequestService: VerificationRequestService, 
+    private prisma: PrismaService,
+    private auth0Service: Auth0Service,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -126,8 +131,16 @@ export class VerificationRequestController {
       if (!updatedVerificationRequest) {
         throw new NotFoundException(`Verification Request ${id} not found`);
       }
-      else {
-        console.log("Hola, yo soy el consolelog: " + JSON.stringify(updatedVerificationRequest.user) + ",,,etc:" + JSON.stringify(updatedVerificationRequest));
+
+      // Si el estado es "ACCEPTED", actualizar el rol del usuario en Auth0
+      if (updateDto.status === 'ACCEPTED') {
+        const auth0Id = updatedVerificationRequest.user.auth0_id;
+        const playerRoleId = 'rol_rRJMXavroO7V1ZBG';  // ID DE ROL "PLAYER" DE AUTH0 HARDCODEADO, HAY QUE MODIFICAR
+        
+        // Llamar al servicio Auth0 para asignar el rol
+        await this.auth0Service.assignRolesToUser(auth0Id, [playerRoleId]);
+        
+        // Crear el registro del jugador en la base de datos
         const player = await this.prisma.player.create({
           data: {
             user_id: updatedVerificationRequest.user.id,
@@ -140,8 +153,7 @@ export class VerificationRequestController {
           },
         });
       }
-
-      console.log(updatedVerificationRequest);
+      
       return {
         message: `Verification Request ${id} updated to ${updateDto.status}`,
         updatedVerificationRequest,

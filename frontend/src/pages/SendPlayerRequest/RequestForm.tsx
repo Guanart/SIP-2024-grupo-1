@@ -140,11 +140,9 @@ export const RequestForm = () => {
 				},
 			};
 			axios.post(url, formData, config).then((response) => {
-					console.log(response.data);
 					navigate(`/requestSuccess`);
 				  });
 		} catch (error) {
-			console.log(error + "hola, soy del front" + "Llegamos aca porque no hay respuesta :/");
 			navigate(`/error`);
 		}
 	};
