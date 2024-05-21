@@ -52,6 +52,9 @@ export const Games = () => {
 				navigate('/error/500');
 			}
 
+			setName('');
+			setIcon('');
+			setIsCreating(false);
 			getGames();
 		} catch (error) {
 			console.log(error);
