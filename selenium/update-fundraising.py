@@ -91,7 +91,7 @@ token_price_select = driver.find_element(
 time.sleep(1)
 
 token_price_select_option = driver.find_element(
-    By.XPATH, '//*[@id=":r9:"]/li[2]').click()
+    By.XPATH, '//*[@id=":r4:"]/li[2]').click()
 
 time.sleep(2)
 
