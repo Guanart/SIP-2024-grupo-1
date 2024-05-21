@@ -4,6 +4,8 @@ import { CreatePreference } from './create-preference.dto';
 import { PrismaService } from '../database/prisma.service';
 import { log } from 'console';
 import { TransactionType } from '@prisma/client';
+import { Items } from 'mercadopago/dist/clients/commonTypes';
+import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
 
 @Injectable()
 export class MercadoPagoService {
@@ -17,22 +19,6 @@ export class MercadoPagoService {
     });
     this.prisma = new PrismaService();
   }
-
-  // async handleWebhook(notification: any) {
-  //   console.log('Processing notification:', notification);
-
-  //   const { id, status } = notification;
-
-  //   if (status === 'approved') {
-  //     // await this.prisma.fundraising.update({
-  //     //   where: { },
-  //     //   data: { }, 
-  //     // });
-  //   }
-
-  //   return notification;
-  // }
-
 
   // CREAR PREFERENCIA PARA MARKETPLACE Y FUNDRAISING
   async createPreference(items: CreatePreference) {
@@ -112,7 +98,7 @@ export class MercadoPagoService {
       };
 
       const result = await preference.create({ body });
-      
+
       console.log('\nPreference created:\n', result);
       return { id: result.id }; // Le retorna al front el id de la preference, para mostrar el botón de MP
     } catch (error) {
@@ -175,78 +161,165 @@ export class MercadoPagoService {
     const paymentId = notification.data.id;
     const data = await payment.get({ id: paymentId });
     console.log('\nPayment received:\n', data);
-    
+
     // Obtener el item de la transacción, y verificar si es una fundraising o un marketplace
     const item = data.additional_info.items[0];
     if (item.category_id === 'fundraising') {
-      const { _, wallet_id, fundraisingId } = item.id.split('-');
-
-      // Buscar primero la fundraising
-      const fundraising = await this.prisma.fundraising.findFirst({
-        where: {
-          id: Number(fundraisingId),
-        },
-        select: {
-          collection: true,
-          player: {
-            select: {
-              user: {
-                select: {
-                  wallet: true
-                }
-              },
-            },
-          },
-        }
-      });      
-      
-      // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
-      // Necesito un token que no tenga token_wallet ni Marketplace_publication asociados
-      const token = await this.prisma.token.findFirst({
-        where: {
-          collection_id: fundraising.collection.id,
-          NOT: {
-            token_wallet: {},
-            Marketplace_publication: {},
-          },
-        },
-      });
-
-      // Si ya no hay más tokens disponibles, se cancela la transacción
-      if (!token) {
-        console.log(`\nFundraising with id ${fundraisingId} doesn't have any token\n`);
-        return `\nFundraising with id ${fundraisingId} doesn't have any token\n`;
-      }
-
-      // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
-      const transaction = await this.prisma.transaction.create({
-        data: {
-          wallet_id: wallet_id,
-          token_id: token.id,
-          type: TransactionType.BUY,
-        },
-      });
-
-      const player_transaction = await this.prisma.transaction.create({
-        data: {
-          wallet_id: fundraising.player.user.wallet.id,
-          token_id: token.id,
-          type: TransactionType.SELL,
-        },
-      });
-
-      // Create a new token_wallet entry to associate the token with the wallet
-      await this.prisma.token_wallet.create({
-        data: {
-          token_id: token.id,
-          wallet_id: wallet_id,
-        },
-      });
-
-      console.log(`\nFundraising transaction with id ${transaction.id} processed successfully\n`, transaction);
+      persistFundraisingTransaction(data, item);
     } else if (item.category_id === 'marketplace') {
-        // TODO: Implementar la lógica para el marketplace
+      persistMarketplaceTransaction(data, item);
     }
     return true;
   }
+}
+
+
+async function persistFundraisingTransaction(data: PaymentResponse, item: Items) {
+  const { _, wallet_id, fundraisingId } = item.id.split('-');
+
+  // Buscar primero la fundraising
+  const fundraising = await this.prisma.fundraising.findFirst({
+    where: {
+      id: Number(fundraisingId),
+    },
+    select: {
+      collection: true,
+      player: {
+        select: {
+          user: {
+            select: {
+              wallet: true
+            }
+          },
+        },
+      },
+    }
+  });
+
+  // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
+  // Necesito un token que no tenga token_wallet ni Marketplace_publication asociados
+  const token = await this.prisma.token.findFirst({
+    where: {
+      collection_id: fundraising.collection.id,
+      NOT: {
+        token_wallet: {},
+        Marketplace_publication: {},
+      },
+    },
+  });
+
+  // Si ya no hay más tokens disponibles, se cancela la transacción
+  if (!token) {
+    console.log(`\nFundraising with id ${fundraisingId} doesn't have any token\n`);
+    return `\nFundraising with id ${fundraisingId} doesn't have any token\n`;
+  }
+
+  // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
+  const transaction = await this.prisma.transaction.create({
+    data: {
+      wallet_id: wallet_id,
+      token_id: token.id,
+      type: TransactionType.BUY,
+    },
+  });
+
+  const player_transaction = await this.prisma.transaction.create({
+    data: {
+      wallet_id: fundraising.player.user.wallet.id,
+      token_id: token.id,
+      type: TransactionType.SELL,
+    },
+  });
+
+  // Create a new token_wallet entry to associate the token with the wallet
+  await this.prisma.token_wallet.create({
+    data: {
+      token_id: token.id,
+      wallet_id: wallet_id,
+    },
+  });
+
+  console.log(`\nFundraising transaction with id ${transaction.id} processed successfully\n`, transaction);
+}
+
+async function persistMarketplaceTransaction(data: PaymentResponse, item: Items) {
+  // Obtener las wallets involucradas en la transacción
+  const [walletId1, walletId2, publicationId] = item.id.split('-').slice(1);
+
+  // Buscar las wallets
+  const [wallet1, wallet2] = await Promise.all([
+    this.prisma.wallet.findUnique({ where: { id: walletId1 } }),
+    this.prisma.wallet.findUnique({ where: { id: walletId2 } }),
+  ]);
+
+  // Verificar si las wallets existen
+  if (!wallet1 || !wallet2) {
+    console.log(`\nOne or both wallets not found\n`);
+    return `\nOne or both wallets not found\n`;
+  }
+
+  // Obtener el token asociado a la primera wallet
+  const token = await this.prisma.token.findFirst({
+    where: {
+      AND: [
+        {
+          token_wallet: {
+            some: {
+              wallet_id: walletId1,
+            },
+          },
+        },
+        {
+          Marketplace_publication: {
+            some: {
+              publication_id: publicationId,
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  // Verificar si hay un token disponible
+  if (!token) {
+    console.log(`\nWallet with id ${walletId1} or marketplace publication with id ${publicationId} doesn't have any token\n`);
+    return `\nWallet with id ${walletId1} or marketplace publication with id ${publicationId} doesn't have any token\n`;
+  }
+
+  // Mover el token de la primera wallet a la segunda wallet
+  await Promise.all([
+    this.prisma.token_wallet.delete({
+      where: {
+        wallet_id_token_id: {
+          wallet_id: walletId1,
+          token_id: token.id,
+        },
+      },
+    }),
+    this.prisma.token_wallet.create({
+      data: {
+        token_id: token.id,
+        wallet_id: walletId2,
+      },
+    }),
+  ]);
+
+  // Persistir la transacción en ambas wallets
+  const transaction1 = await this.prisma.transaction.create({
+    data: {
+      wallet_id: walletId1,
+      token_id: token.id,
+      type: TransactionType.BUY,
+    },
+  });
+
+  const transaction2 = await this.prisma.transaction.create({
+    data: {
+      wallet_id: walletId2,
+      token_id: token.id,
+      type: TransactionType.SELL,
+    },
+  });
+
+  console.log(`\nMarketplace transaction with id ${transaction1.id} processed successfully\n`, transaction1, transaction2);
 }
