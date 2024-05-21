@@ -248,7 +248,7 @@ export const StartFundraising = () => {
 									<MenuItem
 										key={event.id}
 										value={event.id}
-										id={event.id}
+										id={event.id.toString()}
 									>
 										{event.name}
 									</MenuItem>
