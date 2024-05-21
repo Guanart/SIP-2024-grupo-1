@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: backend
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: backend
+    template:
+        metadata:
+            labels:
+                app: backend
+        spec:
+            containers:
+                - name: backend
+                  image: 'lot-backend:1.0.0'
+                  ports:
+                      - containerPort: 3000
+                  env:
+                      - name: DATABASE_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: backend-config
+                                key: DATABASE_URL
+                      - name: AUTH0_ISSUER_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: backend-config
+                                key: AUTH0_ISSUER_URL
+                      - name: AUTH0_AUDIENCE
+                        valueFrom:
+                            configMapKeyRef:
+                                name: backend-config
+                                key: AUTH0_AUDIENCE
+                      - name: PORT
+                        valueFrom:
+                            configMapKeyRef:
+                                name: backend-config
+                                key: PORT
+            # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
+            tolerations:
+                - key: instance_type
+                  operator: Equal
+                  value: applications
+                  effect: NoSchedule
+            affinity:
+                nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        nodeSelectorTerms:
+                            - matchExpressions:
+                                  - key: role
+                                    operator: In
+                                    values:
+                                        - applications
