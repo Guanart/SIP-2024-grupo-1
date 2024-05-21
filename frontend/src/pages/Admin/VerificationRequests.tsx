@@ -42,7 +42,6 @@ export const VerificationRequests = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          //console.log(data); // <-- Verifica la respuesta aquí
           setRequests(data.verificationRequest || []); // <-- Extrae el array de verificationRequest
         }
       } catch (error) {
