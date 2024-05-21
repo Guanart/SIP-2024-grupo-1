@@ -13,21 +13,36 @@ services:
       - ./postgres:/var/lib/postgresql/data
     ports:
       - ${DATABASE_PORT}:5432
-#     networks:
-#       - lot-network
-#   backend:
-#     depends_on:
-#       - postgres-db
-#     image: lot-backend:1.0.0
-#     container_name: lot-backend
-#     ports:
-#       - ${PORT}:${PORT}
-#     environment:
-#       DATABASE_URL: 'postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME}'
-#       AUTH0_ISSUER_URL: ${AUTH0_ISSUER_URL}
-#       AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
-#       PORT: ${PORT}
-#     networks:
-#       - lot-network
-# networks:
-#   lot-network:
+    networks:
+      - lot-network
+  backend:
+    depends_on:
+      - postgres-db
+    image: lot-backend:1.0.0
+    container_name: lot-backend
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      DATABASE_URL: 'postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME}'
+      AUTH0_ISSUER_URL: ${AUTH0_ISSUER_URL}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      PORT: ${PORT}
+    networks:
+      - lot-network
+  frontend:
+    depends_on:
+      - backend
+    image: lot-frontend:1.0.0
+    container_name: lot-frontend
+    ports:
+      - 5173:80
+    environment:
+      APP_BACKEND_HOST: 'lot-backend'
+      APP_BACKEND_PORT: '3000'
+      APP_AUTH0_AUDIENCE: 'http://my-secure-api.com'
+      APP_AUTH0_DOMAIN: 'dev-f57qs7dbi1xcl5kj.us.auth0.com'
+      APP_AUTH0_CLIENT_ID: 'QDUde2yWkQWxGguu7p59G3QirNNpeXgl'
+    networks:
+      - lot-network
+networks:
+  lot-network:
