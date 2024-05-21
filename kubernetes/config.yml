@@ -7,6 +7,12 @@ data:
     AUTH0_ISSUER_URL: https://dev-f57qs7dbi1xcl5kj.us.auth0.com/
     AUTH0_AUDIENCE: http://my-secure-api.com
     PORT: 3000
+    APP_URL: 'https://<IP_BACKEND_SERVICE>:3000'
+    REACT_APP_URL: 'http://<IP_FRONTEND_SERVICE>'
+    MP_APP_ID=: 1517187722603608" # sandbox
+    MP_ACCESS_TOKEN: '' # usar el de la cuenta sandbox
+    MP_CLIENT_SECRET: '' # usar el de la cuenta sandbox
+    MP_REDIRECT_URI: 'https://<IP_BACKEND_SERVICE>:3000/mercado-pago/oauth'
 ---
 apiVersion: v1
 kind: ConfigMap
