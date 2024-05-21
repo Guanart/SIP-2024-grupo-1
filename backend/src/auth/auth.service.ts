@@ -48,4 +48,32 @@ export class Auth0Service {
       );
     }
   }
+
+  public async getRoleIdByName(roleName: string): Promise<string> {
+    const token = await this.getAccessToken();
+    const url = `https://${this.domain}/api/v2/roles`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+        },
+      });
+
+      const roles = response.data.roles;
+      const role = roles.find((role: { name: string }) => role.name === roleName);
+
+      if (!role) {
+        throw new HttpException(`Role ${roleName} not found`, HttpStatus.NOT_FOUND);
+      }
+
+      return role.id;
+    } catch (error) {
+      throw new HttpException(
+        error.response?.data || 'Error fetching roles from Auth0',
+        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

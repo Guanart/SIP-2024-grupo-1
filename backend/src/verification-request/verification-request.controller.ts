@@ -135,7 +135,9 @@ export class VerificationRequestController {
       // Si el estado es "ACCEPTED", actualizar el rol del usuario en Auth0
       if (updateDto.status === 'ACCEPTED') {
         const auth0Id = updatedVerificationRequest.user.auth0_id;
-        const playerRoleId = 'rol_rRJMXavroO7V1ZBG';  // ID DE ROL "PLAYER" DE AUTH0 HARDCODEADO, HAY QUE MODIFICAR
+
+         // Obtener el ID del rol "player"
+         const playerRoleId = await this.auth0Service.getRoleIdByName('player');
         
         // Llamar al servicio Auth0 para asignar el rol
         await this.auth0Service.assignRolesToUser(auth0Id, [playerRoleId]);
