@@ -246,10 +246,7 @@ export const Events = () => {
 										dateAdapter={AdapterDayjs}
 									>
 										<DemoContainer
-											components={[
-												'DatePicker',
-												'DatePicker',
-											]}
+											components={['DatePicker']}
 										>
 											<DatePicker
 												sx={{
@@ -263,8 +260,7 @@ export const Events = () => {
 												}
 												slotProps={{
 													textField: {
-														helperText:
-															'MM/DD/YYYY',
+														error: false,
 													},
 												}}
 											/>
@@ -274,10 +270,7 @@ export const Events = () => {
 										dateAdapter={AdapterDayjs}
 									>
 										<DemoContainer
-											components={[
-												'DatePicker',
-												'DatePicker',
-											]}
+											components={['DatePicker']}
 										>
 											<DatePicker
 												sx={{
@@ -291,8 +284,7 @@ export const Events = () => {
 												}
 												slotProps={{
 													textField: {
-														helperText:
-															'MM/DD/YYYY',
+														error: false,
 													},
 												}}
 											/>
