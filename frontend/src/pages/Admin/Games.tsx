@@ -182,7 +182,6 @@ export const Games = () => {
 										}}
 									>
 										<Button
-											size='small'
 											type='submit'
 											color='secondary'
 											variant='contained'
@@ -197,7 +196,6 @@ export const Games = () => {
 										<Button
 											type='submit'
 											color='error'
-											size='small'
 											sx={{
 												minWidth: '190px',
 												maxWidth: '300px',
