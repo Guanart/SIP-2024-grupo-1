@@ -1,4 +1,4 @@
-import { IsNotEmpty, Max, Min } from 'class-validator';
+import { IsNotEmpty, Min } from 'class-validator';
 
 export class CreateEventDto {
   @IsNotEmpty()

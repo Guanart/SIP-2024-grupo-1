@@ -93,7 +93,7 @@ export class MercadoPagoService {
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
-        marketplace_fee: 10,    // TODO: Cambiar por el porcentaje que se quiera cobrar
+        marketplace_fee: 10, // TODO: Cambiar por el porcentaje que se quiera cobrar
         // notification_url: process.env.APP_URL + `/mercado-pago/webhook?type=${items.type}&comprador=${}`,
       };
 
@@ -109,7 +109,6 @@ export class MercadoPagoService {
       );
     }
   }
-
 
   // AUTORIZAR CUENTA DE MERCADOPAGO DE VENDEDOR (PLAYER O WALLET)
   async authorizeSeller(code: string, type: string, id: string) {
@@ -154,7 +153,6 @@ export class MercadoPagoService {
     }
   }
 
-
   async handlePayment(notification: any) {
     // Obtener el payment
     const payment = new Payment(this.client);
@@ -173,78 +171,83 @@ export class MercadoPagoService {
   }
 }
 
-
-async function persistFundraisingTransaction(data: PaymentResponse, item: Items) {
-  const { wallet_id, seller_wallet_id, fundraisingId } = item.id.split('-');
-
-  // Buscar primero la fundraising
-  const fundraising = await this.prisma.fundraising.findFirst({
-    where: {
-      id: Number(fundraisingId),
-    },
-    select: {
-      collection: true,
-      player: {
-        select: {
-          user: {
-            select: {
-              wallet: true
-            }
-          },
-        },
-      },
-    }
-  });
-
-  // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
-  // Necesito un token que no tenga token_wallet ni Marketplace_publication asociados
-  const token = await this.prisma.token.findFirst({
-    where: {
-      collection_id: fundraising.collection.id,
-      NOT: {
-        token_wallet: {},
-        Marketplace_publication: {},
-      },
-    },
-  });
-
-  // Si ya no hay más tokens disponibles, se cancela la transacción
-  if (!token) {
-    console.log(`\nFundraising with id ${fundraisingId} doesn't have any token\n`);
-    return `\nFundraising with id ${fundraisingId} doesn't have any token\n`;
-  }
-
-  // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
-  const transaction = await this.prisma.transaction.create({
-    data: {
-      wallet_id: wallet_id,
-      token_id: token.id,
-      type: TransactionType.BUY,
-    },
-  });
-
-  const player_transaction = await this.prisma.transaction.create({
-    data: {
-      wallet_id: fundraising.player.user.wallet.id,
-      token_id: token.id,
-      type: TransactionType.SELL,
-    },
-  });
-
-  // Create a new token_wallet entry to associate the token with the wallet
-  await this.prisma.token_wallet.create({
-    data: {
-      token_id: token.id,
-      wallet_id: wallet_id,
-    },
-  });
-
-  console.log(`\nFundraising transaction with id ${transaction.id} processed successfully\n`, transaction);
+async function persistFundraisingTransaction(
+  data: PaymentResponse,
+  item: Items,
+) {
+  // const { wallet_id, seller_wallet_id, fundraisingId } = item.id.split('-');
+  // // Buscar primero la fundraising
+  // const fundraising = await this.prisma.fundraising.findFirst({
+  //   where: {
+  //     id: Number(fundraisingId),
+  //   },
+  //   select: {
+  //     collection: true,
+  //     player: {
+  //       select: {
+  //         user: {
+  //           select: {
+  //             wallet: true,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+  // // Ahora necesito un id de un token disponible para esa fundraising. Un token esta asociado a una collection, que a su vez esta asociada a una fundraising
+  // // Necesito un token que no tenga token_wallet ni Marketplace_publication asociados
+  // const token = await this.prisma.token.findFirst({
+  //   where: {
+  //     collection_id: fundraising.collection.id,
+  //     NOT: {
+  //       token_wallet: {},
+  //       Marketplace_publication: {},
+  //     },
+  //   },
+  // });
+  // // Si ya no hay más tokens disponibles, se cancela la transacción
+  // if (!token) {
+  //   console.log(
+  //     `\nFundraising with id ${fundraisingId} doesn't have any token\n`,
+  //   );
+  //   return `\nFundraising with id ${fundraisingId} doesn't have any token\n`;
+  // }
+  // // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
+  // const transaction = await this.prisma.transaction.create({
+  //   data: {
+  //     wallet_id: wallet_id,
+  //     token_id: token.id,
+  //     type: TransactionType.BUY,
+  //   },
+  // });
+  // const player_transaction = await this.prisma.transaction.create({
+  //   data: {
+  //     wallet_id: fundraising.player.user.wallet.id,
+  //     token_id: token.id,
+  //     type: TransactionType.SELL,
+  //   },
+  // });
+  // // Create a new token_wallet entry to associate the token with the wallet
+  // await this.prisma.token_wallet.create({
+  //   data: {
+  //     token_id: token.id,
+  //     wallet_id: wallet_id,
+  //   },
+  // });
+  // console.log(
+  //   `\nFundraising transaction with id ${transaction.id} processed successfully\n`,
+  //   transaction,
+  // );
 }
 
-async function persistMarketplaceTransaction(data: PaymentResponse, item: Items) {
+async function persistMarketplaceTransaction(
+  data: PaymentResponse,
+  item: Items,
+) {
   // Obtener las wallets involucradas en la transacción
-  const [buyer_wallet_id, seller_wallet_id, publicationId] = item.id.split('-').slice(1);
+  const [buyer_wallet_id, seller_wallet_id, publicationId] = item.id
+    .split('-')
+    .slice(1);
 
   // Buscar las wallets
   const [wallet1, wallet2] = await Promise.all([
@@ -282,7 +285,9 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
 
   // Verificar si hay un token disponible
   if (!token) {
-    console.log(`\nWallet with id ${seller_wallet_id} or marketplace publication with id ${publicationId} doesn't have any token\n`);
+    console.log(
+      `\nWallet with id ${seller_wallet_id} or marketplace publication with id ${publicationId} doesn't have any token\n`,
+    );
     return `\nWallet with id ${seller_wallet_id} or marketplace publication with id ${publicationId} doesn't have any token\n`;
   }
 
@@ -321,5 +326,9 @@ async function persistMarketplaceTransaction(data: PaymentResponse, item: Items)
     },
   });
 
-  console.log(`\nMarketplace transaction with id ${transaction1.id} processed successfully\n`, transaction1, transaction2);
+  console.log(
+    `\nMarketplace transaction with id ${transaction1.id} processed successfully\n`,
+    transaction1,
+    transaction2,
+  );
 }
