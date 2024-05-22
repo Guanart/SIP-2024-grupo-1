@@ -23,6 +23,7 @@ import {
 	VerificationRequests,
 	Administration,
 	Events,
+	Event,
 	Games,
 } from './pages';
 import { theme } from './global/theme.ts';
@@ -81,6 +82,10 @@ const privateRoutes = [
 	{
 		path: `/events`,
 		element: <Events />,
+	},
+	{
+		path: `/event/:event_id`,
+		element: <Event />,
 	},
 	{
 		path: `/games`,

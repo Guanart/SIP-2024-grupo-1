@@ -9,6 +9,7 @@ export * from './Wallet/Wallet';
 export * from './Error';
 export * from './Admin/Games';
 export * from './Admin/Events';
+export * from './Admin/Event';
 export * from './Marketplace/Marketplace';
 export * from './Marketplace/CreatePublication';
 export * from './Marketplace/MarketplacePublication';

@@ -70,6 +70,30 @@ export class EventController {
   }
 
   // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['read:events'])
+  @Get('/details/:event_id')
+  async getEventById(@Param('event_id') event_id: string) {
+    try {
+      const event = await this.eventService.getEventById(Number(event_id));
+
+      if (!event) {
+        throw new NotFoundException(`Events not found`);
+      }
+
+      return JSON.stringify({
+        message: `Event ${event_id} founded`,
+        event,
+      });
+    } catch (exception) {
+      if (exception instanceof NotFoundException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['create:events'])
   @Post()
   async createEvent(@Body() newEvent: CreateEventDto): Promise<string> {
