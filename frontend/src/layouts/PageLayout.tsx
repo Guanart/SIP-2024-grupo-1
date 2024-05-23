@@ -2,6 +2,8 @@ import { FunctionComponent, useEffect } from 'react';
 import { Header } from '../components';
 import './PageLayout.css';
 import { Typography } from '@mui/material';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type PageLayoutProps = {
 	children: React.ReactNode;
@@ -30,6 +32,13 @@ export const PageLayout: FunctionComponent<PageLayoutProps> = ({
 					</Typography>
 				)}
 				{children}
+				<ToastContainer
+					position='bottom-right'
+					autoClose={5000}
+					pauseOnHover
+					theme='dark'
+					closeOnClick
+				/>
 			</main>
 		</>
 	);

@@ -30,6 +30,7 @@ import './Admin.css';
 import { Loader } from '../../components';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -53,7 +54,7 @@ export const Events = () => {
 		event.preventDefault();
 
 		try {
-			const response = await fetchWithAuth({
+			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
 				url: `http://${HOST}:${PORT}/event`,
@@ -68,10 +69,7 @@ export const Events = () => {
 				},
 			});
 
-			if (!response.ok) {
-				console.log(response);
-				navigate('/error/500');
-			}
+			toast.success('New event created successfully');
 
 			setName('');
 			setGameId('');
@@ -82,8 +80,14 @@ export const Events = () => {
 			setIsCreating(false);
 			getEvents();
 		} catch (error) {
-			console.log(error);
-			navigate('/error/500');
+			if (error instanceof Error) {
+				if (error.message.includes('Internal server error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
 		}
 	}
 

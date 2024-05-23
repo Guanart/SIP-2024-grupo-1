@@ -21,6 +21,7 @@ import { useAccessToken } from '../../hooks/useAccessToken';
 import { Game } from '../../types';
 import { Loader } from '../../components';
 import './Admin.css';
+import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -39,7 +40,7 @@ export const Games = () => {
 		event.preventDefault();
 
 		try {
-			const response = await fetchWithAuth({
+			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
 				url: `http://${HOST}:${PORT}/game`,
@@ -47,24 +48,27 @@ export const Games = () => {
 				data: { name, icon },
 			});
 
-			if (!response.ok) {
-				console.log(response);
-				navigate('/error/500');
-			}
+			toast.success('Game created successfully');
 
 			setName('');
 			setIcon('');
 			setIsCreating(false);
 			getGames();
 		} catch (error) {
-			console.log(error);
-			navigate('/error/500');
+			if (error instanceof Error) {
+				if (error.message.includes('Internal server error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
 		}
 	}
 
 	async function handleDelete(game_id: number) {
 		try {
-			const response = await fetchWithAuth({
+			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
 				url: `http://${HOST}:${PORT}/game`,
@@ -72,15 +76,18 @@ export const Games = () => {
 				data: { id: game_id },
 			});
 
-			if (!response.ok) {
-				console.log(response);
-				navigate('/error/500');
-			}
+			toast.success('Game deleted successfully');
 
 			getGames();
 		} catch (error) {
-			console.log(error);
-			navigate('/error/500');
+			if (error instanceof Error) {
+				if (error.message.includes('Internal server error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
 		}
 	}
 
