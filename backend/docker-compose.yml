@@ -9,28 +9,8 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-
-      # Configura zona horaria del contenedor (Argentina)
-      TZ: '03'
+      TZ: '03' # Configura zona horaria del contenedor (Argentina)
     volumes:
       - ./postgres:/var/lib/postgresql/data
     ports:
       - ${DATABASE_PORT}:5432
-#     networks:
-#       - lot-network
-#   backend:
-#     depends_on:
-#       - postgres-db
-#     image: lot-backend:1.0.0
-#     container_name: lot-backend
-#     ports:
-#       - ${PORT}:${PORT}
-#     environment:
-#       DATABASE_URL: 'postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@postgres:5432/${DATABASE_NAME}'
-#       AUTH0_ISSUER_URL: ${AUTH0_ISSUER_URL}
-#       AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
-#       PORT: ${PORT}
-#     networks:
-#       - lot-network
-# networks:
-#   lot-network:
