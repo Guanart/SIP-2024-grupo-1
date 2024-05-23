@@ -40,17 +40,17 @@ spec:
                                 name: backend-config
                                 key: PORT
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
-            # tolerations:
-            #     - key: instance_type
-            #       operator: Equal
-            #       value: applications
-            #       effect: NoSchedule
-            # affinity:
-            #     nodeAffinity:
-            #         requiredDuringSchedulingIgnoredDuringExecution:
-            #             nodeSelectorTerms:
-            #                 - matchExpressions:
-            #                       - key: role
-            #                         operator: In
-            #                         values:
-            #                             - applications
+            tolerations:
+                - key: instance_type
+                  operator: Equal
+                  value: applications
+                  effect: NoSchedule
+            affinity:
+                nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        nodeSelectorTerms:
+                            - matchExpressions:
+                                  - key: role
+                                    operator: In
+                                    values:
+                                        - applications
