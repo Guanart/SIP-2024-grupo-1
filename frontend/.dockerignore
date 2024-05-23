@@ -1,13 +1,10 @@
 .env.example
-postgres
-tests
 .eslintrc.js
 .gitignore
-.prettierrc
-docker-compose.yml
 Dockerfile
 pnpm-lock.yaml
 README.md
 node_modules
 dist
 .history
+
