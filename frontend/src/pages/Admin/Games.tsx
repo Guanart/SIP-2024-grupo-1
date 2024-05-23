@@ -56,7 +56,7 @@ export const Games = () => {
 			getGames();
 		} catch (error) {
 			if (error instanceof Error) {
-				if (error.message.includes('Internal server error')) {
+				if (error.message.includes('Internal Server Error')) {
 					navigate('/error/500');
 				}
 				toast.error(error.message);
@@ -81,7 +81,7 @@ export const Games = () => {
 			getGames();
 		} catch (error) {
 			if (error instanceof Error) {
-				if (error.message.includes('Internal server error')) {
+				if (error.message.includes('Internal Server Error')) {
 					navigate('/error/500');
 				}
 				toast.error(error.message);

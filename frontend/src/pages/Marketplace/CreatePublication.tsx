@@ -7,6 +7,7 @@ import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Loader } from '../../components';
 import { KeyboardBackspaceIcon } from '../../global/icons';
+import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -98,7 +99,14 @@ export const CreatePublication = () => {
 				);
 			}
 		} catch (error) {
-			navigate(`/error`);
+			if (error instanceof Error) {
+				if (error.message.includes('Internal Server Error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
 		}
 	}
 

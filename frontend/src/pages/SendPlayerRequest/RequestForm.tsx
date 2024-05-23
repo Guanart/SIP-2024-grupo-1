@@ -101,7 +101,7 @@ export const RequestForm = () => {
 		getUser();
 		getGames();
 		getRanks();
-	}, [accessToken, isAuthenticated, user]);
+	}, [accessToken, isAuthenticated, user, navigate]);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
