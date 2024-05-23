@@ -1,14 +1,17 @@
-kubectl apply -f postgres-volume.yml
-kubectl apply -f postgres-pvc.yml
-kubectl apply -f postgres.yml
-kubectl apply -f postgres-service.yml
+kubectl apply -f namespaces.yml
+kubectl apply -f config.yml
 
-sleep 20
+kubectl apply -f volumes/postgres-volume.yml
+kubectl apply -f volumes/postgres-pvc.yml
+kubectl apply -f deployments/postgres.yml
+kubectl apply -f services/postgres-service.yml
 
-kubectl apply -f backend.yml
-kubectl apply -f backend-service.yml
+sleep 30
 
-sleep 20
+kubectl apply -f deployments/backend.yml
+kubectl apply -f services/backend-service.yml
 
-kubectl apply -f frontend.yml
-kubectl apply -f frontend-service.yml
+sleep 30
+
+kubectl apply -f deployments/frontend.yml
+kubectl apply -f services/frontend-service.yml

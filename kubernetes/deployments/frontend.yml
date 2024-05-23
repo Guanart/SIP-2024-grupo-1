@@ -1,43 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: backend
+    name: frontend
+    namespace: frontend-namespace
 spec:
     replicas: 3
     selector:
         matchLabels:
-            app: backend
+            app: frontend
     template:
         metadata:
             labels:
-                app: backend
+                app: frontend
         spec:
             containers:
-                - name: backend
-                  image: 'mgimenezdev/lot-backend:1.0.0'
+                - name: frontend
+                  image: 'mgimenezdev/lot-frontend:1.0.0'
                   ports:
                       - containerPort: 3000
                   env:
-                      - name: DATABASE_URL
+                      - name: APP_BACKEND_HOST
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
-                                key: DATABASE_URL
-                      - name: AUTH0_ISSUER_URL
+                                name: frontend-config
+                                key: APP_BACKEND_HOST
+                      - name: APP_BACKEND_PORT
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
-                                key: AUTH0_ISSUER_URL
-                      - name: AUTH0_AUDIENCE
+                                name: frontend-config
+                                key: APP_BACKEND_PORT
+                      - name: APP_AUTH0_AUDIENCE
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
-                                key: AUTH0_AUDIENCE
-                      - name: PORT
+                                name: frontend-config
+                                key: APP_AUTH0_AUDIENCE
+                      - name: APP_AUTH0_DOMAIN
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
-                                key: PORT
+                                name: frontend-config
+                                key: APP_AUTH0_DOMAIN
+                      - name: APP_AUTH0_CLIENT_ID
+                        valueFrom:
+                            configMapKeyRef:
+                                name: frontend-config
+                                key: APP_AUTH0_CLIENT_ID
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
             # tolerations:
             #     - key: instance_type

@@ -1,0 +1,50 @@
+# https://www.digitalocean.com/community/tutorials/how-to-deploy-postgres-to-kubernetes-cluster
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: postgres
+    namespace: postgres-namespace
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: postgres
+    template:
+        metadata:
+            labels:
+                app: postgres
+        spec:
+            containers:
+                - name: postgres
+                  image: 'postgres:15.3'
+                  imagePullPolicy: IfNotPresent
+                  ports:
+                      - containerPort: 5432
+                  env:
+                      - name: POSTGRES_DB
+                        valueFrom:
+                            configMapKeyRef:
+                                name: postgres-config
+                                key: POSTGRES_DB
+                      - name: POSTGRES_PASSWORD
+                        valueFrom:
+                            configMapKeyRef:
+                                name: postgres-config
+                                key: POSTGRES_PASSWORD
+                      - name: POSTGRES_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: postgres-config
+                                key: POSTGRES_USER
+                      - name: TZ
+                        valueFrom:
+                            configMapKeyRef:
+                                name: postgres-config
+                                key: TZ
+                  volumeMounts:
+                      - mountPath: /var/lib/postgresql/data
+                        name: postgresdata
+            volumes:
+                - name: postgresdata
+                  persistentVolumeClaim:
+                      claimName: postgres-volume-claim

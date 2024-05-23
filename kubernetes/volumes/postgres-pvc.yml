@@ -1,16 +1,15 @@
 # https://www.digitalocean.com/community/tutorials/how-to-deploy-postgres-to-kubernetes-cluster
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-    name: postgres-volume
+    name: postgres-volume-claim
+    namespace: postgres-namespace
     labels:
-        type: local
         app: postgres
 spec:
     storageClassName: manual
-    capacity:
-        storage: 10Gi
     accessModes:
         - ReadWriteMany
-    hostPath:
-        path: /data/postgresql
+    resources:
+        requests:
+            storage: 10Gi
