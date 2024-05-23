@@ -132,16 +132,19 @@ export const RequestForm = () => {
 				filepath: 'path-to-file',
 			};
 
-			formData.append('verificationRequest', JSON.stringify(newVerificationRequest));
+			formData.append(
+				'verificationRequest',
+				JSON.stringify(newVerificationRequest)
+			);
 			const url = `http://localhost:3000/verification-request`;
 			const config = {
 				headers: {
 					'content-type': 'multipart/form-data',
 				},
 			};
-			axios.post(url, formData, config).then((response) => {
-					navigate(`/requestSuccess`);
-				  });
+			axios.post(url, formData, config).then(() => {
+				navigate(`/requestSuccess`);
+			});
 		} catch (error) {
 			navigate(`/error`);
 		}
