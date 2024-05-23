@@ -161,8 +161,8 @@ export const Events = () => {
 									style={{
 										gap: '12px',
 										display: 'flex',
-										justifyContent: 'center',
-										flexDirection: 'column',
+										flexWrap: 'wrap',
+										maxWidth: '800px',
 									}}
 									onSubmit={(event) => handleRegister(event)}
 								>
@@ -176,7 +176,10 @@ export const Events = () => {
 											setName(name);
 										}}
 										autoComplete='off'
-										sx={{ maxWidth: '400px', width: '95%' }}
+										sx={{
+											minWidth: '300px',
+											maxWidth: '300px',
+										}}
 										inputProps={{ maxLength: 120 }}
 									/>
 									<FormControl>
@@ -191,8 +194,8 @@ export const Events = () => {
 												)
 											}
 											sx={{
-												maxWidth: '400px',
-												width: '90%',
+												minWidth: '300px',
+												maxWidth: '300px',
 											}}
 										>
 											{games.map((game) => (
@@ -211,7 +214,10 @@ export const Events = () => {
 										label='Max players'
 										variant='outlined'
 										value={maxPlayers}
-										sx={{ maxWidth: '400px', width: '95%' }}
+										sx={{
+											minWidth: '300px',
+											maxWidth: '300px',
+										}}
 										autoComplete='off'
 										onChange={(event) => {
 											const maxPlayers =
@@ -229,7 +235,10 @@ export const Events = () => {
 										label='Prize'
 										variant='outlined'
 										value={prize}
-										sx={{ maxWidth: '400px', width: '95%' }}
+										sx={{
+											minWidth: '300px',
+											maxWidth: '300px',
+										}}
 										autoComplete='off'
 										onChange={(event) => {
 											const prize =
@@ -247,11 +256,16 @@ export const Events = () => {
 									>
 										<DemoContainer
 											components={['DatePicker']}
+											sx={{
+												maxWidth: '300px',
+												minWidth: '300px',
+												overflowX: 'hidden',
+											}}
 										>
 											<DatePicker
 												sx={{
-													maxWidth: '400px',
-													width: '95%',
+													maxWidth: '300px',
+													width: '100%',
 												}}
 												label='Start date'
 												value={startDate}
@@ -270,12 +284,17 @@ export const Events = () => {
 										dateAdapter={AdapterDayjs}
 									>
 										<DemoContainer
+											sx={{
+												maxWidth: '300px',
+												minWidth: '300px',
+												overflowX: 'hidden',
+											}}
 											components={['DatePicker']}
 										>
 											<DatePicker
 												sx={{
-													maxWidth: '400px',
-													width: '95%',
+													maxWidth: '300px',
+													width: '100%',
 												}}
 												label='Finish date'
 												value={endDate}
@@ -293,13 +312,25 @@ export const Events = () => {
 									<Box
 										sx={{
 											display: 'flex',
-											flexWrap: 'wrap',
-											maxWidth: '400px',
-											alignItems: 'center',
-											justifyContent: 'center',
 											gap: '6px',
+											width: '600px',
+											justifyContent: 'center',
+											alignItems: 'center',
 										}}
 									>
+										<Button
+											type='submit'
+											color='error'
+											sx={{
+												minWidth: '190px',
+												maxWidth: '300px',
+												width: '45%',
+											}}
+											variant='contained'
+											onClick={() => setIsCreating(false)}
+										>
+											Cancel
+										</Button>
 										<Button
 											type='submit'
 											color='secondary'
@@ -307,23 +338,10 @@ export const Events = () => {
 											sx={{
 												minWidth: '190px',
 												maxWidth: '300px',
-												width: '95%',
+												width: '45%',
 											}}
 										>
 											Submit
-										</Button>
-										<Button
-											type='submit'
-											color='error'
-											sx={{
-												minWidth: '190px',
-												maxWidth: '300px',
-												width: '95%',
-											}}
-											variant='contained'
-											onClick={() => setIsCreating(false)}
-										>
-											Cancel
 										</Button>
 									</Box>
 								</form>
