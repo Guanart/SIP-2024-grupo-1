@@ -4,9 +4,9 @@ resource "google_service_account" "kubernetes" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool
-resource "google_container_node_pool" "applications" {
-  name       = "applications"
-  cluster    = google_container_cluster.primary.id
+resource "google_container_node_pool" "application" {
+  name       = "application"
+  cluster    = google_container_cluster.lot.id
   node_count = 1
 
   management {
@@ -40,9 +40,9 @@ resource "google_container_node_pool" "applications" {
   }
 }
 
-resource "google_container_node_pool" "services" {
-  name       = "services"
-  cluster    = google_container_cluster.primary.id
+resource "google_container_node_pool" "service" {
+  name       = "service"
+  cluster    = google_container_cluster.lot.id
   node_count = 2
 
   management {

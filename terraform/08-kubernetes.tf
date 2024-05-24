@@ -1,12 +1,12 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster
 # Configuración del cluster de Kubernetes
-resource "google_container_cluster" "primary" {
-  name                     = "primary"
+resource "google_container_cluster" "lot" {
+  name                     = "lot"
   location                 = var.zone
   remove_default_node_pool = true
   initial_node_count       = 1
-  network                  = google_compute_network.main.self_link
-  subnetwork               = google_compute_subnetwork.private.self_link
+  network                  = google_compute_network.mainnet.self_link
+  subnetwork               = google_compute_subnetwork.subnet.self_link
   logging_service          = "logging.googleapis.com/kubernetes"
   monitoring_service       = "monitoring.googleapis.com/kubernetes"
   networking_mode          = "VPC_NATIVE"
@@ -30,8 +30,8 @@ resource "google_container_cluster" "primary" {
   }
 
   ip_allocation_policy {
-    cluster_secondary_range_name  = "k8s-pod-range"
-    services_secondary_range_name = "k8s-service-range"
+    cluster_secondary_range_name  = "k8s-applications-range"
+    services_secondary_range_name = "k8s-services-range"
   }
 
   private_cluster_config {

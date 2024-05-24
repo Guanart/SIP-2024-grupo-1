@@ -1,7 +1,7 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
 resource "google_compute_firewall" "allow-5173" {
   name    = "allow-5173"
-  network = google_compute_network.main.name
+  network = google_compute_network.mainnet.name
 
   allow {
     protocol = "tcp"
@@ -13,7 +13,7 @@ resource "google_compute_firewall" "allow-5173" {
 
 resource "google_compute_firewall" "allow-3000" {
   name    = "allow-3000"
-  network = google_compute_network.main.name
+  network = google_compute_network.mainnet.name
 
   allow {
     protocol = "tcp"
