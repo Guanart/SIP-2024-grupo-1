@@ -2,8 +2,8 @@
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
 
 # Crea una red 
-resource "google_compute_network" "main" {
-  name                            = "main"
+resource "google_compute_network" "mainnet" {
+  name                            = "mainnet"
   routing_mode                    = "REGIONAL"
   auto_create_subnetworks         = false
   mtu                             = 1460
