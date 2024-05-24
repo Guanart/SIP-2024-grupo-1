@@ -20,11 +20,14 @@ import { CreateUserDto } from './dto';
 // import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user-dto';
-import { Auth0Service } from 'src/auth/auth.service';
+import { Auth0Service } from '../../src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService, private readonly auth0Service: Auth0Service) {}
+  constructor(
+    private userService: UserService,
+    private readonly auth0Service: Auth0Service,
+  ) {}
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
@@ -156,7 +159,10 @@ export class UserController {
   }
 
   @Patch('role')
-  async updateRole(@Body('userId') userId: string, @Body('newRole') newRole: string) {
+  async updateRole(
+    @Body('userId') userId: string,
+    @Body('newRole') newRole: string,
+  ) {
     await this.auth0Service.assignRolesToUser(userId, [newRole]);
     return { message: 'Role updated successfully' };
   }

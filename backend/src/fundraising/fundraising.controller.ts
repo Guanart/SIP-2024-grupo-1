@@ -16,13 +16,16 @@ import {
 import { FundraisingService } from './fundraising.service';
 import { CreateFundraisingDto } from './dto/create-fundraising.dto';
 import { UpdateFundraisingDto } from './dto/update-fundraising.dto';
-import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
+import { MercadoPagoService } from '../mercado-pago/mercado-pago.service';
 // import { PermissionsGuard } from 'src/auth/permissions.guard';
 // import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('fundraising')
 export class FundraisingController {
-  constructor(private readonly fundraisingService: FundraisingService, private mercadoPagoService: MercadoPagoService) {}
+  constructor(
+    private readonly fundraisingService: FundraisingService,
+    private mercadoPagoService: MercadoPagoService,
+  ) {}
 
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['create:fundraisings'])
@@ -143,5 +146,5 @@ export class FundraisingController {
   //     const amount = 2000; // Get the token amount through your application's logic
   //     const preferenceId = await this.fundraisingService.generateMercadoPagoPreference(Number(collectionId), amount);
   //     return { preferenceId };
-  // }  
+  // }
 }
