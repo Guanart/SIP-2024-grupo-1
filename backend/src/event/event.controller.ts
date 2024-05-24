@@ -98,13 +98,13 @@ export class EventController {
   @Post()
   async createEvent(@Body() newEvent: CreateEventDto): Promise<string> {
     try {
-      const event = await this.eventService.createEvent(newEvent);
-
       if (newEvent.end_date < newEvent.start_date) {
         throw new BadRequestException(
           'The start date of the event must be prior to or equal to the end date',
         );
       }
+
+      const event = await this.eventService.createEvent(newEvent);
 
       if (!event) {
         throw new BadRequestException();

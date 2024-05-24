@@ -12,7 +12,7 @@ export class CreateEventDto {
   @IsNotEmpty()
   game_id: number;
 
-  @Min(1)
+  @Min(2)
   @IsNotEmpty()
   max_players: number;
 

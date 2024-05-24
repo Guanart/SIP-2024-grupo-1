@@ -34,6 +34,12 @@ export class FundraisingController {
     @Body() newFundraising: CreateFundraisingDto,
   ): Promise<string> {
     try {
+      if (newFundraising.initial_price > newFundraising.goal_amount) {
+        throw new BadRequestException(
+          'Initial price cannot be greater than the goal amount.',
+        );
+      }
+
       const fundraising =
         await this.fundraisingService.createFundraising(newFundraising);
 
