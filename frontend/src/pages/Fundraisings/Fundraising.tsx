@@ -32,6 +32,7 @@ export const Fundraising = () => {
 	const { user, isAuthenticated } = useAuth0();
 	const { id } = useParams();
 	const navigate = useNavigate();
+	const [walletId, setWalletId] = useState<number>();
 
 	useEffect(() => {
 		async function getFundraisings() {
@@ -76,11 +77,25 @@ export const Fundraising = () => {
 
 	const createPreference = async () => {
 		try {
+			// Recupero wallet del usuario
+			let response = await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+			});
+
+			if (response.ok) {
+				const { user } = await response.json();
+				setWalletId(user.wallet.id);
+				console.log("WalletID", user.wallet.id)
+			}
+			
+			// Creo Preference
 			if (fundraising) {
 				console.log(fundraising);
 				const response = await axios.post(REACT_APP_API_URL, {
 					id: id,
-					buyer_wallet_id: user?.sub, // wallet id del usuario que compra
+					buyer_wallet_id: walletId, // wallet id del usuario que compra
 					title: `${fundraising.player.user.username} | ${fundraising.event.name} (${amount})`,
 					quantity: amount,
 					unit_price: fundraising.collection.current_price,
