@@ -66,7 +66,6 @@ export const MarketplacePublication = () => {
 				marketplacePublication.token.collection.fundraising;
 				const response = await axios.post(REACT_APP_API_URL, {
 					id: publication_id,
-					seller_wallet_id: marketplacePublication.out_wallet.id,
 					buyer_wallet_id: user?.sub,	// wallet id del usuario que compra
 					title: `${username} | Token ID: ${marketplacePublication.token.id}`,
 					quantity: 1,
