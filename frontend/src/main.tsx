@@ -142,6 +142,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 						audience: AUTH0_AUDIENCE,
 						scope: 'read:current_user profile email offline_access ',
 					}}
+					cacheLocation="localstorage"
 				>
 					<Routes>
 						<Route element={<Protected />}>
