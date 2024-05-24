@@ -96,6 +96,16 @@ model Player {
   updatedAt    DateTime      @updatedAt
   access_token String?
   public_key   String?
+  Player_event Player_event[]
+}
+
+model Player_event {
+  player_id Int
+  event_id  Int
+  player    Player @relation(fields: [player_id], references: [id])
+  event     Event  @relation(fields: [event_id], references: [id])
+
+  @@id([player_id, event_id])
 }
 
 model Event {
@@ -111,6 +121,7 @@ model Event {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   active       Boolean       @default(true)
+  Player_event Player_event[]
 }
 
 model Fundraising {

@@ -45,6 +45,29 @@ export class EventController {
     }
   }
 
+  @Patch("/events_closing")
+  async eventsClosing(): Promise<string>{
+    try {
+      
+      const events = await this.eventService.closeEvents();
+
+      if (!events){
+        throw new NotFoundException(`Events not found`);
+      }
+
+      return JSON.stringify({
+        message: `Events closed`,
+        events
+      });
+    } catch (exception){
+      if (exception instanceof NotFoundException){
+        throw exception;
+      } else {
+        throw new InternalServerErrorException("Internal Server Error");
+      }
+    }
+  }
+
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['create:events'])
   @Post()
