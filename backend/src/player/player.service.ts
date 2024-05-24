@@ -8,13 +8,14 @@ export class PlayerService {
   constructor(private prisma: PrismaService) {}
 
   async update({ player_id, biography }: UpdatePlayerDto): Promise<Player> {
-    const updatedUser = await this.prisma.player.update({
+    const updatedPlayer = await this.prisma.player.update({
       where: {
         id: player_id,
       },
       data: { biography },
     });
 
-    return updatedUser ? Player.fromObject(updatedUser) : null;
+    console.log('update: ' + JSON.stringify(updatedPlayer));
+    return updatedPlayer ? Player.fromObject(updatedPlayer) : null;
   }
 }

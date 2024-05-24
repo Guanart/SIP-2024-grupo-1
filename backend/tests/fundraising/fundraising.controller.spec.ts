@@ -23,7 +23,11 @@ describe('UserController', () => {
       mercadoPagoService,
       collectionService,
     );
-    fundraisingController = new FundraisingController(fundraisingService);
+
+    fundraisingController = new FundraisingController(
+      fundraisingService,
+      mercadoPagoService,
+    );
 
     jest.clearAllMocks();
   });

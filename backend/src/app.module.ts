@@ -15,6 +15,7 @@ import { GameModule } from './game/game.module';
 import { RankModule } from './rank/rank.module';
 import { VerificationRequestModule } from './verification-request/verification-request.module';
 import { MarketplacePublicationModule } from './marketplace/marketplace-publication.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MarketplacePublicationModule } from './marketplace/marketplace-publicat
     RankModule,
     VerificationRequestModule,
     MarketplacePublicationModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

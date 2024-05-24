@@ -1,10 +1,10 @@
-import { Wallet } from "@prisma/client";
+import { TransactionType, Wallet } from "@prisma/client";
 
 export class Transaction {
     id: number;
     wallet_id: number;
     token_id: number;
-    type_id: number;
+    type: TransactionType;
     timestamp: Date;
     wallet: Wallet;
 
@@ -12,25 +12,25 @@ export class Transaction {
       id: number,
       wallet_id: number,
       token_id: number,
-      type_id: number,
+      type: TransactionType,
       timestamp: Date,
       wallet: Wallet,
     ) {
       this.id = id;
       this.wallet_id = wallet_id;
       this.token_id = token_id;
-      this.type_id = type_id;
+      this.type = type;
       this.timestamp = timestamp;
       this.wallet = wallet;
     }
 
     public static fromObject(object: { [key: string]: unknown }): Transaction {
-      const {  id, wallet_id, token_id, type_id, timestamp, wallet} = object;
+      const {  id, wallet_id, token_id, type, timestamp, wallet} = object;
   
       if (!id) throw 'ID property is required';
       if (!wallet_id) throw 'Wallet ID property is required';
       if (!token_id) throw 'Token ID property is required';
-      if (!type_id) throw 'Type ID property is required';
+      if (!type) throw 'Type property is required';
       if (!timestamp) throw 'Timestamp ID property is required';
       if (!wallet) throw 'Wallet property is required';
   
@@ -38,7 +38,7 @@ export class Transaction {
         id as number,
         wallet_id as number,
         token_id as number,
-        type_id as number,
+        type as TransactionType,
         timestamp as Date,
         wallet as Wallet,
       );

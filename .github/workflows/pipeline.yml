@@ -1,0 +1,158 @@
+name: LOT pipeline
+on:
+    push:
+        branches: ['main']
+jobs:
+    build-images:
+        name: Build and Push Docker Images
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Run backend unit tests
+              working-directory: backend
+              run: |
+                  npm install
+                  npm run test
+
+            - name: Run integration tests (Selenium)
+              working-directory: selenium
+              run: |
+                  pip install -r requirements.txt
+                  bash run-tests.sh
+
+            # - name: Login to Docker Hub
+            #   uses: docker/login-action@v3
+            #   with:
+            #       username: ${{ secrets.DOCKER_HUB_USERNAME }}
+            #       password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+            # - name: Build and push split service image
+            #   uses: docker/build-push-action@v5
+            #   with:
+            #       context: ./backend
+            #       push: true
+            #       tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
+
+            # - name: Build and push entry server image
+            #   uses: docker/build-push-action@v5
+            #   with:
+            #       context: ./frontend
+            #       push: true
+            #       tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+    infra-up:
+        name: Build Kubernetes infrastructure
+        if: startsWith(github.event.head_commit.message, '(up)')
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            # Setup de CLI de Terraform
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v3
+
+            # Crea el cluster en la nube.
+            - name: Terraform init
+              working-directory: terraform
+              env:
+                  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+              run: |
+                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+
+                  ls -lah
+
+                  BUCKET_NAME="terraform_state_cloud"
+                  PREFIX="lot_cluster/state"
+
+                  terraform init --reconfigure \
+                    --backend-config "bucket=${BUCKET_NAME}" \
+                    --backend-config "prefix=${PREFIX}"
+
+                  terraform validate
+
+                  terraform plan -lock=false
+
+                  terraform apply -lock=false --auto-approve
+
+            # Configuración CLI Google Cloud.
+            - name: Google Cloud authentication
+              uses: google-github-actions/auth@v2
+              with:
+                  credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+
+            - name: Google Cloud kubectl plugin
+              uses: google-github-actions/setup-gcloud@v2
+              with:
+                  version: '>= 363.0.0'
+                  install_components: 'kubectl'
+
+            - name: Google Cloud kubectl cluster metadata
+              run: |
+                  REGION="us-east1-b"
+                  gcloud info
+                  gcloud components list
+                  gcloud container clusters get-credentials primary --region=${REGION}
+
+            - name: Create Kubernetes namespaces
+              working-directory: kubernetes
+              run: |
+                  kubectl apply -f namespaces.yml
+
+            - name: Create applications config
+              working-directory: kubernetes
+              run: |
+                  kubectl apply -f config.yml
+
+            - name: Deploy Postgres
+              working-directory: kubernetes
+              run: |
+                  kubectl apply -f volumes/postgres-volume.yml
+                  kubectl apply -f volumes/postgres-pvc.yml
+                  kubectl apply -f deployments/postgres.yml
+                  kubectl apply -f services/postgres-service.yml
+                  sleep 20
+
+            - name: Deploy backend
+              working-directory: kubernetes
+              run: |
+                  kubectl apply -f deployments/backend.yml
+                  kubectl apply -f services/backend-service.yml
+
+            - name: Deploy frontend
+              working-directory: kubernetes
+              run: |
+                  kubectl apply -f deployments/frontend.yml
+                  kubectl apply -f services/frontend-service.yml
+
+    infra-destroy:
+        name: Destroy Kubernetes infrastructure
+        if: startsWith(github.event.head_commit.message, '(down)')
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+              # Setup de CLI de Terraform
+            - name: Terraform setup
+              uses: hashicorp/setup-terraform@v3
+
+              # Crea el cluster en la nube.
+            - name: Terraform init
+              working-directory: TP4/ej3/kubernetes/terraform
+              env:
+                  GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+              run: |
+                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+
+                  ls -lah
+
+                  BUCKET_NAME="terraform_state_cloud"
+                  PREFIX="lot_cluster/state"
+
+                  terraform init --reconfigure \
+                    --backend-config "bucket=${BUCKET_NAME}" \
+                    --backend-config "prefix=${PREFIX}"
+
+                  terraform destroy -lock=false --auto-approve

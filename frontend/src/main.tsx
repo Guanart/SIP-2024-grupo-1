@@ -7,7 +7,6 @@ import {
 	Help,
 	Home,
 	Marketplace,
-	Trending,
 	Wallet,
 	Login,
 	Error,
@@ -21,6 +20,11 @@ import {
 	CreatePublication,
 	MarketplacePublication,
 	TermsConditions,
+	VerificationRequests,
+	Administration,
+	Events,
+	Event,
+	Games,
 } from './pages';
 import { theme } from './global/theme.ts';
 import { Protected } from './components';
@@ -71,6 +75,26 @@ const privateRoutes = [
 		path: `/requestSuccess`,
 		element: <RequestSuccess />,
 	},
+	{
+		path: `/requests`,
+		element: <VerificationRequests />,
+	},
+	{
+		path: `/events`,
+		element: <Events />,
+	},
+	{
+		path: `/event/:event_id`,
+		element: <Event />,
+	},
+	{
+		path: `/games`,
+		element: <Games />,
+	},
+	{
+		path: '/administration',
+		element: <Administration />,
+	},
 ];
 
 const publicRoutes = [
@@ -91,10 +115,6 @@ const publicRoutes = [
 		element: <Login />,
 	},
 
-	{
-		path: '/trending',
-		element: <Trending />,
-	},
 	{
 		path: '/error/:code',
 		element: <Error />,
@@ -122,6 +142,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 						audience: AUTH0_AUDIENCE,
 						scope: 'read:current_user profile email offline_access ',
 					}}
+					cacheLocation="localstorage"
 				>
 					<Routes>
 						<Route element={<Protected />}>

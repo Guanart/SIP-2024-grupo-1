@@ -30,7 +30,23 @@ export async function fetchWithAuth({
 		});
 
 		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
+			const { message, status } = await response.json();
+
+			if (status >= 500) {
+				throw new Error(`Internal server error`);
+			}
+
+			if (Array.isArray(message)) {
+				throw new Error(
+					`${
+						message[0].charAt(0).toUpperCase() + message[0].slice(1)
+					}`
+				);
+			}
+
+			throw new Error(
+				`${message.charAt(0).toUpperCase() + message.slice(1)}`
+			);
 		}
 
 		return response;

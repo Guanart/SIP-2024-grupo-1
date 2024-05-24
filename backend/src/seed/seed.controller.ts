@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { TransactionType } from '@prisma/client';
 
 @Controller('seed')
 export class SeedController {
@@ -174,7 +175,7 @@ export class SeedController {
           data: {
             wallet_id: wallet2.id,
             token_id: token.id,
-            type_id: 1,
+            type: TransactionType.BUY,
           },
         });
       }
@@ -190,7 +191,7 @@ export class SeedController {
         data: {
           token_id: tokens[4].id,
           wallet_id: wallet3.id,
-          type_id: 1,
+          type: TransactionType.BUY,
         },
       });
 

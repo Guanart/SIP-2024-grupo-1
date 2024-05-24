@@ -1,4 +1,4 @@
-import { IsNotEmpty, Max, Min } from 'class-validator';
+import { IsNotEmpty, Min } from 'class-validator';
 
 export class CreateEventDto {
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateEventDto {
   @IsNotEmpty()
   game_id: number;
 
-  @Min(1)
+  @Min(2)
   @IsNotEmpty()
   max_players: number;
 

@@ -11,6 +11,7 @@ import {
   Put,
   Delete,
   InternalServerErrorException,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './user.entity';
@@ -19,14 +20,18 @@ import { CreateUserDto } from './dto';
 // import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user-dto';
+import { Auth0Service } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private readonly auth0Service: Auth0Service,
+  ) {}
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['create:Users'])
+  // @SetMetadata('permissions', ['create:users'])
   @Post()
   async create(@Body() newUser: CreateUserDto): Promise<string> {
     try {
@@ -151,5 +156,14 @@ export class UserController {
         throw new InternalServerErrorException('Internal Server Error');
       }
     }
+  }
+
+  @Patch('role')
+  async updateRole(
+    @Body('userId') userId: string,
+    @Body('newRole') newRole: string,
+  ) {
+    await this.auth0Service.assignRolesToUser(userId, [newRole]);
+    return { message: 'Role updated successfully' };
   }
 }

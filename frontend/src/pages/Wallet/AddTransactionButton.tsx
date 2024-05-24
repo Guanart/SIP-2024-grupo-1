@@ -25,7 +25,7 @@ const AddTransactionButton: React.FC<AddTransactionButtonProps> = ({
 			method: 'POST',
 			data: {
 				wallet_id: walletId,
-				type_id: 1,
+				type: 'BUY',
 				token_id: 2,
 				timestamp: new Date().toISOString(),
 			},

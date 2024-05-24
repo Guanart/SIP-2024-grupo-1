@@ -22,6 +22,7 @@ import {
 	PublicationList,
 } from '../../components';
 import './Account.css';
+import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -82,40 +83,51 @@ export const Account = () => {
 
 		setIsLoading(true);
 
-		const response = await fetchWithAuth({
-			isAuthenticated,
-			accessToken,
-			url: `http://${HOST}:${PORT}/user`,
-			method: 'PUT',
-			data: updatedUser,
-		});
+		try {
+			await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/user`,
+				method: 'PUT',
+				data: updatedUser,
+			});
 
-		if (role === 'player') {
-			if (currentUser?.player?.biography !== biography) {
-				const response = await fetchWithAuth({
-					isAuthenticated,
-					accessToken,
-					url: `http://${HOST}:${PORT}/player`,
-					method: 'PUT',
-					data: {
-						player_id: currentUser?.player?.id,
-						biography,
-					},
-				});
+			if (role === 'player') {
+				if (currentUser?.player?.biography !== biography) {
+					const response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `http://${HOST}:${PORT}/player`,
+						method: 'PUT',
+						data: {
+							player_id: currentUser?.player?.id,
+							biography,
+						},
+					});
 
-				if (!response.ok) {
-					navigate('/error/500');
+					if (!response.ok) {
+						navigate('/error/500');
+					}
 				}
 			}
+
+			setIsEditModalOpen(false);
+			setUpdatedUser(null);
+			setIsLoading(false);
+		} catch (error) {
+			if (error instanceof Error) {
+				if (error.message.includes('Internal Server Error')) {
+					navigate('/error/500');
+				}
+
+				toast.error(error.message);
+				setIsEditModalOpen(false);
+				setIsLoading(false);
+				setUpdatedUser(null);
+			} else {
+				navigate('/error/500');
+			}
 		}
-
-		setUpdatedUser(null);
-
-		if (!response.ok) {
-			navigate('/error/500');
-		}
-
-		setIsEditModalOpen(false);
 	}
 
 	async function handleClick() {

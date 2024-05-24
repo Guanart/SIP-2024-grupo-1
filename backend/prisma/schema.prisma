@@ -67,8 +67,13 @@ model Transaction {
   wallet_id Int
   wallet    Wallet   @relation(fields: [wallet_id], references: [id])
   token_id  Int
-  type_id   Int
+  type   TransactionType
   timestamp DateTime @default(now())
+}
+
+enum TransactionType {
+  BUY
+  SELL
 }
 
 model Game {

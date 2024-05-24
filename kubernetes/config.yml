@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: backend-config
+    namespace: backend-namespace
+data:
+    DATABASE_URL: postgresql://postgres:admin@postgres.postgres-namespace.svc.cluster.local:5432/LOT
+    AUTH0_ISSUER_URL: https://dev-f57qs7dbi1xcl5kj.us.auth0.com/
+    AUTH0_AUDIENCE: http://my-secure-api.com
+    PORT: '3000'
+    APP_URL: https://backend-service.backend-namespace.svc.cluster.local:3000
+    REACT_APP_URL: http://frontend-service.frontend-namespace.svc.cluster.local
+    MP_APP_ID: '1517187722603608' # sandbox
+    MP_ACCESS_TOKEN: '' # usar el de la cuenta sandbox
+    MP_CLIENT_SECRET: '' # usar el de la cuenta sandbox
+    MP_REDIRECT_URI: https://backend-service.backend-namespace.svc.cluster.local:3000/mercado-pago/oauth
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: frontend-config
+    namespace: frontend-namespace
+data:
+    APP_BACKEND_HOST: backend-service.backend-namespace.svc.cluster.local
+    APP_BACKEND_PORT: '3000'
+    APP_AUTH0_AUDIENCE: http://my-secure-api.com
+    APP_AUTH0_DOMAIN: dev-f57qs7dbi1xcl5kj.us.auth0.com
+    APP_AUTH0_CLIENT_ID: QDUde2yWkQWxGguu7p59G3QirNNpeXgl
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: postgres-config
+    namespace: postgres-namespace
+data:
+    POSTGRES_DB: 'LOT'
+    POSTGRES_USER: 'postgres'
+    POSTGRES_PASSWORD: 'admin'
+    TZ: '03'

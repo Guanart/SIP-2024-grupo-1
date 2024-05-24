@@ -40,7 +40,6 @@ export const RequestForm = () => {
 
 	const { user, isAuthenticated } = useAuth0();
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	const [userId, setUserId] = useState<string>('');
 
 	const { accessToken } = useAccessToken();
 	const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -102,7 +101,7 @@ export const RequestForm = () => {
 		getUser();
 		getGames();
 		getRanks();
-	}, [accessToken, isAuthenticated, user]);
+	}, [accessToken, isAuthenticated, user, navigate]);
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
@@ -133,19 +132,20 @@ export const RequestForm = () => {
 				filepath: 'path-to-file',
 			};
 
-			formData.append('verificationRequest', JSON.stringify(newVerificationRequest));
+			formData.append(
+				'verificationRequest',
+				JSON.stringify(newVerificationRequest)
+			);
 			const url = `http://localhost:3000/verification-request`;
 			const config = {
 				headers: {
 					'content-type': 'multipart/form-data',
 				},
 			};
-			axios.post(url, formData, config).then((response) => {
-					console.log(response.data);
-					navigate(`/requestSuccess`);
-				  });
+			axios.post(url, formData, config).then(() => {
+				navigate(`/requestSuccess`);
+			});
 		} catch (error) {
-			console.log(error + "hola, soy del front" + "Llegamos aca porque no hay respuesta :/");
 			navigate(`/error`);
 		}
 	};

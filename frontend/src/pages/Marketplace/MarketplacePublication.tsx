@@ -20,12 +20,13 @@ const REACT_APP_PREFERENCE_TYPE = 'marketplace'; //! Me guié por la preferencia
 
 export const MarketplacePublication = () => {
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
-	const { accessToken } = useAccessToken();
+	const { accessToken, role } = useAccessToken();
 	const [marketplacePublication, setMarketplacePublication] =
 		useState<MarketplacePublicationType>();
 	const { user, isAuthenticated } = useAuth0();
 	const { publication_id } = useParams();
 	const navigate = useNavigate();
+	const [walletId, setWalletId] = useState<number>();
 
 	useEffect(() => {
 		async function getPublication() {
@@ -59,17 +60,31 @@ export const MarketplacePublication = () => {
 
 	const createPreference = async () => {
 		try {
+			// Recupero wallet del usuario
+			let response = await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+			});
+
+			if (response.ok) {
+				const { user } = await response.json();
+				setWalletId(user.wallet.id);
+				console.log("WalletID", user.wallet.id)
+			}
+			
+			// Creo Preference
 			if (marketplacePublication) {
 				const username =
 					marketplacePublication.out_wallet.user?.username;
-
 				marketplacePublication.token.collection.fundraising;
 				const response = await axios.post(REACT_APP_API_URL, {
+					id: publication_id,
+					buyer_wallet_id: walletId, // wallet id del usuario que compra
 					title: `${username} | Token ID: ${marketplacePublication.token.id}`,
 					quantity: 1,
 					unit_price: marketplacePublication.price,
 					type: REACT_APP_PREFERENCE_TYPE,
-					id: publication_id,
 				});
 
 				return response.data.id;
@@ -264,7 +279,8 @@ export const MarketplacePublication = () => {
 						)}
 						{user?.sub !==
 							marketplacePublication.out_wallet.user?.auth0_id &&
-							!preferenceId && (
+							!preferenceId &&
+							role !== 'admin' && (
 								<Button
 									variant='contained'
 									color='secondary'

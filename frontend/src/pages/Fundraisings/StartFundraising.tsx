@@ -22,6 +22,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { Loader } from '../../components';
 import { User } from '../../types';
 import { Container } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -76,7 +77,6 @@ export const StartFundraising = () => {
 	}, [accessToken, isAuthenticated, user, navigate]);
 
 	async function handleStartFundraising(event: FormEvent) {
-		console.log('Creating fundraising...');
 		event.preventDefault();
 
 		const newFundraising = {
@@ -104,8 +104,14 @@ export const StartFundraising = () => {
 				navigate(`/fundraising/${fundraising.id}`);
 			}
 		} catch (error) {
-			console.log(error);
-			navigate(`/error`);
+			if (error instanceof Error) {
+				if (error.message.includes('Internal Server Error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
 		}
 	}
 
@@ -248,7 +254,7 @@ export const StartFundraising = () => {
 									<MenuItem
 										key={event.id}
 										value={event.id}
-										id={event.id}
+										id={event.id.toString()}
 									>
 										{event.name}
 									</MenuItem>

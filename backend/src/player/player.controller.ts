@@ -19,7 +19,7 @@ export class PlayerController {
 
   //? Esto está comentado para que no pida permisos (access_token). Si se prueba desde el front, si se pueden descomentar esas anotaciones
   // @UseGuards(AuthGuard, PermissionsGuard)
-  // @SetMetadata('permissions', ['update:player'])
+  // @SetMetadata('permissions', ['update:players'])
   @Put('/')
   async update(@Body() updatedPlayer: UpdatePlayerDto): Promise<string> {
     try {

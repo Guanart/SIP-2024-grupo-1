@@ -3,17 +3,20 @@ import { UserService } from '../../src/user/user.service';
 import { WalletService } from '../../src/wallet/wallet.service';
 import { User } from '../../src/user/user.entity';
 import { PrismaService } from '../../src/database/prisma.service';
+import { Auth0Service } from '../../src/auth/auth.service';
 
 describe('UserController', () => {
   let userController: UserController;
   let userService: UserService;
   let walletService: WalletService;
   let prisma: PrismaService;
+  let auth0Service: Auth0Service;
 
   beforeEach(() => {
     walletService = new WalletService(prisma);
     userService = new UserService(prisma, walletService);
-    userController = new UserController(userService);
+    auth0Service = new Auth0Service();
+    userController = new UserController(userService, auth0Service);
   });
 
   describe('create', () => {

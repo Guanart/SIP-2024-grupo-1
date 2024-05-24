@@ -51,6 +51,7 @@ export const Wallet = () => {
 						setTokens(user.wallet.token_wallet);
 						setWallet(user.wallet);
 						setTransactions(user.wallet.transactions);
+						console.log(user.wallet.transactions);
 					}
 				}
 			} catch (error) {
@@ -64,15 +65,9 @@ export const Wallet = () => {
 		getUserWallet(user);
 	}, [accessToken, isAuthenticated, user, navigate]);
 
-	// ESTO ES A MODO DE MOCK UP, PROBABLEMENTE HAYA QUE CAMBIARLO
-	const getColorByTypeId: { [key: number]: string } = {
-		1: '#45FFCA',
-		2: 'rgba(147, 11, 11, 0.8)',
-	};
-
-	const transactionsType: { [key: number]: string } = {
-		1: 'IN',
-		2: 'OUT',
+	const getColorByTypeId: { [key: string]: string } = {
+		BUY: '#45FFCA',
+		SELL: 'rgba(147, 11, 11, 0.8)',
 	};
 
 	// const CLIENT_ID = "3437331959866275"; // app cuenta real
@@ -95,16 +90,16 @@ export const Wallet = () => {
 					Autorizar ventas desde MercadoPago para Wallet (Marketplace)
 				</Button>
 			)}
-				<Button
-					variant='contained'
-					color='primary'
-					// El state es inseguro
-					onClick={() =>
-						(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=player-1&redirect_uri=${REDIRECT_URI}`)
-					}
-				>
-					Autorizar ventas desde MercadoPago para Player 1
-				</Button>
+			<Button
+				variant='contained'
+				color='primary'
+				// El state es inseguro
+				onClick={() =>
+					(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=player-1&redirect_uri=${REDIRECT_URI}`)
+				}
+			>
+				Autorizar ventas desde MercadoPago para Player 1
+			</Button>
 			{wallet && (
 				<Stack
 					spacing={2}
@@ -172,16 +167,12 @@ export const Wallet = () => {
 												align='center'
 												sx={{
 													color: getColorByTypeId[
-														transaction.type_id
+														transaction.type
 													],
 													fontWeight: 'bold',
 												}}
 											>
-												{
-													transactionsType[
-														transaction.type_id
-													]
-												}
+												{transaction.type}
 											</TableCell>
 											<TableCell align='center'>
 												{new Date(
@@ -194,26 +185,6 @@ export const Wallet = () => {
 							</Table>
 						</TableContainer>
 					) : (
-						// <List>
-						// 	{transactions.map((transaction) => (
-						// 		<ListItem
-						// 			key={transaction.id}
-						// 			sx={{
-						// 				backgroundColor: getColorByTypeId(
-						// 					transaction.type_id
-						// 				),
-						// 				borderRadius: '4px', // Establece el radio de las esquinas a 8px
-						// 				padding: '12px', // Agrega algo de padding para separarlo de los bordes
-						// 				marginBottom: '8px', // Agrega margen inferior entre cada elemento de la lista
-						// 			}}
-						// 		>
-						// 			<ListItemText
-						// 				primary={`Token: ${transaction.token_id}`}
-						// 				secondary={`Date: ${transaction.timestamp} | Type: ${transaction.type_id}`}
-						// 			/>
-						// 		</ListItem>
-						// 	))}
-						// </List>
 						<Typography>There is no transactions yet!</Typography>
 					)}
 				</Stack>
