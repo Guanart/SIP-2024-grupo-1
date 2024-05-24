@@ -20,7 +20,7 @@ import { CreateUserDto } from './dto';
 // import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteUserDto } from './dto/delete-user-dto';
-import { Auth0Service } from '../../src/auth/auth.service';
+import { Auth0Service } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
