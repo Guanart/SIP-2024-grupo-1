@@ -39,7 +39,6 @@ export class Player {
     const { id, biography, ranking, game, user, fundraisings } = object;
 
     if (!id) throw 'ID property is required';
-    if (!biography) throw 'Biography property is required';
     if (!ranking) throw 'Ranking property is required';
 
     const player = new Player(
