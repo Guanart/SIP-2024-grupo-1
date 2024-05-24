@@ -49,6 +49,11 @@ export class EventService {
         }
       }
     });
+
+    if (!events) {
+      return null;
+    }
+
     events.map(async (event) => {
       Event.fromObject(event);
       await this.prisma.event.update({
@@ -61,24 +66,8 @@ export class EventService {
       });
     } 
     );
-    if (events && events.length > 0) {
-      return events.map(event => Event.fromObject(event));
-    } else {
-      return null;
-    }
-  }
-
-  async crearEventoPrueba() {
-    const event = await this.prisma.event.create({
-      data: {
-        start_date: new Date(),
-        end_date: new Date(),
-        max_players: 4,
-        prize: 999999,
-        name: 'EventoPrueba1',
-        game_id: 1,
-      },
-    });
+    
+    return events.map(event => Event.fromObject(event));
   }
 
   // Se ejecuta todos los días a las 00:00
