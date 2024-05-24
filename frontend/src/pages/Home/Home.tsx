@@ -50,84 +50,92 @@ export const Home = () => {
 	}, [accessToken, user, isAuthenticated]);
 
 	return (
-		<PageLayout title="home">
-		<Stack
-		  direction={{ xs: 'column', md: 'row' }}
-		  className='stack-container'
-		  sx={{
-			height: '100vh', // Make sure the stack takes the full viewport height
-			width: '100vw',
-			justifyContent: 'center',
-		  }}
-		>
-		  <Container
-			className='container'
-			sx={{
-			  backgroundImage: 'url(/assets/images/home-deco1.png)', // Your background image
-			  //backgroundSize: 'cover',
-			  padding: '2rem',
-			  width: '100vw',
-			  display: 'flex',
-			  flexDirection: 'column',
-			  justifyContent: 'center',
-			}}
-		  >
-			<Box
-			  sx={{
-				textAlign: 'left',
-				maxWidth: '60%', // Adjust this value to control the width of the text content
-			  }}
-			>
-			  <Typography variant='h2' fontFamily='Orbitron, sans-serif'>
-				Unlock the power of our tokens
-			  </Typography>
-			  <Typography variant='h4' color='secondary' sx={{ mt: 2 }} fontFamily='Bebas Neue, sans-serif'>
-				Invest now and be part of the revolution
-			  </Typography>
-			  <Box
-				className='box-container'
+		<PageLayout title='Home'>
+			<Stack
+				direction={{ xs: 'column', md: 'row' }}
+				className='stack-container'
 				sx={{
-				  marginTop: '18px',
-				  display: 'flex',
-				  justifyContent: 'flex-start', // Align items to the start (left)
-				  alignItems: 'center',
-				  gap: '8px',
+					height: '100vh', // Make sure the stack takes the full viewport height
+					width: '100vw',
+					justifyContent: 'center',
 				}}
-			  >
-				<Link to='/fundraisings'>
-				  <Button
-					variant='contained'
-					color='secondary'
-					className='home-button'
+			>
+				<Container
+					className='container'
 					sx={{
-					  fontWeight: 'bold',
-					  paddingY: '7px',
+						backgroundImage: 'url(/assets/images/home-deco1.png)', // Your background image
+						//backgroundSize: 'cover',
+						padding: '2rem',
+						width: '100vw',
+						display: 'flex',
+						flexDirection: 'column',
+						justifyContent: 'center',
 					}}
-				  >
-					Buy tokens
-				  </Button>
-				</Link>
-				<Link to='/about'>
-				  <Button
-					variant='contained'
-					color='primary'
-					className='home-button'
-					sx={{
-					  fontWeight: 'bold',
-					  border: `2px solid ${theme.palette.secondary.main}`,
-					  color: `${theme.palette.secondary.main}`,
-					}}
-				  >
-					Learn more
-				  </Button>
-				</Link>
-			  </Box>
-			</Box>
-		  </Container>
-		</Stack>
-	  </PageLayout>
+				>
+					<Box
+						sx={{
+							textAlign: 'left',
+							maxWidth: '60%', // Adjust this value to control the width of the text content
+						}}
+					>
+						<Typography
+							variant='h2'
+							fontFamily='Orbitron, sans-serif'
+						>
+							Unlock the power of our tokens
+						</Typography>
+						<Typography
+							variant='h4'
+							color='secondary'
+							sx={{ mt: 2 }}
+							fontFamily='Bebas Neue, sans-serif'
+						>
+							Invest now and be part of the revolution
+						</Typography>
+						<Box
+							className='box-container'
+							sx={{
+								marginTop: '18px',
+								display: 'flex',
+								justifyContent: 'flex-start', // Align items to the start (left)
+								alignItems: 'center',
+								gap: '8px',
+							}}
+						>
+							<Link to='/fundraisings'>
+								<Button
+									variant='contained'
+									color='secondary'
+									className='home-button'
+									sx={{
+										fontWeight: 'bold',
+										paddingY: '7px',
+									}}
+								>
+									Buy tokens
+								</Button>
+							</Link>
+							<Link to='/about'>
+								<Button
+									variant='contained'
+									color='primary'
+									className='home-button'
+									sx={{
+										fontWeight: 'bold',
+										border: `2px solid ${theme.palette.secondary.main}`,
+										color: `${theme.palette.secondary.main}`,
+									}}
+								>
+									Learn more
+								</Button>
+							</Link>
+						</Box>
+					</Box>
+				</Container>
+			</Stack>
+		</PageLayout>
 	);
-/*
+	/*
 	<img
 	src='/assets/images/home-deco.png'
 	alt='Valorant characters'
