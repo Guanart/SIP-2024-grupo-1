@@ -75,7 +75,7 @@ export class MercadoPagoService {
         expires: false,
         items: [
           {
-            id: `${items.buyer_wallet_id}-${items.seller_wallet_id}-${items.id}`,
+            id: `${items.buyer_wallet_id}-${items.id}`,
             title: items.title,
             quantity: items.quantity,
             unit_price: items.unit_price,
@@ -245,10 +245,35 @@ async function persistMarketplaceTransaction(
   item: Items,
 ) {
   // Obtener las wallets involucradas en la transacción
-  const [buyer_wallet_id, seller_wallet_id, publicationId] = item.id
-    .split('-')
-    .slice(1);
+  const [buyer_wallet_id, publicationId] = item.id
+    .split('-');
 
+  // recupera el seller_wallet_id a partir del type (fundraising o marketplace) y el publicationId
+  // o sea, la wallet asociada a la marketplace_publication, OR, la wallet asociada al user del player de la fundraising
+
+  const typeToWhereMap = {
+    fundraising: {
+      player: {
+        fundraising: {
+          id: publicationId,
+        },
+      },
+    },
+    marketplace: {
+      marketplace_publication: {
+        publication_id: publicationId,
+      },
+    },
+  };
+
+
+  const seller_wallet_id = await this.prisma.wallet.findFirst({
+    where: typeToWhereMap[item.category_id],
+    select: {
+      id: true,
+    },
+  });
+  
   // Buscar las wallets
   const [wallet1, wallet2] = await Promise.all([
     this.prisma.wallet.findUnique({ where: { id: buyer_wallet_id } }),
