@@ -15,9 +15,6 @@ export class CreatePreference {
 
   @IsNotEmpty()
   id: number;
-
-  @IsNotEmpty()
-  seller_wallet_id: number;
   
   @IsNotEmpty()
   buyer_wallet_id: number;
