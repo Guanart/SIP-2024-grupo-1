@@ -115,7 +115,7 @@ export const Home = () => {
 									Buy tokens
 								</Button>
 							</Link>
-							<Link to='/about'>
+							<Link to='/help'>
 								<Button
 									variant='contained'
 									color='primary'
