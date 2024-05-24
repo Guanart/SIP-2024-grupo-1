@@ -14,4 +14,5 @@ spec:
     accessModes:
         - ReadWriteMany
     hostPath:
-        path: /data/postgresql
+        path: /var/data/postgresql
+        type: DirectoryOrCreate
