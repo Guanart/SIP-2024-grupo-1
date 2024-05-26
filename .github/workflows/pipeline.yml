@@ -207,14 +207,14 @@ jobs:
             - name: Install cloud-native operator
               run: |
                   kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
-                  sleep 120
+                  sleep 75
 
             - name: Create infra services
               working-directory: kubernetes/argocd
               run: |
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
-                  sleep 120
+                  sleep 145
 
             # Crear un nuevo ConfigMap con las credenciales de conexión Postgres
             - name: Create Postgres config
@@ -230,7 +230,7 @@ jobs:
                     name: postgres-config
                     namespace: argocd
                   data:
-                    DATABASE_URL: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres.postgres-namespace.svc.cluster.local:5432/LOT
+                    DATABASE_URL: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres-cluster-rw:5432/LOT
                   EOF
 
             - name: Create applications
