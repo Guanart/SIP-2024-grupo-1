@@ -2,6 +2,8 @@
 # https://cloudnative-pg.io/documentation/1.23/samples/cluster-example-full.yaml
 # https://cloudnative-pg.io/documentation/1.23/samples/
 
+Este archivo no es para utilizar, simplemente llevé nota de los comandos que fui ejecutando para iniciar postgres dentro del cluster
+
 # Instalar CloudNativePG
 kubectl apply --server-side -f \
   https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
