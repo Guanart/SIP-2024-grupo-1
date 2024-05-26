@@ -1,0 +1,14 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+    name: postgres-cluster
+spec:
+    instances: 3
+    imageName: ghcr.io/cloudnative-pg/postgresql:15.3
+    storage:
+        size: 1Gi
+    bootstrap:
+        initdb:
+            database: LOT
+            owner: app
+    enableSuperuserAccess: true
