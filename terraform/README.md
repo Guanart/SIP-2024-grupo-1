@@ -9,27 +9,29 @@ variable "project" {
 }
 ```
 
-2. Inicializar el estado de terraform ejecutando el siguiente comando:
+2. Otorgarle el rol de "Storage admin" a la cuenta de servicio de la cuál se obtuvo las credenciales.
+
+3. Inicializar el estado de terraform ejecutando el siguiente comando:
 
 ```bash
 # El bucket debe estar creado previamente en el proyecto GCP.
 terraform init --reconfigure --backend-config "bucket=terraform_state_cloud" --backend-config "prefix=lot_cluster/state"
 ```
 
-3. Iniciar el proceso de creación verificando que todo este en orden ejecutando un `plan` y posteriormente aplicando los cambios:
+4. Iniciar el proceso de creación verificando que todo este en orden ejecutando un `plan` y posteriormente aplicando los cambios:
 
 ```bash
 terraform plan
 terraform apply --auto-approve
 ```
 
-4. Una vez finalizado obtener la metadata del cluster Kubernetes creado, ejecutando el siguiente comando de gcloud:
+5. Una vez finalizado obtener la metadata del cluster Kubernetes creado, ejecutando el siguiente comando de gcloud:
 
 ```bash
  gcloud container clusters get-credentials lot --region=us-east1-b
 ```
 
-5. Para destruir la infraestructura desplegada, ejecutar el siguiente comando:
+6. Para destruir la infraestructura desplegada, ejecutar el siguiente comando:
 
 ```bash
 terraform destroy --auto-approve
