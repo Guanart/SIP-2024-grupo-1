@@ -42,8 +42,6 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
 
-    # DATABASE_URL: postgresql://postgres:admin@postgres.postgres-namespace.svc.cluster.local:5432/LOT
-
     configure-backend:
         name: Configure backend for terraform state
         if: startsWith(github.event.head_commit.message, '(up)')
@@ -58,11 +56,16 @@ jobs:
                   credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
 
             - name: Check and Create GCS Bucket
+              env:
+                  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+                  PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
               run: |
-                  BUCKET_NAME="terraform_state_cloud"
-                  PROJECT_ID="braided-complex-416718"
-
                   gcloud config set project $PROJECT_ID
+
+                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+                  gcloud auth activate-service-account --key-file=credentials.json
+                  gcloud config set pass_credentials_to_gsutil true
+
                   # Check if the bucket exists
                   BUCKET_URI="gs://${BUCKET_NAME}/"
                   if gsutil ls -p $PROJECT_ID | grep $BUCKET_URI; then
@@ -90,17 +93,15 @@ jobs:
               working-directory: terraform
               env:
                   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+                  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
               run: |
                   echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
 
                   ls -lah
 
-                  BUCKET_NAME="terraform_state_cloud"
-                  PREFIX="lot_cluster/state"
-
                   terraform init --reconfigure \
                     --backend-config "bucket=${BUCKET_NAME}" \
-                    --backend-config "prefix=${PREFIX}"
+                    --backend-config "prefix=terraform/state"
 
                   terraform validate
 
@@ -132,7 +133,7 @@ jobs:
             - name: Get Kubernetes cluster credentials
               run: |
                   REGION="us-east1-b"
-                  gcloud container clusters get-credentials primary --region=${REGION}
+                  gcloud container clusters get-credentials lot --region=${REGION}
 
             - name: Check if Argo CD namespace exists
               id: check_namespace
@@ -180,7 +181,7 @@ jobs:
             - name: Get Kubernetes cluster credentials
               run: |
                   REGION="us-east1-b"
-                  gcloud container clusters get-credentials primary --region=${REGION}
+                  gcloud container clusters get-credentials lot --region=${REGION}
 
             - name: Install Argo CD CLI
               run: |
@@ -208,6 +209,12 @@ jobs:
               run: |
                   kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
                   sleep 75
+
+            - name: Create secret with GCP credentials
+              working-directory: kubernetes
+              run: |
+                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+                  kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
 
             - name: Create infra services
               working-directory: kubernetes/argocd
@@ -253,19 +260,17 @@ jobs:
 
               # Crea el cluster en la nube.
             - name: Terraform init
-              working-directory: TP4/ej3/kubernetes/terraform
+              working-directory: terraform
               env:
                   GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+                  BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
               run: |
                   echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
 
                   ls -lah
 
-                  BUCKET_NAME="terraform_state_cloud"
-                  PREFIX="lot_cluster/state"
-
                   terraform init --reconfigure \
                     --backend-config "bucket=${BUCKET_NAME}" \
-                    --backend-config "prefix=${PREFIX}"
+                    --backend-config "prefix=terraform/state"
 
                   terraform destroy -lock=false --auto-approve

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
     name: backend-config
-    namespace: backend-namespace
+    namespace: argocd
 data:
     AUTH0_ISSUER_URL: https://dev-f57qs7dbi1xcl5kj.us.auth0.com/
     AUTH0_AUDIENCE: http://my-secure-api.com
@@ -18,7 +18,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
     name: frontend-config
-    namespace: frontend-namespace
+    namespace: argocd
 data:
     APP_BACKEND_HOST: backend-service
     APP_BACKEND_PORT: '3000'
