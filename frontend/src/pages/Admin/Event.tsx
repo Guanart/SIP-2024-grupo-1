@@ -242,7 +242,7 @@ export const Event = () => {
 														fontWeight: 'bold',
 													}}
 												>
-													{player.ranking}
+													{player.rank.description}
 												</TableCell>
 												<TableCell
 													align='center'

@@ -27,6 +27,7 @@ model Rank {
   id                  Int                   @id @default(autoincrement())
   description         String                @unique
   VerificationRequest VerificationRequest[]
+  Player              Player[]
 }
 
 enum RequestStatus {
@@ -92,7 +93,8 @@ model Player {
   user_id      Int            @unique
   user         User           @relation(fields: [user_id], references: [id])
   biography    String
-  ranking      Int
+  rank_id      Int
+  rank         Rank           @relation(fields: [rank_id], references: [id])
   game_id      Int
   game         Game           @relation(fields: [game_id], references: [id])
   active       Boolean        @default(true)

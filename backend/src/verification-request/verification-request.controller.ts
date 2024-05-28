@@ -28,7 +28,7 @@ import { Auth0Service } from 'src/auth/auth.service';
 @Controller('verification-request')
 export class VerificationRequestController {
   constructor(
-    private verificationRequestService: VerificationRequestService, 
+    private verificationRequestService: VerificationRequestService,
     private prisma: PrismaService,
     private auth0Service: Auth0Service,
   ) {}
@@ -47,16 +47,25 @@ export class VerificationRequestController {
 
     const uploadDir = join(__dirname, '..', 'uploads');
     try {
-      const verificationRequest = await this.verificationRequestService.createVerificationRequest(newVerificationRequest);
+      const verificationRequest =
+        await this.verificationRequestService.createVerificationRequest(
+          newVerificationRequest,
+        );
 
       await fs.mkdir(uploadDir, { recursive: true });
 
       const fileExtension = file.originalname.split('.').pop();
-      const filePath = join(uploadDir, `${verificationRequest.id}.${fileExtension}`);
+      const filePath = join(
+        uploadDir,
+        `${verificationRequest.id}.${fileExtension}`,
+      );
       await fs.writeFile(filePath, file.buffer);
 
       verificationRequest.filepath = filePath;
-      await this.verificationRequestService.updateVerificationRequestFilepath(verificationRequest.id, filePath);
+      await this.verificationRequestService.updateVerificationRequestFilepath(
+        verificationRequest.id,
+        filePath,
+      );
 
       if (!verificationRequest) {
         throw new BadRequestException();
@@ -77,9 +86,10 @@ export class VerificationRequestController {
 
   @Get()
   async getAllRequests() {
-    const verificationRequest = await this.verificationRequestService.getAllRequests();
+    const verificationRequest =
+      await this.verificationRequestService.getAllRequests();
     return {
-      verificationRequest
+      verificationRequest,
     };
   }
 
@@ -91,7 +101,8 @@ export class VerificationRequestController {
         throw new BadRequestException('Invalid ID format');
       }
 
-      const verificationRequest = await this.verificationRequestService.findById(numericId);
+      const verificationRequest =
+        await this.verificationRequestService.findById(numericId);
 
       if (!verificationRequest) {
         throw new NotFoundException(`Verification Request ${id} not found`);
@@ -115,7 +126,7 @@ export class VerificationRequestController {
   @Patch(':id')
   async updateRequestStatus(
     @Param('id') id: string,
-    @Body() updateDto: UpdateVerificationRequestDto
+    @Body() updateDto: UpdateVerificationRequestDto,
   ) {
     const numericId = parseInt(id, 10);
     if (isNaN(numericId)) {
@@ -123,10 +134,11 @@ export class VerificationRequestController {
     }
 
     try {
-      const updatedVerificationRequest = await this.verificationRequestService.updateVerificationRequestStatus({
-        id: numericId,
-        status: updateDto.status,
-      });
+      const updatedVerificationRequest =
+        await this.verificationRequestService.updateVerificationRequestStatus({
+          id: numericId,
+          status: updateDto.status,
+        });
 
       if (!updatedVerificationRequest) {
         throw new NotFoundException(`Verification Request ${id} not found`);
@@ -136,26 +148,26 @@ export class VerificationRequestController {
       if (updateDto.status === 'ACCEPTED') {
         const auth0Id = updatedVerificationRequest.user.auth0_id;
 
-         // Obtener el ID del rol "player"
-         const playerRoleId = await this.auth0Service.getRoleIdByName('player');
-        
+        // Obtener el ID del rol "player"
+        const playerRoleId = await this.auth0Service.getRoleIdByName('player');
+
         // Llamar al servicio Auth0 para asignar el rol
         await this.auth0Service.assignRolesToUser(auth0Id, [playerRoleId]);
-        
+
         // Crear el registro del jugador en la base de datos
         const player = await this.prisma.player.create({
           data: {
             user_id: updatedVerificationRequest.user.id,
             biography:
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
-            ranking: updatedVerificationRequest.rank.id,
+            rank_id: updatedVerificationRequest.rank.id,
             game_id: updatedVerificationRequest.game.id,
             public_key: '',
             access_token: '',
           },
         });
       }
-      
+
       return {
         message: `Verification Request ${id} updated to ${updateDto.status}`,
         updatedVerificationRequest,

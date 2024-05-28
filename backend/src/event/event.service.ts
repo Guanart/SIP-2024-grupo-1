@@ -31,7 +31,9 @@ export class EventService {
       },
       include: {
         game: true,
-        player_event: { include: { player: { include: { user: true } } } },
+        player_event: {
+          include: { player: { include: { user: true, rank: true } } },
+        },
       },
     });
 

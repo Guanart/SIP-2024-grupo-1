@@ -65,7 +65,7 @@ export class SeedController {
 
       const game1 = await this.prisma.game.create({
         data: {
-          name: 'Amogus',
+          name: 'Among us',
           icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Among_Us.png/375px-Among_Us.png',
         },
       });
@@ -87,7 +87,7 @@ export class SeedController {
           user_id: user.id,
           biography:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
-          ranking: 10,
+          rank_id: rank1.id,
           game_id: game.id,
           public_key: '',
           access_token: '',

@@ -14,7 +14,7 @@ import { User } from 'src/user/user.entity';
 export class Player {
   id: number;
   biography: string;
-  ranking: number;
+  rank_id: number;
   user: User;
   game: Game;
   fundraisings: Fundraising[];
@@ -22,29 +22,29 @@ export class Player {
   public constructor(
     id: number,
     biography: string,
-    ranking: number,
+    rank_id: number,
     game: Game,
     user: User,
     fundraisings: Fundraising[],
   ) {
     this.id = id;
     this.biography = biography;
-    this.ranking = ranking;
+    this.rank_id = rank_id;
     this.game = game;
     this.user = user;
     this.fundraisings = fundraisings;
   }
 
   public static fromObject(object: { [key: string]: unknown }): Player {
-    const { id, biography, ranking, game, user, fundraisings } = object;
+    const { id, biography, rank_id, game, user, fundraisings } = object;
 
     if (!id) throw 'ID property is required';
-    if (!ranking) throw 'Ranking property is required';
+    if (!rank_id) throw 'Rank ID property is required';
 
     const player = new Player(
       id as number,
       biography as string,
-      ranking as number,
+      rank_id as number,
       game as Game,
       user as User,
       fundraisings as Fundraising[],

@@ -1,5 +1,6 @@
 import { User } from './User';
 import { Game } from './Game';
+import { Rank } from './Rank';
 
 export interface Player {
 	id: number;
@@ -7,6 +8,7 @@ export interface Player {
 	game_id: number;
 	game: Game;
 	ranking: number;
+	rank: Rank;
 	biography: string;
 	active: boolean;
 	createdAt: Date;
