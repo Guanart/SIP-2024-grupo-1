@@ -9,10 +9,10 @@ export class Auth0Service {
   private audience: string;
 
   constructor() {
-    this.domain = process.env.AUTH0_DOMAIN;
+    this.domain = process.env.AUTH0_ISSUER_URL;
     this.clientId = process.env.AUTH0_CLIENT_ID;
     this.clientSecret = process.env.AUTH0_CLIENT_SECRET;
-    this.audience = `https://${this.domain}/api/v2/`;
+    this.audience = `${this.domain}api/v2/`;
   }
 
   private async getAccessToken(): Promise<string> {
