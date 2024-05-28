@@ -69,25 +69,24 @@ export class EventController {
     }
   }
 
-  @Patch("/events_closing")
-  async eventsClosing(): Promise<string>{
+  @Patch('/events_closing')
+  async eventsClosing(): Promise<string> {
     try {
-      
       const events = await this.eventService.closeEvents();
 
-      if (!events){
+      if (!events) {
         throw new NotFoundException(`Events not found`);
       }
 
       return JSON.stringify({
         message: `Events closed`,
-        events
+        events,
       });
-    } catch (exception){
-      if (exception instanceof NotFoundException){
+    } catch (exception) {
+      if (exception instanceof NotFoundException) {
         throw exception;
       } else {
-        throw new InternalServerErrorException("Internal Server Error");
+        throw new InternalServerErrorException('Internal Server Error');
       }
     }
   }
@@ -124,6 +123,12 @@ export class EventController {
       if (newEvent.end_date < newEvent.start_date) {
         throw new BadRequestException(
           'The start date of the event must be prior to or equal to the end date',
+        );
+      }
+
+      if (new Date(newEvent.start_date) < new Date()) {
+        throw new BadRequestException(
+          'The start date of the event must be in the future.',
         );
       }
 
