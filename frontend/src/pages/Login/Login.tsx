@@ -1,13 +1,15 @@
+import { useEffect } from 'react';
 import { SignupButton, LoginButton } from '../../components';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import { Stack, Box, Typography } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import './Login.css';
 
 export const Login = () => {
 	const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
+
+	useEffect(() => {
+		document.title = `Login | LOT`;
+	}, []);
 
 	return (
 		<Box height='100vh' width='100%' component='section' className='hero'>
