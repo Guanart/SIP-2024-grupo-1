@@ -1,5 +1,14 @@
 import { Fundraising } from 'src/fundraising/fundraising.entity';
 import { Game } from 'src/game/game.entity';
+import { Player } from '../player/player.entity';
+
+type PlayerEvent = {
+  player_id: number;
+  event_id: number;
+  position: number;
+  player: Player;
+  event: Event;
+};
 
 export class Event {
   id: number;
@@ -10,6 +19,7 @@ export class Event {
   name: string;
   game: Game;
   fundraisings: Fundraising[];
+  player_event: PlayerEvent[];
 
   public constructor(
     id: number,
@@ -20,6 +30,7 @@ export class Event {
     name: string,
     game: Game,
     fundraisings: Fundraising[],
+    player_event: PlayerEvent[],
   ) {
     this.id = id;
     this.start_date = start_date;
@@ -29,6 +40,7 @@ export class Event {
     this.name = name;
     this.game = game;
     this.fundraisings = fundraisings;
+    this.player_event = player_event;
   }
 
   public static fromObject(object: { [key: string]: unknown }): Event {
@@ -41,6 +53,7 @@ export class Event {
       name,
       game,
       fundraisings,
+      player_event,
     } = object;
 
     if (!id) throw 'ID property is required';
@@ -59,6 +72,7 @@ export class Event {
       name as string,
       game as Game,
       fundraisings as Fundraising[],
+      player_event as PlayerEvent[],
     );
 
     return event;

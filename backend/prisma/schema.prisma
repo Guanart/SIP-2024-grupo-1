@@ -63,12 +63,12 @@ model Wallet {
 }
 
 model Transaction {
-  id        Int      @id @default(autoincrement())
+  id        Int             @id @default(autoincrement())
   wallet_id Int
-  wallet    Wallet   @relation(fields: [wallet_id], references: [id])
+  wallet    Wallet          @relation(fields: [wallet_id], references: [id])
   token_id  Int
-  type   TransactionType
-  timestamp DateTime @default(now())
+  type      TransactionType
+  timestamp DateTime        @default(now())
 }
 
 enum TransactionType {
@@ -88,25 +88,26 @@ model Game {
 }
 
 model Player {
-  id           Int           @id @default(autoincrement())
-  user_id      Int           @unique
-  user         User          @relation(fields: [user_id], references: [id])
+  id           Int            @id @default(autoincrement())
+  user_id      Int            @unique
+  user         User           @relation(fields: [user_id], references: [id])
   biography    String
   ranking      Int
   game_id      Int
-  game         Game          @relation(fields: [game_id], references: [id])
-  active       Boolean       @default(true)
+  game         Game           @relation(fields: [game_id], references: [id])
+  active       Boolean        @default(true)
   fundraisings Fundraising[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   access_token String?
   public_key   String?
-  Player_event Player_event[]
+  player_event Player_event[]
 }
 
 model Player_event {
   player_id Int
   event_id  Int
+  position  Int    @default(0)
   player    Player @relation(fields: [player_id], references: [id])
   event     Event  @relation(fields: [event_id], references: [id])
 
@@ -114,19 +115,19 @@ model Player_event {
 }
 
 model Event {
-  id           Int           @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   start_date   DateTime
   end_date     DateTime
   max_players  Int
   prize        Float
   name         String
   game_id      Int
-  game         Game          @relation(fields: [game_id], references: [id])
+  game         Game           @relation(fields: [game_id], references: [id])
   fundraisings Fundraising[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  active       Boolean       @default(true)
-  Player_event Player_event[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  active       Boolean        @default(true)
+  player_event Player_event[]
 }
 
 model Fundraising {
