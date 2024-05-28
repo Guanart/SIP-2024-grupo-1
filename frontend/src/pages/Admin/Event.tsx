@@ -175,7 +175,7 @@ export const Event = () => {
 									component='span'
 									sx={{ marginLeft: '8px' }}
 								>
-									{event?.prize}
+									U$D {event?.prize.toLocaleString()}
 								</Typography>
 							</Box>
 							<Button

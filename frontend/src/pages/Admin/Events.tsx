@@ -432,7 +432,8 @@ export const Events = () => {
 														fontWeight: 'bold',
 													}}
 												>
-													{event.prize}
+													U$D{' '}
+													{event.prize.toLocaleString()}
 												</TableCell>
 												<TableCell align='center'>
 													{event.game.name}

@@ -78,7 +78,7 @@ export const Fundraising = () => {
 	const createPreference = async () => {
 		try {
 			// Recupero wallet del usuario
-			let response = await fetchWithAuth({
+			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
 				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
@@ -87,9 +87,9 @@ export const Fundraising = () => {
 			if (response.ok) {
 				const { user } = await response.json();
 				setWalletId(user.wallet.id);
-				console.log("WalletID", user.wallet.id)
+				console.log('WalletID', user.wallet.id);
 			}
-			
+
 			// Creo Preference
 			if (fundraising) {
 				console.log(fundraising);
@@ -148,7 +148,8 @@ export const Fundraising = () => {
 										fontWeight: 'bold',
 									}}
 								>
-									U$D {fundraising.goal_amount}
+									U$D{' '}
+									{fundraising.goal_amount.toLocaleString()}
 								</Typography>
 							</Typography>
 							<Typography component='div' variant='h6'>
@@ -163,7 +164,8 @@ export const Fundraising = () => {
 										fontWeight: 'bold',
 									}}
 								>
-									U$D {fundraising.current_amount}
+									U$D{' '}
+									{fundraising.current_amount.toLocaleString()}
 									<LinearProgress
 										variant='determinate'
 										value={
@@ -192,8 +194,11 @@ export const Fundraising = () => {
 										fontWeight: 'bold',
 									}}
 								>
-									{fundraising.collection.amount_left}/
-									{fundraising.collection.initial_amount}
+									(
+									{fundraising.collection.amount_left.toLocaleString()}
+									/
+									{fundraising.collection.initial_amount.toLocaleString()}
+									)
 									<LinearProgress
 										variant='determinate'
 										value={
@@ -225,7 +230,8 @@ export const Fundraising = () => {
 										fontWeight: 'bold',
 									}}
 								>
-									U$D {fundraising.event.prize}
+									U$D{' '}
+									{fundraising.event.prize.toLocaleString()}
 								</Typography>
 							</Typography>
 							<Typography component='div' variant='h6'>
@@ -274,10 +280,7 @@ export const Fundraising = () => {
 											}}
 										>
 											U$D{' '}
-											{
-												fundraising.collection
-													.current_price
-											}
+											{fundraising.collection.current_price.toLocaleString()}
 										</Typography>
 									</Typography>
 									<Typography component='div' variant='body2'>
@@ -312,11 +315,13 @@ export const Fundraising = () => {
 											}}
 										>
 											Max. U$D{' '}
-											{fundraising.event.prize *
+											{(
+												fundraising.event.prize *
 												(fundraising.prize_percentage /
 													100) *
 												fundraising.collection
-													.token_prize_percentage}
+													.token_prize_percentage
+											).toLocaleString()}
 										</Typography>
 									</Typography>
 								</Stack>

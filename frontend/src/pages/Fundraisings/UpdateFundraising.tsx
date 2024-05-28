@@ -279,8 +279,10 @@ export const UpdateFundraising = () => {
 									variant='h6'
 									color='secondary'
 								>
-									{fundraising.collection.initial_amount} (
-									{fundraising.collection.amount_left} left)
+									{fundraising.collection.initial_amount.toLocaleString()}{' '}
+									(
+									{fundraising.collection.amount_left.toLocaleString()}{' '}
+									left)
 								</Typography>
 							</Typography>
 							<hr
@@ -296,7 +298,8 @@ export const UpdateFundraising = () => {
 									variant='h6'
 									color='secondary'
 								>
-									U$D {fundraising.goal_amount}
+									U$D{' '}
+									{fundraising.goal_amount.toLocaleString()}
 								</Typography>
 							</Typography>
 							<Typography variant='h6' component='div'>
@@ -307,7 +310,7 @@ export const UpdateFundraising = () => {
 									color='secondary'
 								>
 									U$D
-									{fundraising.collection.current_price}
+									{fundraising.collection.current_price.toLocaleString()}
 								</Typography>
 							</Typography>
 						</CardContent>
