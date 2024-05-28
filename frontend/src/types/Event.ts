@@ -1,4 +1,12 @@
 import { Game } from './Game';
+import { Player } from './Player';
+
+export interface PlayerEvent {
+	player_id: number;
+	event_id: number;
+	position: number;
+	player: Player;
+}
 
 export interface Event {
 	id: number;
@@ -12,4 +20,5 @@ export interface Event {
 	createdAt: Date;
 	updatedAt: Date;
 	active: boolean;
+	player_event: PlayerEvent[];
 }
