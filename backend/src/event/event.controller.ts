@@ -8,6 +8,7 @@ import {
   NotFoundException,
   BadRequestException,
   Param,
+  Delete,
   // SetMetadata,
   // UseGuards,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EditEventDto } from './dto/edit-event.dto';
 import { RegisterPlayerDto } from './dto/register-player.dto';
+import { SetFinalPositionDto } from './dto/set-final-position.dto';
+import { UnregisterPlayerDto } from './dto/unregister-player.dto';
 // import { PermissionsGuard } from 'src/auth/permissions.guard';
 // import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -179,9 +182,35 @@ export class EventController {
 
   // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['update:events'])
+  @Delete('unregister')
+  async unregisterPlayer(
+    @Body() event_player: UnregisterPlayerDto,
+  ): Promise<string> {
+    try {
+      const player_event =
+        await this.eventService.unregisterPlayer(event_player);
+
+      if (player_event && typeof player_event == 'string') {
+        throw new BadRequestException(player_event);
+      }
+
+      return JSON.stringify({
+        message: `Player ${event_player.player_id} unregistered of the event ${event_player.event_id}`,
+      });
+    } catch (exception) {
+      if (exception instanceof BadRequestException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['update:events'])
   @Post('position')
   async setPlayerFinalPosition(
-    @Body() event_player: RegisterPlayerDto,
+    @Body() event_player: SetFinalPositionDto,
   ): Promise<string> {
     try {
       const player_event =

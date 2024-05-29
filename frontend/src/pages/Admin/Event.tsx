@@ -19,7 +19,7 @@ import {
 	Avatar,
 	useMediaQuery,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useAccessToken } from '../../hooks';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
@@ -28,6 +28,7 @@ import { KeyboardBackspaceIcon } from '../../global/icons';
 import { Event as EventType, Player } from '../../types';
 import dayjs from 'dayjs';
 import { toast } from 'react-toastify';
+import { range } from '../../utils/range';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -42,49 +43,43 @@ export const Event = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [players, setPlayers] = useState<Player[]>([]);
 	const [playerId, setPlayerId] = useState<string | number>('');
-	const [isAdding, setIsAdding] = useState<boolean>(false);
+	const [isPositioning, setIsPositioning] = useState<boolean>(false);
+	const [currentPlayer, setCurrentPlayer] = useState<Player>();
 	const { isAuthenticated, user } = useAuth0();
 	const { accessToken } = useAccessToken();
 	const navigate = useNavigate();
 
 	const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
 
-	useEffect(() => {
-		async function getEvent() {
-			try {
-				let response = await fetchWithAuth({
+	const getEvent = useCallback(async () => {
+		try {
+			let response = await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/event/details/${event_id}`,
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+
+				setEvent(data.event);
+
+				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/event/details/${event_id}`,
+					url: `http://${HOST}:${PORT}/player/game/${data.event.game.id}`,
 				});
 
 				if (response.ok) {
-					const data = await response.json();
-
-					setEvent(data.event);
-
-					response = await fetchWithAuth({
-						isAuthenticated,
-						accessToken,
-						url: `http://${HOST}:${PORT}/player/game/${data.event.game.id}`,
-					});
-
-					if (response.ok) {
-						const { players } = await response.json();
-						setPlayers(players);
-						setIsLoading(false);
-					}
+					const { players } = await response.json();
+					setPlayers(players);
+					setIsLoading(false);
 				}
-			} catch (error) {
-				console.log(error);
 			}
+		} catch (error) {
+			console.log(error);
 		}
-
-		if (!user) return;
-		if (!accessToken) return;
-
-		getEvent();
-	}, [accessToken, isAuthenticated, user, event_id, isAdding]);
+	}, [accessToken, event_id, isAuthenticated]);
 
 	async function handleAddPlayer() {
 		try {
@@ -99,7 +94,7 @@ export const Event = () => {
 			toast.success('Player registered successfully');
 
 			setIsLoading(true);
-			setTimeout(() => navigate(0), 2000);
+			getEvent();
 		} catch (error) {
 			if (error instanceof Error) {
 				if (error.message.includes('Internal Server Error')) {
@@ -112,6 +107,85 @@ export const Event = () => {
 		}
 	}
 
+	async function handleSetPosition(position: number) {
+		try {
+			if (!currentPlayer) return;
+
+			await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/event/position`,
+				method: 'POST',
+				data: {
+					event_id: event?.id,
+					player_id: currentPlayer.id,
+					position: position,
+				},
+			});
+
+			toast.success(`Position for player ${currentPlayer.id} updated`);
+
+			setIsPositioning(false);
+			setIsLoading(true);
+			getEvent();
+		} catch (error) {
+			if (error instanceof Error) {
+				if (error.message.includes('Internal Server Error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
+		}
+	}
+
+	async function handleDeletePlayer(player_id: number) {
+		try {
+			await fetchWithAuth({
+				isAuthenticated,
+				accessToken,
+				url: `http://${HOST}:${PORT}/event/unregister`,
+				method: 'DELETE',
+				data: {
+					player_id,
+					event_id: Number(event?.id),
+				},
+			});
+
+			toast.success(`Player successfully unregistered from the event`);
+
+			setIsLoading(true);
+			getEvent();
+		} catch (error) {
+			if (error instanceof Error) {
+				if (error.message.includes('Internal Server Error')) {
+					navigate('/error/500');
+				}
+				toast.error(error.message);
+			} else {
+				navigate('/error/500');
+			}
+		}
+	}
+
+	function handleSetPositionClick(player: Player) {
+		setCurrentPlayer(player);
+
+		if (isPositioning && currentPlayer?.id === player.id) {
+			setIsPositioning(false);
+		} else {
+			setIsPositioning(true);
+		}
+	}
+
+	useEffect(() => {
+		if (!user) return;
+		if (!accessToken) return;
+
+		getEvent();
+	}, [accessToken, isAuthenticated, user, event_id, getEvent]);
+
 	return (
 		<PageLayout title={`Event`}>
 			<Link to={`/events`}>
@@ -123,7 +197,7 @@ export const Event = () => {
 				</Button>
 			</Link>
 			{isLoading && <Loader />}
-			{!isLoading && (
+			{!isLoading && event && (
 				<Stack
 					sx={{ marginTop: '8px' }}
 					direction={{ xs: 'column', md: 'row' }}
@@ -244,131 +318,153 @@ export const Event = () => {
 									U$D {event?.prize.toLocaleString()}
 								</Typography>
 							</Box>
-							<Button
-								variant='contained'
-								color={!isAdding ? 'secondary' : 'error'}
-								sx={{ marginTop: '8px', maxWidth: '150px' }}
-								onClick={() => setIsAdding(!isAdding)}
-							>
-								{!isAdding ? 'Add player' : 'Cancel'}
-							</Button>
 						</Box>
 					</Box>
 					<Stack direction='column' spacing={2} width='80%'>
-						{/* TODO: Hacer responsive el form. En mobile direction column probablemente */}
-						{isAdding && (
-							<form
-								style={{
-									display: 'flex',
-									gap: '6px',
-									alignItems: isMediumScreen
-										? 'center'
-										: 'flex-start',
-									flexDirection: isMediumScreen
-										? 'row'
-										: 'column',
-								}}
-							>
-								<TextField
-									label='Game'
-									variant='outlined'
-									disabled
-									value={event?.game.name}
-									sx={{
-										minWidth: isMediumScreen
-											? '200px'
-											: '300px',
-										maxWidth: isMediumScreen
-											? '200px'
-											: '300px',
-										width: '95%',
-									}}
-									inputProps={{ maxLength: 120 }}
-								/>
-								<FormControl
-									sx={{
-										minWidth: '300px',
-										maxWidth: '350px',
-										width: '90%',
-									}}
+						{isPositioning && (
+							<Stack direction='column'>
+								<Typography
+									color='secondary'
+									sx={{ fontWeight: 'bold' }}
 								>
-									<InputLabel id='player-info'>
-										Player
-									</InputLabel>
-									<Select
-										labelId='player-info'
-										id='player-event'
-										label='Event'
-										onChange={(event) =>
-											setPlayerId(
-												Number(event.target.value)
-											)
-										}
-										value={playerId}
+									<Typography
+										component='span'
+										color='white'
 										sx={{
-											width: '100%',
-											maxHeight: '56px',
+											marginRight: '6px',
+											fontWeight: 'bold',
 										}}
 									>
-										{players.length > 0 ? (
-											players.map((player) => (
-												<MenuItem
-													key={player.id}
-													value={player.id}
-													id={player.id.toString()}
+										Updating position for player
+									</Typography>
+									{currentPlayer?.user.username} (ID{' '}
+									{currentPlayer?.id})
+								</Typography>
+								<Typography>
+									Select the final position of the player on
+									the event
+								</Typography>
+								<Box sx={{ display: 'flex', marginTop: '8px' }}>
+									{range(1, event.max_players + 1, 1).map(
+										(value) => {
+											return (
+												<Button
+													key={value}
+													size='small'
+													color='secondary'
+													sx={{
+														maxWidth: '10px',
+														fontWeight: 'bold',
+														fontSize: '16px',
+													}}
+													onClick={() =>
+														handleSetPosition(value)
+													}
 												>
-													<Box
-														sx={{
-															display: 'flex',
-															alignItems:
-																'center',
-															gap: '8px',
-														}}
-													>
-														<Avatar
-															src={
-																player.user
-																	.avatar
-															}
-														/>
-														<Typography>
-															{
-																player.user
-																	.username
-															}
-														</Typography>
-													</Box>
-												</MenuItem>
-											))
-										) : (
-											<MenuItem>
-												There is no players
-											</MenuItem>
-										)}
-									</Select>
-								</FormControl>
-								<Button
-									type='submit'
-									variant='contained'
-									color='secondary'
-									onClick={(e) => {
-										e.preventDefault();
-										handleAddPlayer();
-									}}
-									disabled={!playerId}
+													{value}
+												</Button>
+											);
+										}
+									)}
+								</Box>
+							</Stack>
+						)}
+						<form
+							style={{
+								display: 'flex',
+								gap: '6px',
+								alignItems: isMediumScreen
+									? 'center'
+									: 'flex-start',
+								flexDirection: isMediumScreen
+									? 'row'
+									: 'column',
+							}}
+						>
+							<TextField
+								label='Game'
+								variant='outlined'
+								disabled
+								value={event?.game.name}
+								sx={{
+									minWidth: isMediumScreen
+										? '200px'
+										: '300px',
+									maxWidth: isMediumScreen
+										? '200px'
+										: '300px',
+									width: '95%',
+								}}
+								inputProps={{ maxLength: 120 }}
+							/>
+							<FormControl
+								sx={{
+									minWidth: '300px',
+									maxWidth: '350px',
+									width: '90%',
+								}}
+							>
+								<InputLabel id='player-info'>Player</InputLabel>
+								<Select
+									labelId='player-info'
+									id='player-event'
+									label='Event'
+									onChange={(event) =>
+										setPlayerId(Number(event.target.value))
+									}
+									value={playerId}
 									sx={{
-										height: isMediumScreen
-											? '56px'
-											: 'auto',
-										minWidth: isMediumScreen
-											? '120px'
-											: '300px',
+										width: '100%',
+										maxHeight: '56px',
 									}}
 								>
-									Submit
-								</Button>
-							</form>
-						)}
+									{players.length > 0 ? (
+										players.map((player) => (
+											<MenuItem
+												key={player.id}
+												value={player.id}
+												id={player.id.toString()}
+											>
+												<Box
+													sx={{
+														display: 'flex',
+														alignItems: 'center',
+														gap: '8px',
+													}}
+												>
+													<Avatar
+														src={player.user.avatar}
+													/>
+													<Typography>
+														{player.user.username}
+													</Typography>
+												</Box>
+											</MenuItem>
+										))
+									) : (
+										<MenuItem>There is no players</MenuItem>
+									)}
+								</Select>
+							</FormControl>
+							<Button
+								type='submit'
+								variant='contained'
+								color='secondary'
+								onClick={(e) => {
+									e.preventDefault();
+									handleAddPlayer();
+								}}
+								disabled={!playerId}
+								sx={{
+									height: isMediumScreen ? '56px' : 'auto',
+									minWidth: isMediumScreen
+										? '120px'
+										: '300px',
+								}}
+							>
+								Register player
+							</Button>
+						</form>
 						<TableContainer sx={{ maxWidth: '900px' }}>
 							<Table aria-label='a dense table' size='small'>
 								<TableHead>
@@ -384,6 +480,9 @@ export const Event = () => {
 										</TableCell>
 										<TableCell align='center'>
 											Position
+										</TableCell>
+										<TableCell align='center'>
+											Action
 										</TableCell>
 									</TableRow>
 								</TableHead>
@@ -434,38 +533,73 @@ export const Event = () => {
 																.description
 														}
 													</TableCell>
+													<TableCell align='center'>
+														{position === 0
+															? '-'
+															: position}
+													</TableCell>
 													<TableCell
 														align='center'
 														sx={{
 															fontWeight: 'bold',
+															display: 'flex',
+															flexDirection:
+																'column',
+															alignItems:
+																'center',
 														}}
 													>
-														{position === 0 ? (
-															<Button
-																disabled={
-																	dayjs().format(
-																		'LL'
-																	) <
-																	dayjs(
-																		event.end_date
-																	).format(
-																		'LL'
-																	)
-																}
-																color='secondary'
-																size='small'
-																sx={{
-																	marginTop:
-																		'8px',
-																	maxWidth:
-																		'150px',
-																}}
-															>
-																Set position
-															</Button>
-														) : (
-															position
-														)}
+														<Button
+															disabled={
+																dayjs().format(
+																	'LL'
+																) <
+																dayjs(
+																	event.end_date
+																).format('LL')
+															}
+															color={
+																currentPlayer?.id ===
+																	player.id &&
+																isPositioning
+																	? 'error'
+																	: 'secondary'
+															}
+															size='small'
+															sx={{
+																marginTop:
+																	'8px',
+																maxWidth:
+																	'150px',
+															}}
+															onClick={() => {
+																handleSetPositionClick(
+																	player
+																);
+															}}
+														>
+															{currentPlayer?.id ===
+																player.id &&
+															isPositioning
+																? 'Cancel'
+																: 'Set position'}
+														</Button>
+														<Button
+															color='error'
+															sx={{
+																marginTop:
+																	'8px',
+																maxWidth:
+																	'150px',
+															}}
+															onClick={() =>
+																handleDeletePlayer(
+																	player.id
+																)
+															}
+														>
+															Delete
+														</Button>
 													</TableCell>
 												</TableRow>
 											);

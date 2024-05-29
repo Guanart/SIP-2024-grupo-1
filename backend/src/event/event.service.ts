@@ -6,6 +6,7 @@ import { Event } from './event.entity';
 // import { Fundraising } from 'src/fundraising/fundraising.entity';
 import { Cron } from '@nestjs/schedule';
 import { RegisterPlayerDto } from './dto/register-player.dto';
+import { SetFinalPositionDto } from './dto/set-final-position.dto';
 
 @Injectable()
 export class EventService {
@@ -59,7 +60,7 @@ export class EventService {
     });
 
     if (isAlreadyRegistered > 0) {
-      return `The player is already registered`;
+      return `The player is already registered on this event`;
     }
 
     const player_event = await this.prisma.player_event.create({
@@ -72,7 +73,28 @@ export class EventService {
     return player_event ? player_event : null;
   }
 
-  async setFinalPosition(event_player: RegisterPlayerDto) {
+  async unregisterPlayer(event_player: RegisterPlayerDto) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: event_player.event_id },
+    });
+
+    if (new Date() >= event.start_date) {
+      return `A player cannot be removed from an event that has already started.`;
+    }
+
+    const player_event = await this.prisma.player_event.delete({
+      where: {
+        player_id_event_id: {
+          player_id: event_player.player_id,
+          event_id: event_player.event_id,
+        },
+      },
+    });
+
+    return player_event ? player_event : null;
+  }
+
+  async setFinalPosition(event_player: SetFinalPositionDto) {
     const event = await this.prisma.event.findUnique({
       where: { id: event_player.event_id },
     });

@@ -1,6 +1,6 @@
 import { IsNotEmpty, Min } from 'class-validator';
 
-export class RegisterPlayerDto {
+export class SetFinalPositionDto {
   @IsNotEmpty()
   @Min(0)
   event_id: number;
@@ -8,4 +8,7 @@ export class RegisterPlayerDto {
   @IsNotEmpty()
   @Min(0)
   player_id: number;
+
+  @Min(1)
+  position: number;
 }

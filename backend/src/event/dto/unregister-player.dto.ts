@@ -1,6 +1,6 @@
 import { IsNotEmpty, Min } from 'class-validator';
 
-export class RegisterPlayerDto {
+export class UnregisterPlayerDto {
   @IsNotEmpty()
   @Min(0)
   event_id: number;
