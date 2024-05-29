@@ -9,10 +9,10 @@ export class Auth0Service {
   private audience: string;
 
   constructor() {
-    this.domain = process.env.AUTH0_ISSUER_URL;
+    this.domain = process.env.AUTH0_DOMAIN;
     this.clientId = process.env.AUTH0_CLIENT_ID;
     this.clientSecret = process.env.AUTH0_CLIENT_SECRET;
-    this.audience = `${this.domain}api/v2/`;
+    this.audience = `https://${this.domain}/api/v2/`;
   }
 
   private async getAccessToken(): Promise<string> {
@@ -26,7 +26,10 @@ export class Auth0Service {
     return response.data.access_token;
   }
 
-  public async assignRolesToUser(userId: string, roles: string[]): Promise<void> {
+  public async assignRolesToUser(
+    userId: string,
+    roles: string[],
+  ): Promise<void> {
     const token = await this.getAccessToken();
     const url = `https://${this.domain}/api/v2/users/${userId}/roles`;
 
@@ -61,11 +64,17 @@ export class Auth0Service {
         },
       });
 
-      const roles = response.data.roles;
-      const role = roles.find((role: { name: string }) => role.name === roleName);
+      const roles = response.data;
+
+      const role = roles.find(
+        (role: { name: string }) => role.name === roleName,
+      );
 
       if (!role) {
-        throw new HttpException(`Role ${roleName} not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          `Role ${roleName} not found`,
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       return role.id;
