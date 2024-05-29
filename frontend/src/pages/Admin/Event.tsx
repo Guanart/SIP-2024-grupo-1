@@ -17,6 +17,7 @@ import {
 	MenuItem,
 	Select,
 	Avatar,
+	useMediaQuery,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -45,6 +46,8 @@ export const Event = () => {
 	const { isAuthenticated, user } = useAuth0();
 	const { accessToken } = useAccessToken();
 	const navigate = useNavigate();
+
+	const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
 
 	useEffect(() => {
 		async function getEvent() {
@@ -110,7 +113,7 @@ export const Event = () => {
 	}
 
 	return (
-		<PageLayout title={`${event?.name}`}>
+		<PageLayout title={`Event`}>
 			<Link to={`/events`}>
 				<Button size='small' color='secondary'>
 					<KeyboardBackspaceIcon
@@ -149,6 +152,21 @@ export const Event = () => {
 									sx={{ marginLeft: '8px' }}
 								>
 									{event?.id}
+								</Typography>
+							</Box>
+							<Box>
+								<Typography
+									color='secondary'
+									component='span'
+									sx={{ fontWeight: 'bold' }}
+								>
+									Name
+								</Typography>
+								<Typography
+									component='span'
+									sx={{ marginLeft: '8px' }}
+								>
+									{event?.name}
 								</Typography>
 							</Box>
 							<Box>
@@ -243,7 +261,12 @@ export const Event = () => {
 								style={{
 									display: 'flex',
 									gap: '6px',
-									alignItems: 'center',
+									alignItems: isMediumScreen
+										? 'center'
+										: 'flex-start',
+									flexDirection: isMediumScreen
+										? 'row'
+										: 'column',
 								}}
 							>
 								<TextField
@@ -252,13 +275,22 @@ export const Event = () => {
 									disabled
 									value={event?.game.name}
 									sx={{
-										maxWidth: '200px',
+										minWidth: isMediumScreen
+											? '200px'
+											: '300px',
+										maxWidth: isMediumScreen
+											? '200px'
+											: '300px',
 										width: '95%',
 									}}
 									inputProps={{ maxLength: 120 }}
 								/>
 								<FormControl
-									sx={{ maxWidth: '350px', width: '90%' }}
+									sx={{
+										minWidth: '300px',
+										maxWidth: '350px',
+										width: '90%',
+									}}
 								>
 									<InputLabel id='player-info'>
 										Player
@@ -324,7 +356,14 @@ export const Event = () => {
 										handleAddPlayer();
 									}}
 									disabled={!playerId}
-									sx={{ height: '56px' }}
+									sx={{
+										height: isMediumScreen
+											? '56px'
+											: 'auto',
+										minWidth: isMediumScreen
+											? '120px'
+											: '300px',
+									}}
 								>
 									Submit
 								</Button>

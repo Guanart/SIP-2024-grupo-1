@@ -1,12 +1,14 @@
 @media screen and (max-width: 500px) {
-	main.games {
+	main.games,
+	main.event {
 		padding-left: 1.5rem;
 		padding-right: 1.5rem;
 	}
 }
 
 @media screen and (max-width: 400px) {
-	main.games {
+	main.games,
+	main.event {
 		padding-right: 1rem;
 		padding-left: 1rem;
 	}
