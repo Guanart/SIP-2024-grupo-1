@@ -167,16 +167,15 @@ export const RequestForm = () => {
 						Join the Pros!
 					</Typography>
 					<Typography sx={{ maxWidth: '500px' }}>
-						Para el proceso de verificacion de jugadores,
-						necesitamos algun tipo de documentacion. Una vez
-						registrada su solicitud, nuestros administradores la
-						verificaran lo antes posible!
+						For the player verification process, we need some kind
+						of documentation. Once your application is registered,
+						our administrators will verify it as soon as possible!
 					</Typography>
 					<form onSubmit={handleSubmit}>
 						<Stack spacing={2}>
 							{/* Lista desplegable para seleccionar el rango */}
 							<FormControl fullWidth>
-								<InputLabel id='rank-label'> Rango </InputLabel>
+								<InputLabel id='rank-label'> Rank </InputLabel>
 								<Select
 									labelId='rank-label'
 									id='rank-select'
@@ -209,8 +208,8 @@ export const RequestForm = () => {
 										))
 									) : (
 										<MenuItem disabled>
-											No hay rangos disponibles por el
-											momento
+											No ranks available at the moment at
+											the moment
 										</MenuItem>
 									)}
 								</Select>
@@ -218,7 +217,7 @@ export const RequestForm = () => {
 
 							{/* Lista desplegable para seleccionar el juego */}
 							<FormControl fullWidth>
-								<InputLabel id='game-label'> Juego </InputLabel>
+								<InputLabel id='game-label'> Game </InputLabel>
 								<Select
 									labelId='game-label'
 									id='game-select'
@@ -282,13 +281,13 @@ export const RequestForm = () => {
 										component='span'
 										color='secondary'
 									>
-										Subir PDF
+										Load PDF
 									</Button>
 								</label>
 								<span>
 									{pdfFile
 										? pdfFile.name
-										: 'No se ha seleccionado ningún archivo'}
+										: 'No file has been selected'}
 								</span>
 							</Stack>
 
@@ -298,7 +297,7 @@ export const RequestForm = () => {
 								variant='contained'
 								color='secondary'
 							>
-								Enviar
+								Send request
 							</Button>
 						</Stack>
 					</form>
