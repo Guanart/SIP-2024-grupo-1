@@ -48,6 +48,7 @@ export const RequestForm = () => {
 	const isMediumScreen = useMediaQuery('(min-width: 600px)'); // Definir el breakpoint en 600px
 
 	useEffect(() => {
+		document.title = 'Verification | LOT';
 		async function getUser() {
 			try {
 				const response = await fetchWithAuth({
