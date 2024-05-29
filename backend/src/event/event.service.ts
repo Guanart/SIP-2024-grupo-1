@@ -5,6 +5,7 @@ import { EditEventDto } from './dto/edit-event.dto';
 import { Event } from './event.entity';
 // import { Fundraising } from 'src/fundraising/fundraising.entity';
 import { Cron } from '@nestjs/schedule';
+import { RegisterPlayerDto } from './dto/register-player.dto';
 
 @Injectable()
 export class EventService {
@@ -38,6 +39,37 @@ export class EventService {
     });
 
     return event ? Event.fromObject(event) : null;
+  }
+
+  async registerPlayer(event_player: RegisterPlayerDto) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: event_player.event_id },
+    });
+
+    const currentPlayers = await this.prisma.player_event.count({
+      where: { event_id: event.id },
+    });
+
+    if (currentPlayers >= event.max_players) {
+      return `The event has reached the limit of registered players`;
+    }
+
+    const isAlreadyRegistered = await this.prisma.player_event.count({
+      where: { event_id: event.id, player_id: event_player.player_id },
+    });
+
+    if (isAlreadyRegistered > 0) {
+      return `The player is already registered`;
+    }
+
+    const player_event = await this.prisma.player_event.create({
+      data: {
+        event_id: event_player.event_id,
+        player_id: event_player.player_id,
+      },
+    });
+
+    return player_event ? player_event : null;
   }
 
   async closeEvents() {

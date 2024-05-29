@@ -14,6 +14,7 @@ import {
 import { EventService } from './event.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EditEventDto } from './dto/edit-event.dto';
+import { RegisterPlayerDto } from './dto/register-player.dto';
 // import { PermissionsGuard } from 'src/auth/permissions.guard';
 // import { AuthGuard } from 'src/auth/auth.guard';
 
@@ -141,6 +142,31 @@ export class EventController {
       return JSON.stringify({
         message: `Event ${event.id} created`,
         event,
+      });
+    } catch (exception) {
+      if (exception instanceof BadRequestException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['update:events'])
+  @Post('register')
+  async registerPlayer(
+    @Body() event_player: RegisterPlayerDto,
+  ): Promise<string> {
+    try {
+      const player_event = await this.eventService.registerPlayer(event_player);
+
+      if (player_event && typeof player_event == 'string') {
+        throw new BadRequestException(player_event);
+      }
+
+      return JSON.stringify({
+        message: `Player ${event_player.player_id} registered for the event ${event_player.event_id}`,
       });
     } catch (exception) {
       if (exception instanceof BadRequestException) {

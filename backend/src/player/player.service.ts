@@ -18,4 +18,15 @@ export class PlayerService {
     console.log('update: ' + JSON.stringify(updatedPlayer));
     return updatedPlayer ? Player.fromObject(updatedPlayer) : null;
   }
+
+  async getPlayersByGame(game_id): Promise<Player[]> {
+    const players = await this.prisma.player.findMany({
+      where: {
+        game_id,
+      },
+      include: { user: true },
+    });
+
+    return players ? players.map((player) => Player.fromObject(player)) : null;
+  }
 }
