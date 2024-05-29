@@ -72,6 +72,28 @@ export class EventService {
     return player_event ? player_event : null;
   }
 
+  async setFinalPosition(event_player: RegisterPlayerDto) {
+    const event = await this.prisma.event.findUnique({
+      where: { id: event_player.event_id },
+    });
+
+    if (event_player.position > event.max_players) {
+      return `Position between 1 and ${event.max_players} expected`;
+    }
+
+    const player_event = await this.prisma.player_event.update({
+      where: {
+        player_id_event_id: {
+          player_id: event_player.player_id,
+          event_id: event_player.event_id,
+        },
+      },
+      data: { position: event_player.position },
+    });
+
+    return player_event ? player_event : null;
+  }
+
   async closeEvents() {
     const date0 = new Date();
     const date1 = new Date();

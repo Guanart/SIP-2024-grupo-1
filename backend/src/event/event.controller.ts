@@ -178,6 +178,32 @@ export class EventController {
   }
 
   // @UseGuards(AuthGuard, PermissionsGuard)
+  // @SetMetadata('permissions', ['update:events'])
+  @Post('position')
+  async setPlayerFinalPosition(
+    @Body() event_player: RegisterPlayerDto,
+  ): Promise<string> {
+    try {
+      const player_event =
+        await this.eventService.setFinalPosition(event_player);
+
+      if (player_event && typeof player_event == 'string') {
+        throw new BadRequestException(player_event);
+      }
+
+      return JSON.stringify({
+        message: `Player final position updated`,
+      });
+    } catch (exception) {
+      if (exception instanceof BadRequestException) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  // @UseGuards(AuthGuard, PermissionsGuard)
   // @SetMetadata('permissions', ['create:events'])
   @Patch('/:event_id')
   async upgradeEvent(

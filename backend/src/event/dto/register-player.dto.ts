@@ -8,4 +8,6 @@ export class RegisterPlayerDto {
   @IsNotEmpty()
   @Min(0)
   player_id: number;
+
+  position?: number;
 }
