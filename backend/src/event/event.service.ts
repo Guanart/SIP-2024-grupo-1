@@ -103,6 +103,17 @@ export class EventService {
       return `Position between 1 and ${event.max_players} expected`;
     }
 
+    const already_used = await this.prisma.player_event.count({
+      where: {
+        event_id: event_player.event_id,
+        position: event_player.position,
+      },
+    });
+
+    if (already_used > 0) {
+      return `Position ${event_player.position} is already used on other player`;
+    }
+
     const player_event = await this.prisma.player_event.update({
       where: {
         player_id_event_id: {
