@@ -32,12 +32,12 @@ jobs:
               with:
                   context: ./backend
                   push: false
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
+                  tags: local-lot-backend:latest
 
             - name: Scan backend image
               uses: anchore/scan-action@v3
               with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
+                  image: local-lot-backend:latest
                   fail-build: true
                   severity-cutoff: critical
 
@@ -46,12 +46,12 @@ jobs:
               with:
                   context: ./frontend
                   push: false
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+                  tags: local-lot-frotend:latest
 
             - name: Scan frontend image
               uses: anchore/scan-action@v3
               with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+                  image: local-lot-frotend:latest
                   fail-build: true
                   severity-cutoff: critical
 
@@ -61,11 +61,11 @@ jobs:
                   npm install
                   npm run test
 
-            # - name: Run Selenium integration tests
-            #   working-directory: selenium
-            #   run: |
-            #       pip install -r requirements.txt
-            #       bash run-tests.sh
+            - name: Run Selenium integration tests
+              working-directory: selenium
+              run: |
+                  pip install -r requirements.txt
+                  bash run-tests.sh
 
             - name: Push entry frontend image
               uses: docker/build-push-action@v5
