@@ -130,6 +130,7 @@ model Event {
   updatedAt    DateTime       @updatedAt
   active       Boolean        @default(true)
   player_event Player_event[]
+  checked      Boolean        @default(false)
 }
 
 model Fundraising {
