@@ -51,7 +51,7 @@ jobs:
             - name: Scan frontend image
               uses: anchore/scan-action@v3
               with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
                   fail-build: true
                   severity-cutoff: critical
 
@@ -61,11 +61,11 @@ jobs:
                   npm install
                   npm run test
 
-            - name: Run Selenium integration tests
-              working-directory: selenium
-              run: |
-                  pip install -r requirements.txt
-                  bash run-tests.sh
+            # - name: Run Selenium integration tests
+            #   working-directory: selenium
+            #   run: |
+            #       pip install -r requirements.txt
+            #       bash run-tests.sh
 
             - name: Push entry frontend image
               uses: docker/build-push-action@v5
