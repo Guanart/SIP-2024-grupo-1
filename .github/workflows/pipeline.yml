@@ -32,12 +32,12 @@ jobs:
               with:
                   context: ./backend
                   push: false
-                  tags: local-lot-backend:latest
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
 
             - name: Scan backend image
               uses: anchore/scan-action@v3
               with:
-                  image: local-lot-backend:latest
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
                   fail-build: true
                   severity-cutoff: critical
 
@@ -46,12 +46,12 @@ jobs:
               with:
                   context: ./frontend
                   push: false
-                  tags: local-lot-frotend:latest
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
 
             - name: Scan frontend image
               uses: anchore/scan-action@v3
               with:
-                  image: local-lot-frotend:latest
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
                   fail-build: true
                   severity-cutoff: critical
 
