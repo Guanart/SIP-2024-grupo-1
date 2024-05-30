@@ -123,7 +123,15 @@ export const Event = () => {
 				},
 			});
 
-			toast.success(`Position for player ${currentPlayer.id} updated`);
+			if (position === 0)
+				toast.success(
+					`Position for player ${currentPlayer.id} unsetted`
+				);
+			else {
+				toast.success(
+					`Position for player ${currentPlayer.id} updated`
+				);
+			}
 
 			setIsPositioning(false);
 			setIsLoading(true);
@@ -345,6 +353,19 @@ export const Event = () => {
 									the event
 								</Typography>
 								<Box sx={{ display: 'flex', marginTop: '8px' }}>
+									<Button
+										key={0}
+										size='small'
+										color='secondary'
+										sx={{
+											maxWidth: '10px',
+											fontWeight: 'bold',
+											fontSize: '16px',
+										}}
+										onClick={() => handleSetPosition(0)}
+									>
+										-
+									</Button>
 									{range(1, event.max_players + 1, 1).map(
 										(value) => {
 											return (
@@ -546,6 +567,8 @@ export const Event = () => {
 															flexDirection:
 																'column',
 															alignItems:
+																'center',
+															justifyContent:
 																'center',
 														}}
 													>

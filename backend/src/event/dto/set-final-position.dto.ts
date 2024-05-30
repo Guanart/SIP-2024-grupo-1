@@ -9,6 +9,6 @@ export class SetFinalPositionDto {
   @Min(0)
   player_id: number;
 
-  @Min(1)
+  @Min(0)
   position: number;
 }
