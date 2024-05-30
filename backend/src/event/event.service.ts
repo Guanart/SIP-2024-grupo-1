@@ -117,15 +117,12 @@ export class EventService {
   }
 
   async closeEvents() {
-    const date0 = new Date();
-    const date1 = new Date();
-    date0.setHours(0, 0, 0, 0);
-    date1.setHours(23, 59, 59, 999);
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
     const events = await this.prisma.event.findMany({
       where: {
         start_date: {
-          gte: date0,
-          lt: date1,
+          gte: date,
         },
       },
     });
@@ -144,6 +141,23 @@ export class EventService {
           active: false,
         },
       });
+
+      // Se cierran también las colectas asociadas al evento que se está cerrando
+      await this.prisma.fundraising.updateMany({
+        where: { event_id: event.id },
+        data: {
+          active: false,
+        },
+      });
+
+      // Obtiene las fundraisings que pueden requerir revalorización de su token
+      const fundraisings = await this.prisma.fundraising.findMany({
+        where: { event_id: event.id },
+      });
+
+      console.log(fundraisings);
+
+      //TODO: Post cerrado de colectas, se debería ver en cuales hay tokens no vendidos
     });
 
     return events.map((event) => Event.fromObject(event));
