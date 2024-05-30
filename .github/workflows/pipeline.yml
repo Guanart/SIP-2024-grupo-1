@@ -4,7 +4,7 @@ on:
         branches: ['main']
 jobs:
     build-images:
-        name: Build and push Docker images
+        name: Build and Push Docker Images
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
@@ -34,10 +34,10 @@ jobs:
                   push: false
                   tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
 
-            - name: Scan image
+            - name: Scan backend image
               uses: anchore/scan-action@v3
               with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
                   fail-build: true
                   severity-cutoff: critical
 
