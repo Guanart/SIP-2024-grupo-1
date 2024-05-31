@@ -63,22 +63,66 @@ export class SeedController {
         },
       });
 
-      const game1 = await this.prisma.game.create({
+      await this.prisma.game.create({
         data: {
           name: 'Among us',
           icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Among_Us.png/375px-Among_Us.png',
         },
       });
 
-      const rank1 = await this.prisma.rank.create({
+      await this.prisma.game.create({
         data: {
-          description: 'Rango S',
+          name: 'League of Legends',
+          icon: 'https://cdn.icon-icons.com/icons2/3053/PNG/512/league_of_legends_macos_bigsur_icon_190030.png',
         },
       });
 
-      const rank2 = await this.prisma.rank.create({
+      await this.prisma.game.create({
         data: {
-          description: 'Rango A',
+          name: 'Counter Strike',
+          icon: 'https://cdn2.steamgriddb.com/icon/f3d801966e7e0d77863c9f8b31d02529/32/256x256.png',
+        },
+      });
+
+      const rank1 = await this.prisma.rank.create({
+        data: {
+          description: 'Iron',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Silver',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Gold',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Platinum',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Diamond',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Master',
+        },
+      });
+
+      await this.prisma.rank.create({
+        data: {
+          description: 'Challenguer',
         },
       });
 
@@ -97,7 +141,7 @@ export class SeedController {
       const event = await this.prisma.event.create({
         data: {
           start_date: new Date(),
-          end_date: new Date('05/08/2024'),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           max_players: 12,
           prize: 1000000,
           name: 'Supermagic',
@@ -108,7 +152,7 @@ export class SeedController {
       await this.prisma.event.create({
         data: {
           start_date: new Date(),
-          end_date: new Date('06/08/2024'),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           max_players: 10,
           prize: 2000000,
           name: 'Pro League V',
