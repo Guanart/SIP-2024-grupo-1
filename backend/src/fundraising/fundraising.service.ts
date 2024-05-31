@@ -209,34 +209,34 @@ export class FundraisingService {
     });
   }
 
-  async closeFundraisings(event_id: number){
+  async closeFundraisings(event_id: number) {
     // Obtiene las fundraisings que pueden requerir revalorización de su token
     const fundraisings = await this.prisma.fundraising.findMany({
       where: { event_id: event_id, active: true },
-      include: {collection: true, event: { include:{ player_event:true }}}
+      include: { collection: true, event: { include: { player_event: true } } },
     });
 
-    
-
     fundraisings.map(async (fundraising) => {
-      const player = fundraising.player_id
-      const registeredPlayers = fundraising.event.player_event.filter(({player_id}) => player_id === player)
+      const player = fundraising.player_id;
+      const registeredPlayers = fundraising.event.player_event.filter(
+        ({ player_id }) => player_id === player,
+      );
       const isRegistered = registeredPlayers.length === 1;
-      
+
       if (!isRegistered) {
         fundraising.prize_percentage = 0.0;
         await this.prisma.fundraising.update({
           where: {
-            id: fundraising.id
-          }, 
-          data:{ 
-            prize_percentage: 0.0
-          }
-        })
+            id: fundraising.id,
+          },
+          data: {
+            prize_percentage: 0.0,
+          },
+        });
       }
 
       await this.collectionService.destroySurplusTokens(fundraising);
-    })
+    });
 
     await this.prisma.fundraising.updateMany({
       where: { event_id: event_id },

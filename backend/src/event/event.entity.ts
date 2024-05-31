@@ -20,6 +20,7 @@ export class Event {
   game: Game;
   fundraisings: Fundraising[];
   player_event: PlayerEvent[];
+  active?: boolean;
 
   public constructor(
     id: number,
@@ -31,6 +32,7 @@ export class Event {
     game: Game,
     fundraisings: Fundraising[],
     player_event: PlayerEvent[],
+    active: boolean,
   ) {
     this.id = id;
     this.start_date = start_date;
@@ -41,6 +43,7 @@ export class Event {
     this.game = game;
     this.fundraisings = fundraisings;
     this.player_event = player_event;
+    this.active = active;
   }
 
   public static fromObject(object: { [key: string]: unknown }): Event {
@@ -54,6 +57,7 @@ export class Event {
       game,
       fundraisings,
       player_event,
+      active,
     } = object;
 
     if (!id) throw 'ID property is required';
@@ -73,6 +77,7 @@ export class Event {
       game as Game,
       fundraisings as Fundraising[],
       player_event as PlayerEvent[],
+      active as boolean,
     );
 
     return event;

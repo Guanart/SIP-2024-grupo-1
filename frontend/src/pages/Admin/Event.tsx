@@ -64,6 +64,8 @@ export const Event = () => {
 
 				setEvent(data.event);
 
+				console.log(data.event.active);
+
 				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
@@ -574,12 +576,7 @@ export const Event = () => {
 													>
 														<Button
 															disabled={
-																dayjs().format(
-																	'LL'
-																) <
-																dayjs(
-																	event.end_date
-																).format('LL')
+																event.active
 															}
 															color={
 																currentPlayer?.id ===

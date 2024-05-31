@@ -11,7 +11,10 @@ import { SetFinalPositionDto } from './dto/set-final-position.dto';
 
 @Injectable()
 export class EventService {
-  constructor(private prisma: PrismaService, private fundraisingService: FundraisingService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fundraisingService: FundraisingService,
+  ) {}
 
   async getEvents() {
     return await this.prisma.event.findMany({
@@ -154,8 +157,7 @@ export class EventService {
         },
       });
 
-
-      await this.fundraisingService.closeFundraisings(event.id)
+      await this.fundraisingService.closeFundraisings(event.id);
     });
 
     return events.map((event) => Event.fromObject(event));
@@ -166,11 +168,6 @@ export class EventService {
   async handleCron() {
     await this.closeEvents();
   }
-
-  // @Cron('*/20 * * * * *')
-  // async handleCron() {
-  //   await this.closeEvents();
-  // }
 
   /*
   async closeExpiredEvents(): Promise<void> {

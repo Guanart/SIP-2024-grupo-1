@@ -19,6 +19,6 @@ export interface Event {
 	name: string;
 	createdAt: Date;
 	updatedAt: Date;
-	active: boolean;
+	active?: boolean;
 	player_event: PlayerEvent[];
 }
