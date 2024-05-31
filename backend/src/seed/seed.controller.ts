@@ -96,7 +96,7 @@ export class SeedController {
 
       const event = await this.prisma.event.create({
         data: {
-          start_date: new Date('05/07/2024'),
+          start_date: new Date(),
           end_date: new Date('05/08/2024'),
           max_players: 12,
           prize: 1000000,
@@ -107,7 +107,7 @@ export class SeedController {
 
       await this.prisma.event.create({
         data: {
-          start_date: new Date('04/07/2024'),
+          start_date: new Date(),
           end_date: new Date('06/08/2024'),
           max_players: 10,
           prize: 2000000,

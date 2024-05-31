@@ -119,4 +119,41 @@ export class CollectionService {
 
     return collection ? Collection.fromObject(collection) : null;
   }
+
+  async destroySurplusTokens(fundraising) {
+    // Actualización de % premio x token (revalorización) 
+    const collection = await this.prisma.collection.findUnique({
+      where: {
+        id: fundraising.collection.id,
+      }
+    })
+
+    const tokens = await this.prisma.token.findMany({
+      where: {
+        collection_id: fundraising.collection.id,
+      },
+      include: {
+        token_wallet: true,
+      }
+    })
+
+    const tokensSold = collection.initial_amount - collection.amount_left;
+    const newTokenPricePercentage = fundraising.prize_percentage / tokensSold; 
+
+    await this.prisma.collection.update({
+      where: {
+        id: fundraising.collection.id
+      },
+      data: {
+        token_prize_percentage: (newTokenPricePercentage / 100),
+      }
+    })
+
+    console.log("Token %: " + (newTokenPricePercentage / 100))
+
+    // Destrucción de los tokens no vendidos
+    const tokensNotSold = tokens.filter((token) => token.token_wallet.length === 0);
+    console.log(tokensNotSold)
+    await this.tokenService.destroyMany(tokensNotSold)
+  }
 }

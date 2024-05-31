@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { FundraisingService } from '../fundraising/fundraising.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EditEventDto } from './dto/edit-event.dto';
 import { Event } from './event.entity';
@@ -10,7 +11,7 @@ import { SetFinalPositionDto } from './dto/set-final-position.dto';
 
 @Injectable()
 export class EventService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private fundraisingService: FundraisingService) {}
 
   async getEvents() {
     return await this.prisma.event.findMany({
@@ -153,22 +154,8 @@ export class EventService {
         },
       });
 
-      // Se cierran también las colectas asociadas al evento que se está cerrando
-      await this.prisma.fundraising.updateMany({
-        where: { event_id: event.id },
-        data: {
-          active: false,
-        },
-      });
 
-      // Obtiene las fundraisings que pueden requerir revalorización de su token
-      const fundraisings = await this.prisma.fundraising.findMany({
-        where: { event_id: event.id },
-      });
-
-      console.log(fundraisings);
-
-      //TODO: Post cerrado de colectas, se debería ver en cuales hay tokens no vendidos
+      await this.fundraisingService.closeFundraisings(event.id)
     });
 
     return events.map((event) => Event.fromObject(event));
@@ -179,6 +166,11 @@ export class EventService {
   async handleCron() {
     await this.closeEvents();
   }
+
+  // @Cron('*/20 * * * * *')
+  // async handleCron() {
+  //   await this.closeEvents();
+  // }
 
   /*
   async closeExpiredEvents(): Promise<void> {

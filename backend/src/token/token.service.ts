@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { Token } from '@prisma/client';
 
 type emitNewTokensOptions = {
   amount: number;
@@ -112,5 +113,17 @@ export class TokenService {
     });
 
     return tokens;
+  }
+
+  async destroyToken(token_id: number) {
+    await this.prisma.token.delete({
+      where: {
+        id: token_id,
+      }
+    })
+  }
+
+  async destroyMany(tokensNotSold: Token[]) {
+    tokensNotSold.map(({id}) => this.destroyToken(id))
   }
 }
