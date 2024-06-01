@@ -15,8 +15,7 @@ import './Marketplace.css';
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
 const REACT_APP_API_URL = `http://${HOST}:${PORT}/mercado-pago/create-preference`;
-const REACT_APP_MP_PUBLIC_KEY = 'APP_USR-7c8279da-16eb-4752-a9c8-f924a64c067b'; // vendedor 3 en app sandbox
-const REACT_APP_PREFERENCE_TYPE = 'marketplace'; //! Me guié por la preferencia que se crea en la fundraising
+const REACT_APP_PREFERENCE_TYPE = 'marketplace';
 
 export const MarketplacePublication = () => {
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
@@ -26,7 +25,6 @@ export const MarketplacePublication = () => {
 	const { user, isAuthenticated } = useAuth0();
 	const { publication_id } = useParams();
 	const navigate = useNavigate();
-	const [walletId, setWalletId] = useState<number>();
 
 	useEffect(() => {
 		async function getPublication() {
@@ -54,10 +52,11 @@ export const MarketplacePublication = () => {
 		getPublication();
 	}, [accessToken, isAuthenticated, user, publication_id, navigate]);
 
-	initMercadoPago(REACT_APP_MP_PUBLIC_KEY, {
-		locale: 'es-AR',
-	});
-
+	if (marketplacePublication && marketplacePublication.out_wallet.public_key) {
+		initMercadoPago(marketplacePublication.out_wallet.public_key, {
+			locale: 'es-AR',
+		});
+	}
 	const createPreference = async () => {
 		try {
 			// Recupero wallet del usuario
@@ -67,14 +66,15 @@ export const MarketplacePublication = () => {
 				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
 			});
 
+			let walletId;
 			if (response.ok) {
 				const { user } = await response.json();
-				setWalletId(user.wallet.id);
-				console.log("WalletID", user.wallet.id)
+				walletId = user.wallet.id
+				console.log('WalletID', user.wallet.id);
 			}
 			
 			// Creo Preference
-			if (marketplacePublication) {
+			if (marketplacePublication && walletId) {
 				const username =
 					marketplacePublication.out_wallet.user?.username;
 				marketplacePublication.token.collection.fundraising;
