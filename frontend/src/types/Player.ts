@@ -7,7 +7,10 @@ export interface Player {
 	user_id: number;
 	game_id: number;
 	game: Game;
-	ranking: number;
+	ranking: {
+		id: number;
+		description: string;
+	};
 	rank: Rank;
 	biography: string;
 	active: boolean;

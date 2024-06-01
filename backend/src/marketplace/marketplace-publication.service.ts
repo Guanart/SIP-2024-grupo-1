@@ -36,7 +36,7 @@ export class MarketplacePublicationService {
               include: {
                 fundraising: {
                   include: {
-                    player: { include: { user: true, game: true } },
+                    player: { include: { user: true, game: true, rank: true } },
                     event: true,
                   },
                 },
@@ -70,7 +70,7 @@ export class MarketplacePublicationService {
               include: {
                 fundraising: {
                   include: {
-                    player: { include: { user: true, game: true } },
+                    player: { include: { user: true, game: true, rank: true } },
                     event: true,
                   },
                 },

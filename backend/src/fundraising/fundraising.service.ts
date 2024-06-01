@@ -64,7 +64,7 @@ export class FundraisingService {
         collection: true,
         event: true,
         player: {
-          include: { user: true, game: true },
+          include: { user: true, game: true, rank: true },
         },
       },
     });
@@ -82,7 +82,7 @@ export class FundraisingService {
         event: true,
         player: {
           // PROBLEMA DE SEGURIDAD: se envía el access_token del player al frontend (excluirlo con select: {})
-          include: { user: true, game: true },
+          include: { user: true, game: true, rank: true },
         },
       },
     });
