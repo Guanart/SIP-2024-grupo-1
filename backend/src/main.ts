@@ -12,7 +12,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true, // Lanza un error si se encuentran valores no permitidos
     }),
   );
-  app.enableCors();
 
   // Swagger
   // Use DocumentBuilder to create a new Swagger document configuration
