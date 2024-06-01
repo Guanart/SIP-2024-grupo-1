@@ -5,7 +5,7 @@ export const TermsConditions = () => {
 	return (
 		<PageLayout>
 			<Typography variant='h4'> LOT terms & conditions </Typography>
-			<Stack direction='column' spacing={2} sx={{ marginTop: '8px' }}>
+			<Stack direction='column' spacing={2} sx={{ paddingTop: '56px' }}>
 				<Container
 					sx={{
 						display: 'flex',
