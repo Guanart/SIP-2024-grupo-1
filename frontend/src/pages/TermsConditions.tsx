@@ -264,9 +264,16 @@ export const TermsConditions = () => {
 						7. Privacy
 					</Typography>
 					<Typography>
-						Our privacy policy describes how we collect, use and
-						protect your personal information. By using the
-						platform, you agree to the terms of our privacy policy.
+						Our Privacy Policy describes in detail how we collect,
+						use, store and protect your personal information. We are
+						committed to ensuring the security of your data and use
+						this information only to enhance your experience on our
+						platform. By using our services, you consent to the
+						practices described in our policy, including the
+						collection of data necessary for the operation and
+						improvement of our services, the use of cookies and
+						similar technologies, and communication with you
+						regarding your account.
 					</Typography>
 				</Container>
 				<Container
