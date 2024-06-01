@@ -5,7 +5,11 @@ export const TermsConditions = () => {
 	return (
 		<PageLayout>
 			<Typography variant='h4'> LOT terms & conditions </Typography>
-			<Stack direction='column' spacing={2} sx={{ paddingTop: '56px' }}>
+			<Stack
+				direction='column'
+				spacing={2}
+				sx={{ paddingTop: '56px', paddingBottom: '24px' }}
+			>
 				<Container
 					sx={{
 						display: 'flex',
@@ -242,7 +246,11 @@ export const TermsConditions = () => {
 						All content, trademarks, logos and other materials on
 						the Platform are the property of LOT or its licensors
 						and are protected by intellectual property laws. You may
-						not use, copy or dis
+						not use, copy, or distribute any of these materials
+						without the prior written permission of LOT or the
+						respective licensors. Any unauthorized use may violate
+						copyright, trademark, and other applicable laws and
+						could result in civil or criminal penalties
 					</Typography>
 				</Container>
 				<Container
