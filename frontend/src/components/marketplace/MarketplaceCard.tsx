@@ -65,7 +65,7 @@ export const MarketplaceCard: FunctionComponent<MarketplaceCardProps> = ({
 							fontWeight: 'bold',
 						}}
 					>
-						{player.ranking}
+						{player.rank.description}
 					</Typography>
 				</Typography>
 				<Typography component='div'>

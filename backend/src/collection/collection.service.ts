@@ -157,4 +157,18 @@ export class CollectionService {
     );
     await this.tokenService.destroyMany(tokensNotSold);
   }
+
+  async getUsersWithTokens(collection_id: number) {
+    const usersWithTokens = await this.prisma.token.findMany({
+      where: {
+        collection_id,
+        token_wallet: {
+          some: {},
+        },
+      },
+      include: { token_wallet: true },
+    });
+
+    return usersWithTokens;
+  }
 }
