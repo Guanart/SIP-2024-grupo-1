@@ -61,13 +61,19 @@ jobs:
                   npm install
                   npm run test
 
+            - name: Run Accounts API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/accounts.json
+                  environment: postman/environment.json
+
             - name: Run Selenium integration tests
               working-directory: selenium
               run: |
                   pip install -r requirements.txt
                   bash run-tests.sh
 
-            - name: Push entry frontend image
+            - name: Push frontend image
               uses: docker/build-push-action@v5
               with:
                   context: ./frontend
