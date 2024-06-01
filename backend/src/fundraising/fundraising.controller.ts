@@ -8,8 +8,7 @@ import {
   Param,
   Post,
   Put,
-  Req,
-  Res,
+
   // SetMetadata,
   // UseGuards,
 } from '@nestjs/common';
@@ -43,7 +42,9 @@ export class FundraisingController {
       const fundraising =
         await this.fundraisingService.createFundraising(newFundraising);
 
-      if (!fundraising) {
+      if (typeof fundraising == 'string') {
+        throw new BadRequestException(fundraising);
+      } else if (!fundraising) {
         throw new BadRequestException();
       }
 

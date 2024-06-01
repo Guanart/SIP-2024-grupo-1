@@ -23,17 +23,18 @@ export class FundraisingService {
       initial_price,
     } = newFundraising;
 
-    // No permite crear una colecta si el jugador ya tiene una colecta activa en este momento
-    // const activeFundraising = await this.prisma.fundraising.findMany({
-    //   where: {
-    //     player_id,
-    //     active: true,
-    //   },
-    // });
+    // No permite crear una colecta si el jugador ya tiene una colecta activa para el mismo evento
+    const activeFundraising = await this.prisma.fundraising.findMany({
+      where: {
+        player_id,
+        active: true,
+        event_id: newFundraising.event_id,
+      },
+    });
 
-    // if (activeFundraising.length > 0) {
-    //   return null;
-    // }
+    if (activeFundraising.length > 0) {
+      return 'A player can only have one collection active for an event.';
+    }
 
     const fundraising = await this.prisma.fundraising.create({
       data: {
