@@ -63,7 +63,7 @@ export const Home = () => {
 				<Container
 					className='container'
 					sx={{
-						backgroundImage: 'url(/assets/images/home-deco1.png)', // Your background image
+						backgroundImage: 'url(assets/images/home-deco1.png)', // Your background image
 						//backgroundSize: 'cover',
 						padding: '2rem',
 						width: '100vw',
