@@ -54,7 +54,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user?.sub}`,
+					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -137,7 +137,7 @@ export const RequestForm = () => {
 				'verificationRequest',
 				JSON.stringify(newVerificationRequest)
 			);
-			const url = `http://localhost:3000/verification-request`;
+			const url = `http://${HOST}:${PORT}/verification-request`;
 			const config = {
 				headers: {
 					'content-type': 'multipart/form-data',
