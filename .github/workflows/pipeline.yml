@@ -67,6 +67,18 @@ jobs:
                   collection: postman/accounts.json
                   environment: postman/environment.json
 
+            - name: Run Fundraisings API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/fundraisings.json
+                  environment: postman/environment.json
+
+            - name: Run Marketplace API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/marketplace.json
+                  environment: postman/environment.json
+
             - name: Run Selenium integration tests
               working-directory: selenium
               run: |
