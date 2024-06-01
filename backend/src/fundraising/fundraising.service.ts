@@ -94,15 +94,11 @@ export class FundraisingService {
     updatedFundraising: UpdateFundraisingDto,
     currentFundraising?: Fundraising,
   ) {
-    const fundraising = await this.prisma.fundraising.update({
+    const fundraising = await this.prisma.fundraising.findUnique({
       where: { id: currentFundraising.id },
-      data: {
-        goal_amount: updatedFundraising.goal_amount,
-      },
     });
 
     const collection = await this.collectionService.update(
-      updatedFundraising.goal_amount,
       updatedFundraising.initial_price,
       fundraising,
     );

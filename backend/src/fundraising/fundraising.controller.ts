@@ -84,10 +84,6 @@ export class FundraisingController {
         );
       }
 
-      if (fundraising.goal_amount > updatedFundraising.goal_amount) {
-        throw new BadRequestException('The goal amount can only be increased');
-      }
-
       const currentFundraising =
         await this.fundraisingService.updateFundraising(
           updatedFundraising,

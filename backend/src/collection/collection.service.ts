@@ -49,11 +49,7 @@ export class CollectionService {
     return collection ? Collection.fromObject(collection) : null;
   }
 
-  async update(
-    new_goal_amount: number,
-    new_initial_price: number,
-    fundraising: Fundraising,
-  ) {
+  async update(new_initial_price: number, fundraising: Fundraising) {
     let collection = await this.prisma.collection.findUnique({
       where: { fundraising_id: fundraising.id },
     });
@@ -65,7 +61,9 @@ export class CollectionService {
     const ownedTokens = collection.initial_amount - collection.amount_left;
     const recalculatedOwnedTokens = ownedTokens * compensationRatio;
 
-    const recalculatedAmount = Math.ceil(new_goal_amount / new_initial_price);
+    const recalculatedAmount = Math.ceil(
+      fundraising.goal_amount / new_initial_price,
+    );
 
     const recalculatedAmountLeft = recalculatedAmount - recalculatedOwnedTokens;
 

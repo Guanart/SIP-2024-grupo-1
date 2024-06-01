@@ -92,7 +92,6 @@ export const UpdateFundraising = () => {
 		event.preventDefault();
 
 		const updatedFundraising = {
-			goal_amount: goalAmount,
 			initial_price: initialPrice,
 		};
 
