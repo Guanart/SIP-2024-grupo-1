@@ -15,7 +15,7 @@ spec:
         spec:
             containers:
                 - name: frontend
-                  image: 'mgimenezdev/lot-frontend:latest'
+                  image: 'mgimenezdev/lot-frontend:1.0.0'
                   ports:
                       - containerPort: 3000
                   env:
