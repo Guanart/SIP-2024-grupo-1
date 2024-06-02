@@ -178,7 +178,7 @@ export const StartFundraising = () => {
 											fontWeight: 'bold',
 										}}
 									>
-										{currentUser?.player?.ranking}
+										{currentUser?.player?.rank.description}
 									</Typography>
 								</Typography>
 								<Typography component='div'>
