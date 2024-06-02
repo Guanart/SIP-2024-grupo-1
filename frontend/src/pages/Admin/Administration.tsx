@@ -6,18 +6,35 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks/useAccessToken';
 import { PieChart, BarChart } from '@mui/x-charts';
+import { Loader } from '../../components';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
+
+type Analytics = {
+	transactions: number;
+	sellTransactions: number;
+	buyTransactions: number;
+	players: number;
+	users: number;
+	publications: number;
+	activePublications: number;
+	fundraisings: number;
+	inactiveFundraisings: number;
+	activeFundraisings: number;
+	tokensSold: number;
+	successPublications: number;
+};
 
 export const Administration = () => {
 	const { isAuthenticated, user } = useAuth0();
 	const { accessToken } = useAccessToken();
 	const navigate = useNavigate();
-	const [data, setData] = useState<any>({});
+	const [analytics, setAnalytics] = useState<Analytics>();
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useEffect(() => {
-		async function getPlatformData() {
+		async function getAnalytics() {
 			try {
 				const response = await fetchWithAuth({
 					isAuthenticated,
@@ -29,8 +46,8 @@ export const Administration = () => {
 					const { data } = await response.json();
 
 					if (data) {
-						console.log(data.transactions);
-						setData(data);
+						setAnalytics(data);
+						setIsLoading(false);
 					}
 				}
 			} catch (error) {
@@ -41,7 +58,7 @@ export const Administration = () => {
 		if (!user) return;
 		if (!accessToken) return;
 
-		getPlatformData();
+		getAnalytics();
 	}, [accessToken, isAuthenticated, user, navigate]);
 
 	return (
@@ -79,20 +96,75 @@ export const Administration = () => {
 					</Button>
 				</Link>
 			</Stack>
-			<Stack
-				direction={{ xs: 'column', md: 'row' }}
-				sx={{
-					marginTop: '32px',
-					display: 'flex',
-					flexWrap: 'wrap',
-					gap: '62px',
-				}}
-			>
-				<Box sx={{ maxWidth: '800px' }}>
-					<Typography variant='h5' color='secondary'>
-						Users
-					</Typography>
+			{isLoading && <Loader />}
+			{!isLoading && analytics && (
+				<Stack
+					direction={{ xs: 'column', md: 'row' }}
+					sx={{
+						marginTop: '32px',
+						display: 'flex',
+						flexWrap: 'wrap',
+						gap: '62px',
+					}}
+				>
 					<Box sx={{ maxWidth: '800px' }}>
+						<Typography variant='h5' color='secondary'>
+							Users
+						</Typography>
+						<Box sx={{ maxWidth: '800px' }}>
+							<Stack direction={{ xs: 'column', md: 'row' }}>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										marginTop: '8px',
+									}}
+								>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 'bold',
+										}}
+									>
+										{analytics.users} registered users
+									</Typography>
+									<Typography
+										variant='h6'
+										sx={{ fontWeight: 'bold' }}
+										color='secondary'
+									>
+										{analytics.players} verified players
+									</Typography>
+								</Box>
+								<BarChart
+									xAxis={[
+										{
+											scaleType: 'band',
+											data: ['Users', 'Players'],
+										},
+									]}
+									series={[
+										{
+											data: [
+												analytics.users,
+												analytics.players,
+											],
+										},
+									]}
+									width={500}
+									height={300}
+								/>
+							</Stack>
+						</Box>
+					</Box>
+					<Box sx={{ maxWidth: '800px' }}>
+						<Typography
+							variant='h5'
+							color='secondary'
+							sx={{ marginTop: '32px' }}
+						>
+							Fundraisings
+						</Typography>
 						<Stack direction={{ xs: 'column', md: 'row' }}>
 							<Box
 								sx={{
@@ -102,200 +174,158 @@ export const Administration = () => {
 								}}
 							>
 								<Typography
+									sx={{ fontWeight: 'bold' }}
 									variant='h6'
-									sx={{
-										fontWeight: 'bold',
-									}}
 								>
-									{data.users} registered users
+									{analytics.fundraisings} fundraisings
 								</Typography>
 								<Typography
-									variant='h6'
 									sx={{ fontWeight: 'bold' }}
-									color='secondary'
+									variant='h6'
 								>
-									{data.players} verified players
+									{analytics.activeFundraisings} active
+									fundraisings
+								</Typography>
+								<Typography
+									color='secondary'
+									sx={{ fontWeight: 'bold' }}
+								>
+									{analytics.tokensSold} tokens sold
 								</Typography>
 							</Box>
-							<BarChart
-								xAxis={[
+							<PieChart
+								series={[
 									{
-										scaleType: 'band',
-										data: ['Users', 'Players'],
+										data: [
+											{
+												id: 0,
+												value: analytics.inactiveFundraisings,
+												label: 'Completed fundraisings',
+											},
+											{
+												id: 1,
+												value: analytics.activeFundraisings,
+												label: 'Active fundraisings',
+											},
+										],
 									},
 								]}
-								series={[{ data: [data.users, data.players] }]}
-								width={500}
-								height={300}
+								width={600}
+								height={200}
 							/>
 						</Stack>
 					</Box>
-				</Box>
-				<Box sx={{ maxWidth: '800px' }}>
-					<Typography
-						variant='h5'
-						color='secondary'
-						sx={{ marginTop: '32px' }}
-					>
-						Fundraisings
-					</Typography>
-					<Stack direction={{ xs: 'column', md: 'row' }}>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								marginTop: '8px',
-							}}
-						>
-							<Typography
-								sx={{ fontWeight: 'bold' }}
-								variant='h6'
-							>
-								{data.fundraisings} fundraisings
-							</Typography>
-							<Typography
-								sx={{ fontWeight: 'bold' }}
-								variant='h6'
-							>
-								{data.activeFundraisings} active fundraisings
-							</Typography>
-							<Typography
-								color='secondary'
-								sx={{ fontWeight: 'bold' }}
-							>
-								{data.tokensSold} tokens sold
-							</Typography>
-						</Box>
-						<PieChart
-							series={[
-								{
-									data: [
-										{
-											id: 0,
-											value: data.inactiveFundraisings,
-											label: 'Completed fundraisings',
-										},
-										{
-											id: 1,
-											value: data.activeFundraisings,
-											label: 'Active fundraisings',
-										},
-									],
-								},
-							]}
-							width={600}
-							height={200}
-						/>
-					</Stack>
-				</Box>
 
-				<Box sx={{ maxWidth: '800px' }}>
-					<Typography
-						variant='h5'
-						color='secondary'
-						sx={{ marginTop: '32px' }}
-					>
-						Platform transactions
-					</Typography>
-					<Stack direction={{ xs: 'column', md: 'row' }}>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								marginTop: '8px',
-							}}
+					<Box sx={{ maxWidth: '800px' }}>
+						<Typography
+							variant='h5'
+							color='secondary'
+							sx={{ marginTop: '32px' }}
 						>
-							<Typography
-								sx={{ fontWeight: 'bold' }}
-								color='secondary'
-								variant='h6'
+							Platform transactions
+						</Typography>
+						<Stack direction={{ xs: 'column', md: 'row' }}>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									marginTop: '8px',
+								}}
 							>
-								{data.transactions} transactions
-							</Typography>
-							<Typography sx={{ fontWeight: 'bold' }}>
-								{data.buyTransactions} buy transactions
-							</Typography>
-							<Typography sx={{ fontWeight: 'bold' }}>
-								{data.sellTransactions} sell transactions
-							</Typography>
-						</Box>
-						<PieChart
-							series={[
-								{
-									data: [
-										{
-											id: 0,
-											value: data.buyTransactions,
-											label: 'Buy transactions',
-										},
-										{
-											id: 1,
-											value: data.sellTransactions,
-											label: 'Sell transactions',
-										},
-									],
-								},
-							]}
-							width={500}
-							height={200}
-						/>
-					</Stack>
-				</Box>
+								<Typography
+									sx={{ fontWeight: 'bold' }}
+									color='secondary'
+									variant='h6'
+								>
+									{analytics.transactions} transactions
+								</Typography>
+								<Typography sx={{ fontWeight: 'bold' }}>
+									{analytics.buyTransactions} buy transactions
+								</Typography>
+								<Typography sx={{ fontWeight: 'bold' }}>
+									{analytics.sellTransactions} sell
+									transactions
+								</Typography>
+							</Box>
+							<PieChart
+								series={[
+									{
+										data: [
+											{
+												id: 0,
+												value: analytics.buyTransactions,
+												label: 'Buy transactions',
+											},
+											{
+												id: 1,
+												value: analytics.sellTransactions,
+												label: 'Sell transactions',
+											},
+										],
+									},
+								]}
+								width={500}
+								height={200}
+							/>
+						</Stack>
+					</Box>
 
-				<Box sx={{ maxWidth: '800px' }}>
-					<Typography
-						variant='h5'
-						color='secondary'
-						sx={{ marginTop: '32px' }}
-					>
-						Marketplace
-					</Typography>
-					<Stack direction={{ xs: 'column', md: 'row' }}>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								marginTop: '8px',
-							}}
+					<Box sx={{ maxWidth: '800px' }}>
+						<Typography
+							variant='h5'
+							color='secondary'
+							sx={{ marginTop: '32px' }}
 						>
-							<Typography
-								sx={{ fontWeight: 'bold' }}
-								color='secondary'
-								variant='h6'
+							Marketplace
+						</Typography>
+						<Stack direction={{ xs: 'column', md: 'row' }}>
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									marginTop: '8px',
+								}}
 							>
-								{data.publications} publications
-							</Typography>
-							<Typography sx={{ fontWeight: 'bold' }}>
-								{data.activePublications} active publications
-							</Typography>
-							<Typography sx={{ fontWeight: 'bold' }}>
-								{data.successPublications} completed
-								publications
-							</Typography>
-						</Box>
-						<PieChart
-							series={[
-								{
-									data: [
-										{
-											id: 0,
-											value: data.successPublications,
-											label: 'Tokens sold',
-										},
-										{
-											id: 1,
-											value: data.activePublications,
-											label: 'Active publications',
-										},
-									],
-								},
-							]}
-							width={500}
-							height={200}
-						/>
-					</Stack>
-				</Box>
-			</Stack>
+								<Typography
+									sx={{ fontWeight: 'bold' }}
+									color='secondary'
+									variant='h6'
+								>
+									{analytics.publications} publications
+								</Typography>
+								<Typography sx={{ fontWeight: 'bold' }}>
+									{analytics.activePublications} active
+									publications
+								</Typography>
+								<Typography sx={{ fontWeight: 'bold' }}>
+									{analytics.successPublications} completed
+									publications
+								</Typography>
+							</Box>
+							<PieChart
+								series={[
+									{
+										data: [
+											{
+												id: 0,
+												value: analytics.successPublications,
+												label: 'Tokens sold',
+											},
+											{
+												id: 1,
+												value: analytics.activePublications,
+												label: 'Active publications',
+											},
+										],
+									},
+								]}
+								width={500}
+								height={200}
+							/>
+						</Stack>
+					</Box>
+				</Stack>
+			)}
 		</PageLayout>
 	);
 };

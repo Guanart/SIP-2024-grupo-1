@@ -1,49 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private analyticService: AnalyticsService,
+  ) {}
 
   async getData() {
-    const transactions = await this.prisma.transaction.count({
-      where: {},
-    });
-    const buyTransactions = await this.prisma.transaction.count({
-      where: { type: 'BUY' },
-    });
-    const sellTransactions = await this.prisma.transaction.count({
-      where: { type: 'SELL' },
-    });
+    const { buyTransactions, sellTransactions } =
+      await this.analyticService.getTransactions();
 
-    const players = await this.prisma.player.count({ where: { active: true } });
-    const users = await this.prisma.user.count({});
+    const transactions = buyTransactions + sellTransactions;
 
-    const activePublications = await this.prisma.marketplace_publication.count({
-      where: { active: true },
-    });
+    const { players, users } = await this.analyticService.getRegisteredUsers();
 
-    const publications = await this.prisma.marketplace_publication.count({
-      where: {},
-    });
+    const { publications, activePublications, successPublications } =
+      await this.analyticService.getAllPublications();
 
-    const successPublications = await this.prisma.in_wallet.count({
-      where: {},
-    });
-
-    const activeFundraisings = await this.prisma.fundraising.count({
-      where: { active: true },
-    });
-
-    const inactiveFundraisings = await this.prisma.fundraising.count({
-      where: { active: false },
-    });
-
-    const fundraisings = await this.prisma.fundraising.count({
-      where: {},
-    });
-
-    const tokensSold = await this.prisma.token_wallet.count({ where: {} });
+    const {
+      fundraisings,
+      activeFundraisings,
+      inactiveFundraisings,
+      tokensSold,
+    } = await this.analyticService.getFundraisingsActive();
 
     return {
       transactions,

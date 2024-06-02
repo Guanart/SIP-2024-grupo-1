@@ -11,31 +11,42 @@ export class AnalyticsService {
 
     return {
       players: players,
-      users: users
-    }
+      users: users,
+    };
   }
 
-  async getTransactions(startDate: Date, endDate: Date) {
+  async getTransactions(endDate: Date = new Date(), startDate?: Date) {
     const buyTransactions = await this.prisma.transaction.count({
-      where: { type: 'BUY',
-        date: {
-          gte: startDate,
-          lte: endDate
-        }
+      where: {
+        type: 'BUY',
+        timestamp: startDate
+          ? {
+              gte: startDate,
+              lte: endDate,
+            }
+          : {
+              lte: endDate,
+            },
       },
     });
+
     const sellTransactions = await this.prisma.transaction.count({
-      where: { type: 'SELL',
-        date: {
-          gte: startDate,
-          lte: endDate
-        }
+      where: {
+        type: 'SELL',
+        timestamp: startDate
+          ? {
+              gte: startDate,
+              lte: endDate,
+            }
+          : {
+              lte: endDate,
+            },
       },
     });
     return {
       sellTransactions: sellTransactions,
-      buyTransactions: buyTransactions
-    }
+      buyTransactions: buyTransactions,
+    };
   }
 
   async getAllPublications() {
@@ -55,10 +66,10 @@ export class AnalyticsService {
       publications: publications,
       activePublications: activePublications,
       successPublications: successPublications,
-    }
+    };
   }
 
-  async getFundraisingsActive(){
+  async getFundraisingsActive() {
     const activeFundraisings = await this.prisma.fundraising.count({
       where: { active: true },
     });
@@ -82,28 +93,28 @@ export class AnalyticsService {
   }
 
   async getFundraisingsByGame() {
-    const games = await this.prisma.game.findMany({select: {
-      id: true,
-      name: true
-    }});
+    const games = await this.prisma.game.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
 
-
-
-    const countFundraisings : { [name: string]: number } = {};
+    const countFundraisings: { [name: string]: number } = {};
     for (const game of games) {
       const gameName = game.name;
-      const count = await this.prisma.fundraisings.count({
+      const count = await this.prisma.fundraising.count({
         where: {
           event: {
             game: {
-              id: game.id
-            }
-          }
-        }
+              id: game.id,
+            },
+          },
+        },
       });
 
       countFundraisings[gameName] = count;
-    };
+    }
 
     return countFundraisings;
   }
