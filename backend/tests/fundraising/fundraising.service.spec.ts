@@ -9,6 +9,7 @@ jest.mock('../../src/database/prisma.service', () => ({
     fundraising: {
       create: jest.fn(),
       update: jest.fn(),
+      findMany: jest.fn(),
     },
   })),
 }));
@@ -65,6 +66,8 @@ describe('FundraisingService', () => {
         event_id,
         player_id,
       } = newFundraising;
+
+      jest.spyOn(prisma.fundraising, 'findMany').mockResolvedValue([]);
 
       jest.spyOn(prisma.fundraising, 'create').mockResolvedValue({
         id: 123,

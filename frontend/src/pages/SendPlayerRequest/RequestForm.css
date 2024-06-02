@@ -13,39 +13,39 @@ p {
 }
 
 div.entry {
-	margin: 2rem !important;;
+	margin: 2rem !important;
 }
 
 main.requestform {
-    padding: 0%;
+	padding: 0%;
 }
 
 /* Estilo para centrar la imagen de fondo */
 .requestFormBackground {
-    /* Ajusta esta ruta a la de tu imagen */
-    background-image: url('assets/images/crowd-background.png');
-    background-size: cover; /* Ajusta la imagen para que cubra el área */
-    background-position: center; /* Centra la imagen */
-    height: 100vh; /* Ocupa toda la altura de la ventana */
+	/* Ajusta esta ruta a la de tu imagen */
+	background-image: url('/assets/images/crowd-background.png');
+	background-size: cover; /* Ajusta la imagen para que cubra el área */
+	background-position: center; /* Centra la imagen */
+	height: 100vh; /* Ocupa toda la altura de la ventana */
 	width: 100vw;
-    display: flex; /* Utiliza flexbox para centrar */
+	display: flex; /* Utiliza flexbox para centrar */
 	flex-direction: column;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente */
-    align-self: center;
-    justify-self: center;
+	justify-content: center; /* Centra horizontalmente */
+	align-items: center; /* Centra verticalmente */
+	align-self: center;
+	justify-self: center;
 }
 
 /* Rectángulo contenedor para el formulario */
 .form-container {
-    background-color: #272727;; /* Fondo blanco con transparencia */
-    padding: 3rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para elevar el formulario */
-    width: auto;
+	background-color: #272727; /* Fondo blanco con transparencia */
+	padding: 3rem;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para elevar el formulario */
+	width: auto;
 	display: flex; /* Utiliza flexbox para centrar */
 	flex-direction: column;
-	gap:2rem;
+	gap: 2rem;
 }
 
 label {

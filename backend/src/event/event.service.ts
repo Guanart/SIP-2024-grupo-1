@@ -4,16 +4,17 @@ import { FundraisingService } from '../fundraising/fundraising.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { EditEventDto } from './dto/edit-event.dto';
 import { Event } from './event.entity';
-// import { Fundraising } from 'src/fundraising/fundraising.entity';
 import { Cron } from '@nestjs/schedule';
 import { RegisterPlayerDto } from './dto/register-player.dto';
 import { SetFinalPositionDto } from './dto/set-final-position.dto';
+import { CollectionService } from 'src/collection/collection.service';
 
 @Injectable()
 export class EventService {
   constructor(
     private prisma: PrismaService,
     private fundraisingService: FundraisingService,
+    private collectionService: CollectionService,
   ) {}
 
   async getEvents() {
@@ -163,25 +164,95 @@ export class EventService {
     return events.map((event) => Event.fromObject(event));
   }
 
+  async checkFinishedEvents() {
+    const date = new Date();
+    date.setHours(23, 59, 59, 999);
+
+    // Obtengo eventos finalizados (fecha fin <= fecha actual)
+    const events = await this.prisma.event.findMany({
+      where: {
+        end_date: {
+          lte: date,
+        },
+        checked: false,
+      },
+    });
+
+    events.map(async (event) => {
+      // Verifico que administrador/a haya cargado las posiciones finales (todos los jugadores inscriptos position != 0)
+      const registeredPlayers = await this.prisma.player_event.findMany({
+        where: {
+          event_id: event.id,
+        },
+      });
+
+      const positionsUpdated = registeredPlayers.every(
+        (player) => player.position !== 0,
+      );
+
+      // Si no se actualizaron las posiciones finales en el evento, no se puede repartir premios
+      if (!positionsUpdated) return;
+
+      // Obtengo datos del ganador del evento
+      const winner = await this.prisma.player_event.findMany({
+        where: { position: 1 },
+      });
+
+      // Verifico si el ganador había iniciado una colecta para el evento
+
+      const fundraising = await this.fundraisingService.getWinnerFundraising(
+        winner[0].player_id,
+        winner[0].event_id,
+      );
+
+      // Si no inició colecta, no hay que repartir premios
+      if (!fundraising) return;
+
+      // Busco los datos de los usuarios que poseen tokens de la colecta iniciada por el ganador
+      const usersWithTokens = await this.collectionService.getUsersWithTokens(
+        fundraising[0].collection.id,
+      );
+
+      const tokenCountByWallet = {};
+
+      // Itera sobre el array original y actualiza los conteos en el objeto
+      usersWithTokens.forEach(({ token_wallet }) => {
+        if (token_wallet.length > 0) {
+          const { wallet_id } = token_wallet[0];
+          if (!tokenCountByWallet[wallet_id]) {
+            tokenCountByWallet[wallet_id] = 1;
+          } else {
+            tokenCountByWallet[wallet_id]++;
+          }
+        }
+      });
+
+      // Calculo el premio $ por token
+      const token_reward =
+        fundraising[0].collection.token_prize_percentage *
+        fundraising[0].event.prize;
+
+      console.log('Token_reward: ' + token_reward);
+      //? Este array contiene un objeto por cada wallet que compro tokens en la colecta
+      const amountOfMoneyPerWallet = Object.keys(tokenCountByWallet).map(
+        (wallet_id) => ({
+          wallet_id: Number(wallet_id),
+          total: tokenCountByWallet[wallet_id] * token_reward, // Calculo el total de $ que hay que entregar a cada usuario comprador
+        }),
+      );
+
+      console.log(amountOfMoneyPerWallet);
+      // TODO: Implementar entrega de premios con MP?
+      //? Usando los datos de "amountOfMoneyPerWallet" se puede saber cuanto $ (total) se tiene que dar a cada wallet (wallet_id)
+    });
+  }
+
   // Se ejecuta todos los días a las 00:00
   @Cron('0 0 * * *')
   async handleCron() {
     await this.closeEvents();
+    await this.checkFinishedEvents();
   }
-
-  /*
-  async closeExpiredEvents(): Promise<void> {
-    const now = new Date();
-    const expiredEvents = await this.eventRepository.find({
-      where: { endDate: LessThan(now), isClosed: false },
-    });
-
-    for (const event of expiredEvents) {
-      event.isClosed = true;
-      await this.eventRepository.save(event);
-    }
-  }
-  */
 
   async createEvent(newEvent: CreateEventDto) {
     const { name, prize, game_id, max_players, start_date, end_date } =

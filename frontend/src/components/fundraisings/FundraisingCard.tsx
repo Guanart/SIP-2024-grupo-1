@@ -46,7 +46,7 @@ export const FundraisingCard: FunctionComponent<FundraisingCardProps> = ({
 							fontWeight: 'bold',
 						}}
 					>
-						{player.ranking}
+						{player.rank.description}
 					</Typography>
 				</Typography>
 				<Typography component='div'>

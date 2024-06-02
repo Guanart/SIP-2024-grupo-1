@@ -254,7 +254,6 @@ export class SeedController {
           out_wallet_id: wallet3.id,
         },
       });
-
       return 'Database loaded successfully with test data';
     } catch (exception) {
       console.log(exception);

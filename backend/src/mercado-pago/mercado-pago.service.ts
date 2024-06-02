@@ -52,6 +52,7 @@ export class MercadoPagoService {
             access_token: true,
           },
         });
+        console.log(wallet)
         return wallet?.access_token || null;
       },
     };
@@ -60,7 +61,7 @@ export class MercadoPagoService {
     if (!queryFunction) {
       throw new HttpException('Invalid type', HttpStatus.BAD_REQUEST);
     }
-
+    console.log(items)
     const access_token = await queryFunction(Number(items.id));
     if (!access_token) {
       throw new HttpException('access_token not found', HttpStatus.NOT_FOUND);
@@ -264,33 +265,39 @@ async persistMarketplaceTransaction(
     fundraising: {
       player: {
         fundraising: {
-          id: publicationId,
+          some: {
+            id: Number(publicationId),
+          }
         },
       },
     },
     marketplace: {
       marketplace_publication: {
-        publication_id: publicationId,
+        some: {
+          publication_id: Number(publicationId),
+        }
       },
     },
   };
 
 
-  const seller_wallet_id = await this.prisma.wallet.findFirst({
+  const seller_wallet = await this.prisma.wallet.findFirst({
     where: typeToWhereMap[item.category_id],
     select: {
       id: true,
     },
   });
+
+  const seller_wallet_id = seller_wallet?.id;
   
-  // Buscar las wallets
+  // Buscar las wallets  
   const [wallet1, wallet2] = await Promise.all([
     this.prisma.wallet.findUnique({ where: { id: Number(buyer_wallet_id) } }),
     this.prisma.wallet.findUnique({ where: { id: Number(seller_wallet_id) } }),
   ]);
 
   // Verificar si las wallets existen
-  if (!buyer_wallet_id || !seller_wallet_id) {
+  if (!wallet1 || !wallet2) {
     console.log(`\nOne or both wallets not found\n`);
     return `\nOne or both wallets not found\n`;
   }

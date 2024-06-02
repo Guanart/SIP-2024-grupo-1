@@ -8,8 +8,7 @@ import {
   Param,
   Post,
   Put,
-  Req,
-  Res,
+
   // SetMetadata,
   // UseGuards,
 } from '@nestjs/common';
@@ -43,7 +42,9 @@ export class FundraisingController {
       const fundraising =
         await this.fundraisingService.createFundraising(newFundraising);
 
-      if (!fundraising) {
+      if (typeof fundraising == 'string') {
+        throw new BadRequestException(fundraising);
+      } else if (!fundraising) {
         throw new BadRequestException();
       }
 
@@ -81,10 +82,6 @@ export class FundraisingController {
         throw new BadRequestException(
           'The price of the token can only be decreased',
         );
-      }
-
-      if (fundraising.goal_amount > updatedFundraising.goal_amount) {
-        throw new BadRequestException('The goal amount can only be increased');
       }
 
       const currentFundraising =

@@ -13,6 +13,13 @@ import { TokenService } from 'src/token/token.service';
 @Module({
   imports: [AuthModule, ConfigModule.forRoot(), ScheduleModule.forRoot()],
   controllers: [EventController],
-  providers: [EventService, PrismaService, FundraisingService, MercadoPagoService, CollectionService, TokenService],
+  providers: [
+    EventService,
+    PrismaService,
+    FundraisingService,
+    MercadoPagoService,
+    CollectionService,
+    TokenService,
+  ],
 })
 export class EventModule {}
