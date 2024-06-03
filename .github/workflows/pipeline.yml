@@ -112,7 +112,7 @@ jobs:
               with:
                   credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
 
-            - name: Check and Create GCS Bucket
+            - name: Check and Create GCS Bucket for Terraform state
               env:
                   BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
                   PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
@@ -129,6 +129,26 @@ jobs:
                     echo "Bucket $BUCKET_NAME already exists."
                   else
                     echo "Creating bucket $BUCKET_NAME..."
+                    gsutil mb -p $PROJECT_ID $BUCKET_URI
+                  fi
+
+            - name: Check and Create GCS Bucket for Postgres backups
+              env:
+                  PROJECT_ID: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+              run: |
+                  gcloud config set project $PROJECT_ID
+
+                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+                  gcloud auth activate-service-account --key-file=credentials.json
+                  gcloud config set pass_credentials_to_gsutil true
+
+                  BUCKET_URI="gs://lot-pg-backups/"
+
+                  # Check if the bucket exists
+                  if gsutil ls -p $PROJECT_ID | grep $BUCKET_URI; then
+                    echo "Bucket lot-pg-backups already exists."
+                  else
+                    echo "Creating bucket lot-pg-backups..."
                     gsutil mb -p $PROJECT_ID $BUCKET_URI
                   fi
 
