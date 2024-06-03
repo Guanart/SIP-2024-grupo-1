@@ -13,3 +13,37 @@ spec:
             database: LOT
             owner: app
     enableSuperuserAccess: true
+    backup:
+        barmanObjectStore:
+            destinationPath: 'gs://lot-pg-backups'
+            googleCredentials:
+                gkeEnvironment: true
+    serviceAccountTemplate:
+        metadata:
+            annotations:
+                iam.gke.io/gcp-service-account: cnpg-backup@starlit-verve-424519-e5.iam.gserviceaccount.com # @<project_id>
+    monitoring:
+        enablePodMonitor: true
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+    name: postgres-cluster-scheduled-backup
+    namespace: argocd
+spec:
+    schedule: '* * * * *' # '0 0 * * *'
+    backupOwnerReference: self
+    cluster:
+        name: postgres-cluster
+    immediate: true
+    method: barmanObjectStore
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata:
+    name: postgres-cluster-backup
+    namespace: argocd
+spec:
+    cluster:
+        name: postgres-cluster
+    method: barmanObjectStore
