@@ -1,15 +1,3 @@
-resource "google_storage_bucket" "cnpg" {
-    name = "lot-pg-backups"
-    location = var.region
-    storage_class = "STANDARD"
-    project = var.project
-    force_destroy = true
-    uniform_bucket_level_access = true
-    versioning {
-        enabled = false
-    }
-}
-
 resource "google_service_account" "cnpg" {
    account_id   = "cnpg-backup"
 }
