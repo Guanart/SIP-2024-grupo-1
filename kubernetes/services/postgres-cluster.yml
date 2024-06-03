@@ -10,7 +10,10 @@ spec:
         size: 1Gi
     bootstrap:
         initdb:
-            database: LOT
+            # database: LOT
+            recovery:
+                backup:
+                    name: postgres-cluster-scheduled-backup
             owner: app
     enableSuperuserAccess: true
     backup:
@@ -31,7 +34,7 @@ metadata:
     name: postgres-cluster-scheduled-backup
     namespace: argocd
 spec:
-    schedule: '* * * * *' # '0 0 * * *'
+    schedule: '0 2 * * *' # Se ejecuta 2 AM todos los días
     backupOwnerReference: self
     cluster:
         name: postgres-cluster
