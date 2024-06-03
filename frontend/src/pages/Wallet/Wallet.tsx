@@ -15,7 +15,7 @@ import { useAccessToken } from '../../hooks';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import Typography from '@mui/material/Typography';
 import { Token_wallet, Wallet as WalletType } from '../../types';
-import { Transaction as TransactionType } from '../../types';
+import { Transaction as TransactionType, Player } from '../../types';
 import { useNavigate } from 'react-router-dom';
 import { TokensList } from '../../components/wallet/TokensList';
 import { Loader } from '../../components';
@@ -26,6 +26,7 @@ const PORT = import.meta.env.APP_BACKEND_PORT;
 
 export const Wallet = () => {
 	const [wallet, setWallet] = useState<WalletType | null>(null);
+	const [player, setPlayer] = useState<Player | null>(null);
 	const [transactions, setTransactions] = useState<TransactionType[] | null>(
 		null
 	);
@@ -46,6 +47,10 @@ export const Wallet = () => {
 				if (response.ok) {
 					const { user } = await response.json();
 
+					if (user.player) {
+						setPlayer(user.player);
+					}
+					
 					if (user.wallet) {
 						console.log(user.wallet);
 						setTokens(user.wallet.token_wallet);
@@ -95,10 +100,10 @@ export const Wallet = () => {
 				color='primary'
 				// El state es inseguro
 				onClick={() =>
-					(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=player-1&redirect_uri=${REDIRECT_URI}`)
+					(window.location.href = `https://auth.mercadopago.com.ar/authorization?client_id=${CLIENT_ID}&response_type=code&platform_id=mp&state=player-${player?.id}&redirect_uri=${REDIRECT_URI}`)
 				}
 			>
-				Autorizar ventas desde MercadoPago para Player 1
+				Autorizar ventas desde MercadoPago para Player
 			</Button>
 			{wallet && (
 				<Stack
