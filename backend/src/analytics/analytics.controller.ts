@@ -177,7 +177,7 @@ export class AnalyticsController {
 
       return JSON.stringify({
         description: 'Average token price',
-        data: price,
+        average: price,
       });
     } catch (exception) {
       if (

@@ -13,6 +13,7 @@ import {
 	Stack,
 	TextField,
 	Typography,
+	Container,
 } from '@mui/material';
 import { KeyboardBackspaceIcon } from '../../global/icons';
 import { Event } from '../../types';
@@ -21,7 +22,6 @@ import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Loader } from '../../components';
 import { User } from '../../types';
-import { Container } from '@mui/material';
 import { toast } from 'react-toastify';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
@@ -37,6 +37,7 @@ export const StartFundraising = () => {
 	const [prizePercentage, setPrizePercentage] = useState<number | string>('');
 	const [eventId, setEventId] = useState<number | string>('');
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [averageTokenPrice, setAverageTokenPrice] = useState<number>(0);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -63,6 +64,17 @@ export const StartFundraising = () => {
 						const { events } = await response.json();
 						setEvents(events);
 						setIsLoading(false);
+					}
+
+					response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `http://${HOST}:${PORT}/analytics/token/average`,
+					});
+
+					if (response.ok) {
+						const { average } = await response.json();
+						setAverageTokenPrice(average);
 					}
 				}
 			} catch (error) {
@@ -309,6 +321,18 @@ export const StartFundraising = () => {
 								}
 							}}
 						/>
+						{averageTokenPrice > 0 && (
+							<Typography sx={{ fontWeight: 'bold' }}>
+								Average token price:{' '}
+								<Typography
+									component='span'
+									color='secondary'
+									sx={{ fontWeight: 'bold' }}
+								>
+									U$D {averageTokenPrice}
+								</Typography>
+							</Typography>
+						)}
 						<Button
 							variant='contained'
 							color='secondary'

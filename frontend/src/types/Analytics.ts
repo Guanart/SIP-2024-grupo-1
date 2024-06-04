@@ -29,4 +29,5 @@ export type Analytics = {
 	activeFundraisings: number;
 	tokensSold: number;
 	successPublications: number;
+	averageTokenPrice: number;
 };

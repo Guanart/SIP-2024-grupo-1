@@ -44,8 +44,6 @@ export class AdminService {
       },
     ];
 
-    console.log(playersAnalytics);
-
     const { publications, activePublications, successPublications } =
       await this.analyticService.getAllPublications();
 
@@ -55,6 +53,9 @@ export class AdminService {
       inactiveFundraisings,
       tokensSold,
     } = await this.analyticService.getFundraisingsActive();
+
+    const averageTokenPrice =
+      await this.analyticService.getTokensAveragePrice();
 
     return {
       transactions,
@@ -66,6 +67,7 @@ export class AdminService {
       publications,
       activePublications,
       fundraisings,
+      averageTokenPrice,
       inactiveFundraisings,
       activeFundraisings,
       tokensSold,

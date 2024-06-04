@@ -427,6 +427,26 @@ export const Administration = () => {
 											</TableRow>
 										</TableBody>
 									</Table>
+									<Typography
+										sx={{
+											fontWeight: 'bold',
+											marginTop: '24px',
+										}}
+										variant='h6'
+									>
+										Average token price
+										<Typography
+											component='span'
+											color='secondary'
+											variant='h6'
+											sx={{
+												fontWeight: 'bold',
+												marginLeft: '8px',
+											}}
+										>
+											U$D {analytics.averageTokenPrice}
+										</Typography>
+									</Typography>
 								</TableContainer>
 								<Stack direction={{ xs: 'column', md: 'row' }}>
 									<Box
