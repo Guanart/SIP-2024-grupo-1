@@ -10,12 +10,7 @@ spec:
         size: 1Gi
     bootstrap:
         initdb:
-            # Inicializa la BDD a partir de un backup (restore)
-            recovery:
-                backup:
-                    name: postgres-cluster-backup
-            # Inicializa la BDD vacía
-            # database: LOT
+            database: LOT # Inicializa la BDD vacía
             owner: app
     enableSuperuserAccess: true
     backup:
