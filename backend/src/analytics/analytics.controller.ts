@@ -151,8 +151,12 @@ export class AnalyticsController {
 
       return JSON.stringify({
         description: 'Player with the most events won',
-        player: data.player,
-        data: `${data.wins} events`,
+        players: [data[0], data[1], data[2]],
+        data: [
+          `${data[0].wins} events`,
+          `${data[1].wins} events`,
+          `${data[2].wins} events`,
+        ],
       });
     } catch (exception) {
       if (

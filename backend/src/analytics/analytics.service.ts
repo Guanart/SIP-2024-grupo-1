@@ -41,25 +41,59 @@ export class AnalyticsService {
     });
 
     // Encontrar el player_id con más victorias
-    let maxPlayerId = null;
-    let maxCount = 0;
+    // let maxPlayerId = null;
+    // let maxCount = 0;
 
-    for (const [playerId, count] of Object.entries(playerCount)) {
-      if (count > maxCount) {
-        maxCount = count;
-        maxPlayerId = playerId;
-      }
-    }
+    // for (const [playerId, count] of Object.entries(playerCount)) {
+    //   if (count > maxCount) {
+    //     maxCount = count;
+    //     maxPlayerId = playerId;
+    //   }
+    // }
 
-    const player = await this.prisma.player.findUnique({
-      where: { id: Number(maxPlayerId) },
+    // const player = await this.prisma.player.findUnique({
+    //   where: { id: Number(maxPlayerId) },
+    //   include: { user: true },
+    // });
+
+    // Sort players by win count in descending order
+    // Convertir el objeto playerCount a un array de pares [playerId, count]
+    const playerCountArray = Object.entries(playerCount);
+
+    // Ordenar el array en orden descendente por el número de victorias
+    playerCountArray.sort((a, b) => b[1] - a[1]);
+
+    const topPlayers = playerCountArray.slice(0, 3);
+
+    const player1 = await this.prisma.player.findUnique({
+      where: { id: Number(topPlayers[0][0]) },
       include: { user: true },
     });
 
-    return {
-      player,
-      wins: maxCount,
-    };
+    const player2 = await this.prisma.player.findUnique({
+      where: { id: Number(topPlayers[1][0]) },
+      include: { user: true },
+    });
+
+    const player3 = await this.prisma.player.findUnique({
+      where: { id: Number(topPlayers[2][0]) },
+      include: { user: true },
+    });
+
+    return [
+      {
+        player: player1,
+        wins: playerCountArray[0][1],
+      },
+      {
+        player: player2,
+        wins: playerCountArray[1][1],
+      },
+      {
+        player: player3,
+        wins: playerCountArray[2][1],
+      },
+    ];
   }
 
   async getPlayerWithMoreTokensSold() {

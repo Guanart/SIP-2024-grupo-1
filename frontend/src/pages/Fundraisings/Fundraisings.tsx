@@ -14,7 +14,7 @@ import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
-import { Fundraising, PlayerAnalytic } from '../../types';
+import { Fundraising, PlayersAnalytics } from '../../types';
 import { Loader } from '../../components';
 import { Link } from 'react-router-dom';
 
@@ -24,7 +24,7 @@ const PORT = import.meta.env.APP_BACKEND_PORT;
 export const Fundraisings = () => {
 	const { accessToken, role } = useAccessToken();
 	const [fundraisings, setFundraisings] = useState<Fundraising[]>([]);
-	const [analytics, setAnalytics] = useState<PlayerAnalytic>();
+	const [analytics, setAnalytics] = useState<PlayersAnalytics>();
 	const [currentFundraisings, setCurrentFundraisings] = useState<
 		Fundraising[]
 	>([]);
@@ -57,6 +57,7 @@ export const Fundraisings = () => {
 				if (response.ok) {
 					const data = await response.json();
 					setAnalytics(data);
+					console.log(data);
 					setIsLoading(false);
 				}
 			} catch (error) {
@@ -97,63 +98,84 @@ export const Fundraisings = () => {
 			{isLoading && <Loader />}
 			{!isLoading && (
 				<>
-					<Box>
-						<Card
-							sx={{
-								display: 'flex',
-								marginTop: '8px',
-								marginBottom: '16px',
-							}}
+					{analytics && (
+						<Stack
+							sx={{ marginTop: '8px' }}
+							direction={{ xs: 'column', md: 'row' }}
+							spacing={2}
 						>
-							<CardMedia
-								component='img'
-								sx={{ width: 151 }}
-								image={analytics?.player.user.avatar}
-								alt={`${analytics?.player.user.username} avatar`}
-							/>
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-								}}
-							>
-								<CardContent sx={{ flex: '1 0 auto' }}>
-									<Typography
-										gutterBottom
-										variant='h5'
-										component='div'
-									>
-										{analytics?.description}
-									</Typography>
-									<Typography variant='h6' color='secondary'>
-										{analytics?.player.user.username}
-									</Typography>
-									<Typography>{analytics?.data}</Typography>
-								</CardContent>
-								<Box
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										pl: 1,
-										pb: 1,
-									}}
-								>
-									<Button
-										size='small'
-										color='secondary'
-										onClick={() => {
-											setFilter(
-												analytics?.player.user
-													.username ?? ''
-											);
+							{analytics.players.map(({ player }, index) => {
+								return (
+									<Card
+										key={player.id}
+										sx={{
+											display: 'flex',
+											marginTop: '8px',
+											marginBottom: '16px',
+											padding: '8px',
 										}}
 									>
-										Search his/her tokens
-									</Button>
-								</Box>
-							</Box>
-						</Card>
-					</Box>
+										<CardMedia
+											component='img'
+											sx={{ width: 151 }}
+											image={player.user.avatar}
+											alt={`${player.user.username} avatar`}
+										/>
+										<Box
+											sx={{
+												display: 'flex',
+												flexDirection: 'column',
+											}}
+										>
+											<CardContent
+												sx={{ flex: '1 0 auto' }}
+											>
+												<Typography
+													gutterBottom
+													variant='h5'
+													component='div'
+												>
+													Most winning players
+												</Typography>
+												<Typography
+													variant='h6'
+													color='secondary'
+												>
+													{player.user.username}
+												</Typography>
+												<Typography
+													sx={{ fontWeight: 'bold' }}
+												>
+													{analytics.data[index]}
+												</Typography>
+											</CardContent>
+											<Box
+												sx={{
+													display: 'flex',
+													alignItems: 'center',
+													pl: 1,
+													pb: 1,
+												}}
+											>
+												<Button
+													size='small'
+													color='secondary'
+													onClick={() => {
+														setFilter(
+															player.user
+																.username ?? ''
+														);
+													}}
+												>
+													Search his/her tokens
+												</Button>
+											</Box>
+										</Box>
+									</Card>
+								);
+							})}
+						</Stack>
+					)}
 					<Stack spacing={2} mt={4}>
 						<Stack
 							spacing={4}

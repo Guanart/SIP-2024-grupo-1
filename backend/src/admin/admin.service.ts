@@ -29,8 +29,8 @@ export class AdminService {
     const playersAnalytics = [
       {
         description: 'Player with the most events won',
-        player: playerWithMostWins.player,
-        data: `${playerWithMostWins.wins} events`,
+        player: playerWithMostWins[0].player,
+        data: `${playerWithMostWins[0].wins} events`,
       },
       {
         description: 'Player who sold the most tokens',

@@ -34,7 +34,18 @@ export class SeedController {
           email: 'juanperez@lot.com',
           auth0_id: 'auth0|66436a7b4d1c357206d6c3c4',
           username: 'Juan Perez',
-          avatar: 'https://pbs.twimg.com/media/FjU2lkcWYAgNG6d.jpg',
+          avatar:
+            'https://fgcu360.com/wp-content/uploads/sites/1/2022/05/Esports-Zevari-Norman-552x394-1.jpg',
+        },
+      });
+
+      const user4 = await this.prisma.user.create({
+        data: {
+          email: 'marianorapa@lot.com',
+          auth0_id: 'auth0|665f4486abc968d72e004c04',
+          username: 'Mariano Rapa',
+          avatar:
+            'https://i.blogs.es/juegos/6683/dota_2/fotos/noticias/dota_2-5313356.jpg',
         },
       });
 
@@ -53,6 +64,12 @@ export class SeedController {
       const wallet3 = await this.prisma.wallet.create({
         data: {
           user_id: user3.id,
+        },
+      });
+
+      await this.prisma.wallet.create({
+        data: {
+          user_id: user4.id,
         },
       });
 
@@ -138,6 +155,30 @@ export class SeedController {
         },
       });
 
+      const player2 = await this.prisma.player.create({
+        data: {
+          user_id: user3.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: rank1.id,
+          game_id: game.id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player3 = await this.prisma.player.create({
+        data: {
+          user_id: user4.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: rank1.id,
+          game_id: game.id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
       const event = await this.prisma.event.create({
         data: {
           start_date: new Date(),
@@ -168,6 +209,73 @@ export class SeedController {
           prize: 2000000,
           name: 'SuperEvent',
           game_id: game.id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent2 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Magic V',
+          game_id: game.id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent3 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Superleague X',
+          game_id: game.id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent4 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Gameland',
+          game_id: game.id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent5 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Rapid',
+          game_id: game.id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent6 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Energy',
+          game_id: game.id,
+          checked: true,
+          active: false,
         },
       });
 
@@ -175,6 +283,46 @@ export class SeedController {
         data: {
           event_id: oldEvent.id,
           player_id: player.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent3.id,
+          player_id: player.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent4.id,
+          player_id: player.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent2.id,
+          player_id: player2.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent5.id,
+          player_id: player2.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent6.id,
+          player_id: player3.id,
           position: 1,
         },
       });

@@ -6,6 +6,15 @@ export type PlayerAnalytic = {
 	data: string;
 };
 
+export type PlayersAnalytics = {
+	description: string;
+	players: {
+		player: Player;
+		wins: number;
+	}[];
+	data: string[];
+};
+
 export type Analytics = {
 	transactions: number;
 	sellTransactions: number;
