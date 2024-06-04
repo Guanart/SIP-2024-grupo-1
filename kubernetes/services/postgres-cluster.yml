@@ -13,7 +13,7 @@ spec:
             # Inicializa la BDD a partir de un backup (restore)
             recovery:
                 backup:
-                    name: postgres-cluster-scheduled-backup
+                    name: postgres-cluster-backup
             # Inicializa la BDD vacía
             # database: LOT
             owner: app
