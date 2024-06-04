@@ -85,7 +85,7 @@ export const Fundraising = () => {
 			let walletId;
 			if (response.ok) {
 				const { user } = await response.json();
-				walletId = user.wallet.id
+				walletId = user.wallet.id;
 				console.log('WalletID', user.wallet.id);
 			}
 

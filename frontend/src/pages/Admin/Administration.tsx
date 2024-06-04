@@ -1,4 +1,15 @@
-import { Button, Box, Stack, Typography } from '@mui/material';
+import {
+	Button,
+	Box,
+	Stack,
+	Typography,
+	TableContainer,
+	Table,
+	TableHead,
+	TableRow,
+	TableCell,
+	TableBody,
+} from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -7,24 +18,10 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks/useAccessToken';
 import { PieChart, BarChart } from '@mui/x-charts';
 import { Loader } from '../../components';
+import { Analytics, PlayerAnalytic } from '../../types';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
-
-type Analytics = {
-	transactions: number;
-	sellTransactions: number;
-	buyTransactions: number;
-	players: number;
-	users: number;
-	publications: number;
-	activePublications: number;
-	fundraisings: number;
-	inactiveFundraisings: number;
-	activeFundraisings: number;
-	tokensSold: number;
-	successPublications: number;
-};
 
 export const Administration = () => {
 	const { isAuthenticated, user } = useAuth0();
@@ -99,132 +96,100 @@ export const Administration = () => {
 			{isLoading && <Loader />}
 			{!isLoading && analytics && (
 				<Stack
-					direction={{ xs: 'column', md: 'row' }}
+					direction={{ xs: 'column' }}
 					sx={{
 						marginTop: '32px',
 						display: 'flex',
-						flexWrap: 'wrap',
 						gap: '62px',
 					}}
 				>
-					<Box sx={{ maxWidth: '800px' }}>
+					<Box sx={{ maxWidth: '1200px' }}>
 						<Typography variant='h5' color='secondary'>
-							Users
+							Transactions
 						</Typography>
-						<Box sx={{ maxWidth: '800px' }}>
-							<Stack direction={{ xs: 'column', md: 'row' }}>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										marginTop: '8px',
-									}}
-								>
-									<Typography
-										variant='h6'
-										sx={{
-											fontWeight: 'bold',
-										}}
-									>
-										{analytics.users} registered users
-									</Typography>
-									<Typography
-										variant='h6'
-										sx={{ fontWeight: 'bold' }}
-										color='secondary'
-									>
-										{analytics.players} verified players
-									</Typography>
-								</Box>
-								<BarChart
-									xAxis={[
-										{
-											scaleType: 'band',
-											data: ['Users', 'Players'],
-										},
-									]}
-									series={[
-										{
-											data: [
-												analytics.users,
-												analytics.players,
-											],
-										},
-									]}
-									width={500}
-									height={300}
-								/>
-							</Stack>
+						<Box>
+							<Typography variant='h6' color='error'>
+								Agregar acá filtro de fechas
+							</Typography>
 						</Box>
-					</Box>
-					<Box sx={{ maxWidth: '800px' }}>
-						<Typography
-							variant='h5'
-							color='secondary'
-							sx={{ marginTop: '32px' }}
+						<Stack
+							direction={{ xs: 'column', md: 'row' }}
+							spacing={6}
 						>
-							Fundraisings
-						</Typography>
-						<Stack direction={{ xs: 'column', md: 'row' }}>
-							<Box
+							<TableContainer
 								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									marginTop: '8px',
+									paddingTop: '16px',
+									maxWidth: '500px',
 								}}
 							>
-								<Typography
-									sx={{ fontWeight: 'bold' }}
-									variant='h6'
-								>
-									{analytics.fundraisings} fundraisings
-								</Typography>
-								<Typography
-									sx={{ fontWeight: 'bold' }}
-									variant='h6'
-								>
-									{analytics.activeFundraisings} active
-									fundraisings
-								</Typography>
-								<Typography
-									color='secondary'
-									sx={{ fontWeight: 'bold' }}
-								>
-									{analytics.tokensSold} tokens sold
-								</Typography>
-							</Box>
-							<PieChart
-								series={[
-									{
-										data: [
-											{
-												id: 0,
-												value: analytics.inactiveFundraisings,
-												label: 'Completed fundraisings',
-											},
-											{
-												id: 1,
-												value: analytics.activeFundraisings,
-												label: 'Active fundraisings',
-											},
-										],
-									},
-								]}
-								width={600}
-								height={200}
-							/>
-						</Stack>
-					</Box>
-
-					<Box sx={{ maxWidth: '800px' }}>
-						<Typography
-							variant='h5'
-							color='secondary'
-							sx={{ marginTop: '32px' }}
-						>
-							Platform transactions
-						</Typography>
-						<Stack direction={{ xs: 'column', md: 'row' }}>
+								<Table aria-label='a dense table' size='small'>
+									<TableHead>
+										<TableRow>
+											<TableCell align='center'>
+												Total
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{ maxWidth: '80px' }}
+											>
+												BUY
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{ maxWidth: '80px' }}
+											>
+												SELL
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{ maxWidth: '80px' }}
+											>
+												Earnings
+											</TableCell>
+										</TableRow>
+									</TableHead>
+									<TableBody>
+										<TableRow
+											sx={{
+												'&:last-child td, &:last-child th':
+													{ border: 0 },
+											}}
+										>
+											<TableCell
+												align='center'
+												component='th'
+												scope='row'
+											>
+												1000
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													fontWeight: 'bold',
+												}}
+											>
+												500
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													fontWeight: 'bold',
+												}}
+											>
+												500
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													fontWeight: 'bold',
+												}}
+											>
+												U$D 100.000
+											</TableCell>
+										</TableRow>
+									</TableBody>
+								</Table>
+							</TableContainer>
 							<Box
 								sx={{
 									display: 'flex',
@@ -246,83 +211,385 @@ export const Administration = () => {
 									{analytics.sellTransactions} sell
 									transactions
 								</Typography>
+								<PieChart
+									series={[
+										{
+											data: [
+												{
+													id: 0,
+													value: analytics.buyTransactions,
+													label: 'Buy transactions',
+												},
+												{
+													id: 1,
+													value: analytics.sellTransactions,
+													label: 'Sell transactions',
+												},
+											],
+										},
+									]}
+									width={500}
+									height={200}
+								/>
 							</Box>
-							<PieChart
-								series={[
-									{
-										data: [
-											{
-												id: 0,
-												value: analytics.buyTransactions,
-												label: 'Buy transactions',
-											},
-											{
-												id: 1,
-												value: analytics.sellTransactions,
-												label: 'Sell transactions',
-											},
-										],
-									},
-								]}
-								width={500}
-								height={200}
-							/>
 						</Stack>
 					</Box>
-
-					<Box sx={{ maxWidth: '800px' }}>
-						<Typography
-							variant='h5'
-							color='secondary'
-							sx={{ marginTop: '32px' }}
-						>
-							Marketplace
-						</Typography>
-						<Stack direction={{ xs: 'column', md: 'row' }}>
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									marginTop: '8px',
-								}}
+					<Box sx={{ maxWidth: '1200px' }}>
+						<Box>
+							<Typography variant='h5' color='secondary'>
+								Players
+							</Typography>
+							<Stack
+								direction={{ xs: 'column', md: 'row' }}
+								spacing={6}
 							>
-								<Typography
-									sx={{ fontWeight: 'bold' }}
-									color='secondary'
-									variant='h6'
+								<TableContainer
+									sx={{
+										paddingTop: '16px',
+										maxWidth: '500px',
+									}}
 								>
-									{analytics.publications} publications
-								</Typography>
-								<Typography sx={{ fontWeight: 'bold' }}>
-									{analytics.activePublications} active
-									publications
-								</Typography>
-								<Typography sx={{ fontWeight: 'bold' }}>
-									{analytics.successPublications} completed
-									publications
-								</Typography>
-							</Box>
-							<PieChart
-								series={[
-									{
-										data: [
+									<Table
+										aria-label='a dense table'
+										size='small'
+									>
+										<TableHead>
+											<TableRow>
+												<TableCell align='center'>
+													Description
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Player
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Data
+												</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											{analytics.playersAnalytics.map(
+												(analytic: PlayerAnalytic) => {
+													return (
+														<TableRow
+															sx={{
+																'&:last-child td, &:last-child th':
+																	{
+																		border: 0,
+																	},
+															}}
+														>
+															<TableCell
+																align='center'
+																component='th'
+																scope='row'
+															>
+																{
+																	analytic.description
+																}
+															</TableCell>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{
+																	analytic
+																		.player
+																		.user
+																		.username
+																}
+															</TableCell>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{analytic.data}
+															</TableCell>
+														</TableRow>
+													);
+												}
+											)}
+										</TableBody>
+									</Table>
+								</TableContainer>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										marginTop: '8px',
+									}}
+								>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 'bold',
+											marginLeft: '16px',
+										}}
+									>
+										{analytics.users} registered users
+									</Typography>
+									<Typography
+										variant='h6'
+										sx={{
+											fontWeight: 'bold',
+											marginLeft: '16px',
+										}}
+										color='secondary'
+									>
+										{analytics.players} verified players
+									</Typography>
+									<BarChart
+										xAxis={[
 											{
-												id: 0,
-												value: analytics.successPublications,
-												label: 'Tokens sold',
+												scaleType: 'band',
+												data: ['Users', 'Players'],
 											},
+										]}
+										series={[
 											{
-												id: 1,
-												value: analytics.activePublications,
-												label: 'Active publications',
+												data: [
+													analytics.users,
+													analytics.players,
+												],
 											},
-										],
-									},
-								]}
-								width={500}
-								height={200}
-							/>
-						</Stack>
+										]}
+										width={500}
+										height={300}
+									/>
+								</Box>
+							</Stack>
+						</Box>
+					</Box>
+					<Box sx={{ maxWidth: '1200px' }}>
+						<Box>
+							<Typography variant='h5' color='secondary'>
+								Fundraisings
+							</Typography>
+							<Stack
+								direction={{ xs: 'column', md: 'row' }}
+								spacing={6}
+							>
+								<TableContainer
+									sx={{
+										paddingTop: '16px',
+										maxWidth: '500px',
+									}}
+								>
+									<Table
+										aria-label='a dense table'
+										size='small'
+									>
+										<TableHead>
+											<TableRow>
+												<TableCell align='center'>
+													Description
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Player
+												</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow
+												sx={{
+													'&:last-child td, &:last-child th':
+														{ border: 0 },
+												}}
+											>
+												<TableCell
+													align='center'
+													component='th'
+													scope='row'
+												>
+													Player with the most events
+													won
+												</TableCell>
+
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													Jugador 1
+												</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
+								<Stack direction={{ xs: 'column', md: 'row' }}>
+									<Box
+										sx={{
+											display: 'flex',
+											flexDirection: 'column',
+											marginTop: '8px',
+										}}
+									>
+										<Typography
+											sx={{ fontWeight: 'bold' }}
+											variant='h6'
+										>
+											{analytics.fundraisings}{' '}
+											fundraisings
+										</Typography>
+										<Typography
+											sx={{ fontWeight: 'bold' }}
+											variant='h6'
+										>
+											{analytics.activeFundraisings}{' '}
+											active fundraisings
+										</Typography>
+										<Typography
+											color='secondary'
+											sx={{ fontWeight: 'bold' }}
+										>
+											{analytics.tokensSold} tokens sold
+										</Typography>
+										<PieChart
+											series={[
+												{
+													data: [
+														{
+															id: 0,
+															value: analytics.inactiveFundraisings,
+															label: 'Completed fundraisings',
+														},
+														{
+															id: 1,
+															value: analytics.activeFundraisings,
+															label: 'Active fundraisings',
+														},
+													],
+												},
+											]}
+											width={600}
+											height={200}
+										/>
+									</Box>
+								</Stack>
+							</Stack>
+						</Box>
+					</Box>
+
+					<Box sx={{ maxWidth: '1200px' }}>
+						<Box>
+							<Typography variant='h5' color='secondary'>
+								Marketplace
+							</Typography>
+							<Stack
+								direction={{ xs: 'column', md: 'row' }}
+								spacing={6}
+							>
+								<TableContainer
+									sx={{
+										paddingTop: '16px',
+										maxWidth: '500px',
+									}}
+								>
+									<Table
+										aria-label='a dense table'
+										size='small'
+									>
+										<TableHead>
+											<TableRow>
+												<TableCell align='center'>
+													Description
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Player
+												</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow
+												sx={{
+													'&:last-child td, &:last-child th':
+														{ border: 0 },
+												}}
+											>
+												<TableCell
+													align='center'
+													component='th'
+													scope='row'
+												>
+													Player with the most events
+													won
+												</TableCell>
+
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													Jugador 1
+												</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										marginTop: '8px',
+									}}
+								>
+									<Typography
+										sx={{ fontWeight: 'bold' }}
+										color='secondary'
+										variant='h6'
+									>
+										{analytics.publications} publications
+									</Typography>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										{analytics.activePublications} active
+										publications
+									</Typography>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										{analytics.successPublications}{' '}
+										completed publications
+									</Typography>
+									<PieChart
+										series={[
+											{
+												data: [
+													{
+														id: 0,
+														value: analytics.successPublications,
+														label: 'Tokens sold',
+													},
+													{
+														id: 1,
+														value: analytics.activePublications,
+														label: 'Active publications',
+													},
+												],
+											},
+										]}
+										width={500}
+										height={200}
+									/>
+								</Box>
+							</Stack>
+						</Box>
 					</Box>
 				</Stack>
 			)}

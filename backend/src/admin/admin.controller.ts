@@ -28,6 +28,7 @@ export class AdminController {
         data,
       });
     } catch (exception) {
+      console.log(exception);
       if (
         exception instanceof NotFoundException ||
         exception instanceof BadRequestException

@@ -160,6 +160,25 @@ export class SeedController {
         },
       });
 
+      const oldEvent = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'SuperEvent',
+          game_id: game.id,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: oldEvent.id,
+          player_id: player.id,
+          position: 1,
+        },
+      });
+
       const fundraising = await this.prisma.fundraising.create({
         data: {
           goal_amount: 25000,

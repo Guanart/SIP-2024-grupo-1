@@ -17,6 +17,35 @@ export class AdminService {
 
     const { players, users } = await this.analyticService.getRegisteredUsers();
 
+    const playerWithMostWins =
+      await this.analyticService.getPlayerWithMoreWins();
+
+    const playerWithMostTokensSold =
+      await this.analyticService.getPlayerWithMoreTokensSold();
+
+    const playerWithMostMoneyCollected =
+      await this.analyticService.getPlayerWithMoreMoneyCollected();
+
+    const playersAnalytics = [
+      {
+        description: 'Player with the most events won',
+        player: playerWithMostWins.player,
+        data: `${playerWithMostWins.wins} events`,
+      },
+      {
+        description: 'Player who sold the most tokens',
+        player: playerWithMostTokensSold.player,
+        data: `${playerWithMostTokensSold.tokens} tokens`,
+      },
+      {
+        description: 'Player who collected the most money',
+        player: playerWithMostMoneyCollected.player,
+        data: `U$D ${playerWithMostMoneyCollected.amount}`,
+      },
+    ];
+
+    console.log(playersAnalytics);
+
     const { publications, activePublications, successPublications } =
       await this.analyticService.getAllPublications();
 
@@ -32,6 +61,7 @@ export class AdminService {
       sellTransactions,
       buyTransactions,
       players,
+      playersAnalytics,
       users,
       publications,
       activePublications,

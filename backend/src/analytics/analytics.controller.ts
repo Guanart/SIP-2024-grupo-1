@@ -143,4 +143,26 @@ export class AnalyticsController {
       }
     }
   }
+
+  @Get('/player/wins')
+  async getPlayerWithMoreWins(): Promise<string> {
+    try {
+      const data = await this.analyticsService.getPlayerWithMoreWins();
+
+      return JSON.stringify({
+        description: 'Player with the most events won',
+        player: data.player,
+        data: `${data.wins} events`,
+      });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
 }
