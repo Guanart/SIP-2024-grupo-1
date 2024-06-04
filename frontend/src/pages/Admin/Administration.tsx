@@ -119,7 +119,7 @@ export const Administration = () => {
 							<TableContainer
 								sx={{
 									paddingTop: '16px',
-									maxWidth: '500px',
+									maxWidth: '600px',
 								}}
 							>
 								<Table aria-label='a dense table' size='small'>
@@ -204,33 +204,14 @@ export const Administration = () => {
 								>
 									{analytics.transactions} transactions
 								</Typography>
-								<Typography sx={{ fontWeight: 'bold' }}>
-									{analytics.buyTransactions} buy transactions
+								<Typography
+									sx={{ fontWeight: 'bold' }}
+									color='error'
+									variant='h6'
+								>
+									Acá mostrar un gráfico adecuado a los datos
+									de transacciones
 								</Typography>
-								<Typography sx={{ fontWeight: 'bold' }}>
-									{analytics.sellTransactions} sell
-									transactions
-								</Typography>
-								<PieChart
-									series={[
-										{
-											data: [
-												{
-													id: 0,
-													value: analytics.buyTransactions,
-													label: 'Buy transactions',
-												},
-												{
-													id: 1,
-													value: analytics.sellTransactions,
-													label: 'Sell transactions',
-												},
-											],
-										},
-									]}
-									width={500}
-									height={200}
-								/>
 							</Box>
 						</Stack>
 					</Box>
@@ -246,7 +227,7 @@ export const Administration = () => {
 								<TableContainer
 									sx={{
 										paddingTop: '16px',
-										maxWidth: '500px',
+										maxWidth: '600px',
 									}}
 								>
 									<Table
@@ -383,7 +364,7 @@ export const Administration = () => {
 								<TableContainer
 									sx={{
 										paddingTop: '16px',
-										maxWidth: '500px',
+										maxWidth: '600px',
 									}}
 								>
 									<Table
@@ -393,13 +374,19 @@ export const Administration = () => {
 										<TableHead>
 											<TableRow>
 												<TableCell align='center'>
-													Description
+													Total
 												</TableCell>
 												<TableCell
 													align='center'
 													sx={{ maxWidth: '80px' }}
 												>
-													Player
+													Active
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Tokens sold
 												</TableCell>
 											</TableRow>
 										</TableHead>
@@ -415,8 +402,7 @@ export const Administration = () => {
 													component='th'
 													scope='row'
 												>
-													Player with the most events
-													won
+													{analytics.fundraisings}
 												</TableCell>
 
 												<TableCell
@@ -425,7 +411,18 @@ export const Administration = () => {
 														fontWeight: 'bold',
 													}}
 												>
-													Jugador 1
+													{
+														analytics.activeFundraisings
+													}
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													{analytics.tokensSold}{' '}
+													tokens
 												</TableCell>
 											</TableRow>
 										</TableBody>
@@ -497,7 +494,7 @@ export const Administration = () => {
 								<TableContainer
 									sx={{
 										paddingTop: '16px',
-										maxWidth: '500px',
+										maxWidth: '600px',
 									}}
 								>
 									<Table
@@ -507,13 +504,19 @@ export const Administration = () => {
 										<TableHead>
 											<TableRow>
 												<TableCell align='center'>
-													Description
+													Publications
 												</TableCell>
 												<TableCell
 													align='center'
 													sx={{ maxWidth: '80px' }}
 												>
-													Player
+													Active publications
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Completed publications
 												</TableCell>
 											</TableRow>
 										</TableHead>
@@ -529,8 +532,7 @@ export const Administration = () => {
 													component='th'
 													scope='row'
 												>
-													Player with the most events
-													won
+													{analytics.publications}
 												</TableCell>
 
 												<TableCell
@@ -539,7 +541,19 @@ export const Administration = () => {
 														fontWeight: 'bold',
 													}}
 												>
-													Jugador 1
+													{
+														analytics.activePublications
+													}
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													{
+														analytics.successPublications
+													}
 												</TableCell>
 											</TableRow>
 										</TableBody>
@@ -588,6 +602,89 @@ export const Administration = () => {
 										height={200}
 									/>
 								</Box>
+							</Stack>
+						</Box>
+					</Box>
+
+					<Box sx={{ maxWidth: '1200px' }}>
+						<Box>
+							<Typography variant='h5' color='secondary'>
+								Games
+							</Typography>
+							<Stack
+								direction={{ xs: 'column', md: 'row' }}
+								spacing={6}
+							>
+								<TableContainer
+									sx={{
+										paddingTop: '16px',
+										maxWidth: '600px',
+									}}
+								>
+									<Typography variant='h6'>
+										Game whose events raised the most money
+									</Typography>
+									<Table
+										aria-label='a dense table'
+										size='small'
+									>
+										<TableHead>
+											<TableRow>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													#
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Game
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Amount
+												</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow
+												sx={{
+													'&:last-child td, &:last-child th':
+														{ border: 0 },
+												}}
+											>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													1
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													League of Legends
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													U$D 1.000.000
+												</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
 							</Stack>
 						</Box>
 					</Box>
