@@ -285,4 +285,18 @@ export class AnalyticsService {
 
     return countFundraisings;
   }
+
+  async getTokensAveragePrice() {
+    const collections = await this.prisma.collection.findMany({ where: {} });
+
+    let price = 0;
+
+    collections.forEach((collection) => {
+      price += collection.current_price;
+    });
+
+    const average = price / collections.length;
+
+    return average;
+  }
 }

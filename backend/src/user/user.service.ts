@@ -31,7 +31,7 @@ export class UserService {
       },
       include: {
         player: {
-          include: { game: true },
+          include: { game: true, rank: true },
         },
         wallet: {
           include: {

@@ -169,4 +169,25 @@ export class AnalyticsController {
       }
     }
   }
+
+  @Get('/token/average')
+  async getTokensAveragePrice(): Promise<string> {
+    try {
+      const price = await this.analyticsService.getTokensAveragePrice();
+
+      return JSON.stringify({
+        description: 'Average token price',
+        data: price,
+      });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
 }

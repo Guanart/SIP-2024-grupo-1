@@ -27,6 +27,7 @@ export class EventService {
     return await this.prisma.event.findMany({
       where: {
         game_id,
+        active: true,
       },
     });
   }
