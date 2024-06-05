@@ -9,6 +9,9 @@ import {
 	TableRow,
 	TableCell,
 	TableBody,
+	Slider,
+	Divider,
+	InputLabel,
 } from '@mui/material';
 import { PageLayout } from '../../layouts/PageLayout';
 import { Link, useNavigate } from 'react-router-dom';
@@ -29,11 +32,14 @@ export const Administration = () => {
 	const navigate = useNavigate();
 	const [analytics, setAnalytics] = useState<Analytics>();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [fundraisingsCount, setFunraisingsCount] = useState<number>(0);
+	const [minPercentageLimit, setMinPercentageLimit] = useState<number>(0);
+	const [maxPercentageLimit, setMaxPercentageLimit] = useState<number>(100);
 
 	useEffect(() => {
 		async function getAnalytics() {
 			try {
-				const response = await fetchWithAuth({
+				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
 					url: `http://${HOST}:${PORT}/admin`,
@@ -44,6 +50,17 @@ export const Administration = () => {
 
 					if (data) {
 						setAnalytics(data);
+					}
+
+					response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `http://${HOST}:${PORT}/analytics/fundraisings/percentage/${minPercentageLimit}/${maxPercentageLimit}`,
+					});
+
+					if (response.ok) {
+						const { count } = await response.json();
+						setFunraisingsCount(count);
 						setIsLoading(false);
 					}
 				}
@@ -56,7 +73,14 @@ export const Administration = () => {
 		if (!accessToken) return;
 
 		getAnalytics();
-	}, [accessToken, isAuthenticated, user, navigate]);
+	}, [
+		accessToken,
+		isAuthenticated,
+		user,
+		navigate,
+		maxPercentageLimit,
+		minPercentageLimit,
+	]);
 
 	return (
 		<PageLayout title='Administration panel'>
@@ -120,6 +144,7 @@ export const Administration = () => {
 								sx={{
 									paddingTop: '16px',
 									maxWidth: '600px',
+									minWidth: '400px',
 								}}
 							>
 								<Table aria-label='a dense table' size='small'>
@@ -215,6 +240,7 @@ export const Administration = () => {
 							</Box>
 						</Stack>
 					</Box>
+					<Divider />
 					<Box sx={{ maxWidth: '1200px' }}>
 						<Box>
 							<Typography variant='h5' color='secondary'>
@@ -228,6 +254,7 @@ export const Administration = () => {
 									sx={{
 										paddingTop: '16px',
 										maxWidth: '600px',
+										minWidth: '400px',
 									}}
 								>
 									<Table
@@ -264,6 +291,9 @@ export const Administration = () => {
 																		border: 0,
 																	},
 															}}
+															key={
+																analytic.description
+															}
 														>
 															<TableCell
 																align='center'
@@ -352,6 +382,7 @@ export const Administration = () => {
 							</Stack>
 						</Box>
 					</Box>
+					<Divider />
 					<Box sx={{ maxWidth: '1200px' }}>
 						<Box>
 							<Typography variant='h5' color='secondary'>
@@ -365,6 +396,7 @@ export const Administration = () => {
 									sx={{
 										paddingTop: '16px',
 										maxWidth: '600px',
+										minWidth: '400px',
 									}}
 								>
 									<Table
@@ -447,6 +479,104 @@ export const Administration = () => {
 											U$D {analytics.averageTokenPrice}
 										</Typography>
 									</Typography>
+									<Box>
+										<Stack
+											direction={{
+												xs: 'column',
+												md: 'row',
+											}}
+											spacing={{ xs: 2, md: 4 }}
+											sx={{
+												minWidth: '200px',
+												maxWidth: '200px',
+												marginLeft: '8px',
+												marginTop: '24px',
+											}}
+										>
+											<Box>
+												<InputLabel id='player-info'>
+													Min. % of the goal amount
+												</InputLabel>
+												<Slider
+													onChange={(_, value) => {
+														if (
+															(value as number) <
+															maxPercentageLimit
+														) {
+															setMinPercentageLimit(
+																value as number
+															);
+														}
+													}}
+													value={minPercentageLimit}
+													defaultValue={0.0}
+													aria-label='Small'
+													size='small'
+													valueLabelDisplay='auto'
+													step={10}
+													max={90}
+													min={0}
+												/>
+											</Box>
+											<Box>
+												<InputLabel id='player-info'>
+													Max. % of the goal amount
+												</InputLabel>
+												<Slider
+													onChange={(_, value) => {
+														if (
+															(value as number) >
+															minPercentageLimit
+														) {
+															setMaxPercentageLimit(
+																value as number
+															);
+														}
+													}}
+													value={maxPercentageLimit}
+													defaultValue={100}
+													aria-label='Small'
+													size='small'
+													valueLabelDisplay='auto'
+													step={10}
+													min={10}
+													max={100}
+												/>
+											</Box>
+										</Stack>
+										<Typography
+											sx={{
+												fontWeight: 'bold',
+												fontSize: '18px',
+											}}
+										>
+											Reach between {minPercentageLimit}%
+											and {maxPercentageLimit}% of the
+											goal amount
+										</Typography>
+										<Typography
+											color='secondary'
+											variant='h6'
+											sx={{
+												fontWeight: 'bold',
+											}}
+										>
+											{(fundraisingsCount /
+												analytics.fundraisings) *
+												100}{' '}
+											% of total =
+											<Typography
+												variant='h6'
+												component='span'
+												sx={{
+													fontWeight: 'bold',
+													marginLeft: '8px',
+												}}
+											>
+												{fundraisingsCount} fundraisings{' '}
+											</Typography>
+										</Typography>
+									</Box>
 								</TableContainer>
 								<Stack direction={{ xs: 'column', md: 'row' }}>
 									<Box
@@ -483,7 +613,7 @@ export const Administration = () => {
 														{
 															id: 0,
 															value: analytics.inactiveFundraisings,
-															label: 'Completed fundraisings',
+															label: 'Previous fundraisings',
 														},
 														{
 															id: 1,
@@ -501,7 +631,7 @@ export const Administration = () => {
 							</Stack>
 						</Box>
 					</Box>
-
+					<Divider />
 					<Box sx={{ maxWidth: '1200px' }}>
 						<Box>
 							<Typography variant='h5' color='secondary'>
@@ -515,6 +645,7 @@ export const Administration = () => {
 									sx={{
 										paddingTop: '16px',
 										maxWidth: '600px',
+										minWidth: '400px',
 									}}
 								>
 									<Typography variant='h6'>
@@ -584,128 +715,68 @@ export const Administration = () => {
 							</Stack>
 						</Box>
 					</Box>
-
+					<Divider />
 					<Box sx={{ maxWidth: '1200px' }}>
 						<Box>
 							<Typography variant='h5' color='secondary'>
 								Marketplace
 							</Typography>
-							<Stack
-								direction={{ xs: 'column', md: 'row' }}
-								spacing={6}
+							<TableContainer
+								sx={{
+									paddingTop: '16px',
+									maxWidth: '600px',
+									minWidth: '400px',
+								}}
 							>
-								<TableContainer
-									sx={{
-										paddingTop: '16px',
-										maxWidth: '600px',
-									}}
-								>
-									<Table
-										aria-label='a dense table'
-										size='small'
-									>
-										<TableHead>
-											<TableRow>
-												<TableCell align='center'>
-													Publications
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{ maxWidth: '80px' }}
-												>
-													Active publications
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{ maxWidth: '80px' }}
-												>
-													Completed publications
-												</TableCell>
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											<TableRow
+								<Table aria-label='a dense table' size='small'>
+									<TableHead>
+										<TableRow>
+											<TableCell align='center'>
+												Publications
+											</TableCell>
+											<TableCell align='center'>
+												Active publications
+											</TableCell>
+											<TableCell align='center'>
+												Completed publications
+											</TableCell>
+										</TableRow>
+									</TableHead>
+									<TableBody>
+										<TableRow
+											sx={{
+												'&:last-child td, &:last-child th':
+													{ border: 0 },
+											}}
+										>
+											<TableCell
+												align='center'
+												component='th'
+												scope='row'
+											>
+												{analytics.publications}
+											</TableCell>
+
+											<TableCell
+												align='center'
 												sx={{
-													'&:last-child td, &:last-child th':
-														{ border: 0 },
+													fontWeight: 'bold',
 												}}
 											>
-												<TableCell
-													align='center'
-													component='th'
-													scope='row'
-												>
-													{analytics.publications}
-												</TableCell>
-
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													{
-														analytics.activePublications
-													}
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													{
-														analytics.successPublications
-													}
-												</TableCell>
-											</TableRow>
-										</TableBody>
-									</Table>
-								</TableContainer>
-								<Box
-									sx={{
-										display: 'flex',
-										flexDirection: 'column',
-										marginTop: '8px',
-									}}
-								>
-									<Typography
-										sx={{ fontWeight: 'bold' }}
-										color='secondary'
-										variant='h6'
-									>
-										{analytics.publications} publications
-									</Typography>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										{analytics.activePublications} active
-										publications
-									</Typography>
-									<Typography sx={{ fontWeight: 'bold' }}>
-										{analytics.successPublications}{' '}
-										completed publications
-									</Typography>
-									<PieChart
-										series={[
-											{
-												data: [
-													{
-														id: 0,
-														value: analytics.successPublications,
-														label: 'Tokens sold',
-													},
-													{
-														id: 1,
-														value: analytics.activePublications,
-														label: 'Active publications',
-													},
-												],
-											},
-										]}
-										width={500}
-										height={200}
-									/>
-								</Box>
-							</Stack>
+												{analytics.activePublications}
+											</TableCell>
+											<TableCell
+												align='center'
+												sx={{
+													fontWeight: 'bold',
+												}}
+											>
+												{analytics.successPublications}
+											</TableCell>
+										</TableRow>
+									</TableBody>
+								</Table>
+							</TableContainer>
 						</Box>
 					</Box>
 				</Stack>

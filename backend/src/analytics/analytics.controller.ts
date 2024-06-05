@@ -210,4 +210,29 @@ export class AnalyticsController {
       }
     }
   }
+
+  @Get('/fundraisings/percentage/:min_limit/:max_limit')
+  async getFundraisingsByAmountCollected(
+    @Param('min_limit') min_limit: number,
+    @Param('max_limit') max_limit: number,
+  ): Promise<string> {
+    try {
+      const fundraisingsCount =
+        await this.analyticsService.getFundraisingsByAmountCollected(
+          min_limit,
+          max_limit,
+        );
+
+      return JSON.stringify({ count: fundraisingsCount });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
 }

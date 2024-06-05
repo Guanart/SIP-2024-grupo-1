@@ -328,4 +328,39 @@ export class AnalyticsService {
       return [];
     }
   }
+
+  async getUnsuccessfullFundraisings() {
+    const fundraisings = await this.prisma.fundraising.findMany({
+      where: {},
+    });
+
+    let count = 0;
+    const limit = 0.3;
+
+    fundraisings.forEach((fundraisings) => {
+      if (fundraisings.current_amount / fundraisings.goal_amount <= limit) {
+        count++;
+      }
+    });
+
+    return count;
+  }
+
+  async getFundraisingsByAmountCollected(min_limit: number, max_limit: number) {
+    const fundraisings = await this.prisma.fundraising.findMany({
+      where: {},
+    });
+
+    let count = 0;
+
+    fundraisings.forEach((fundraising) => {
+      const percentage =
+        (fundraising.current_amount / fundraising.goal_amount) * 100;
+      if (percentage >= min_limit && percentage <= max_limit) {
+        count++;
+      }
+    });
+
+    return count;
+  }
 }

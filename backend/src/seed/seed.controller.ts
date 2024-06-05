@@ -338,6 +338,54 @@ export class SeedController {
         },
       });
 
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 25000,
+          current_amount: 25000,
+          prize_percentage: 40,
+          player_id: player3.id,
+          event_id: oldEvent.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 50000,
+          current_amount: 25000,
+          prize_percentage: 40,
+          player_id: player2.id,
+          event_id: oldEvent2.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 150000,
+          current_amount: 50000,
+          prize_percentage: 40,
+          player_id: player.id,
+          event_id: oldEvent3.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 75000,
+          current_amount: 70000,
+          prize_percentage: 20,
+          player_id: player2.id,
+          event_id: oldEvent3.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
       const collection = await this.prisma.collection.create({
         data: {
           previous_price: 25.0,
