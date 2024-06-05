@@ -40,23 +40,6 @@ export class AnalyticsService {
       }
     });
 
-    // Encontrar el player_id con más victorias
-    // let maxPlayerId = null;
-    // let maxCount = 0;
-
-    // for (const [playerId, count] of Object.entries(playerCount)) {
-    //   if (count > maxCount) {
-    //     maxCount = count;
-    //     maxPlayerId = playerId;
-    //   }
-    // }
-
-    // const player = await this.prisma.player.findUnique({
-    //   where: { id: Number(maxPlayerId) },
-    //   include: { user: true },
-    // });
-
-    // Sort players by win count in descending order
     // Convertir el objeto playerCount a un array de pares [playerId, count]
     const playerCountArray = Object.entries(playerCount);
 
@@ -298,5 +281,51 @@ export class AnalyticsService {
     const average = price / collections.length;
 
     return average;
+  }
+
+  async getMorePopularEvents(game_id: number) {
+    const events = await this.prisma.event.findMany({
+      where: {
+        game_id: game_id,
+      },
+      include: {
+        fundraisings: true,
+        game: true,
+      },
+    });
+
+    // Calcular la recaudación total para cada evento
+    const eventsWithTotalFundraising = events.map((event) => {
+      const totalFundraising = event.fundraisings.reduce(
+        (sum, fundraising) => sum + fundraising.current_amount,
+        0,
+      );
+      return {
+        ...event,
+        totalFundraising,
+      };
+    });
+
+    // Ordenar los eventos por la recaudación total y tomar los 3 primeros
+    const topEvents = eventsWithTotalFundraising
+      .sort((a, b) => b.totalFundraising - a.totalFundraising)
+      .slice(0, 3);
+
+    if (topEvents) {
+      const data = topEvents.map(({ name, totalFundraising, game }) => {
+        console.log(name, totalFundraising, game.name);
+        return {
+          event_name: name,
+          total: totalFundraising,
+        };
+      });
+
+      return {
+        description: `${topEvents[0].game.name} most popular events`,
+        events: data,
+      };
+    } else {
+      return [];
+    }
   }
 }

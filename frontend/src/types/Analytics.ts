@@ -6,6 +6,14 @@ export type PlayerAnalytic = {
 	data: string;
 };
 
+export type EventsAnalytics = {
+	description: string;
+	events: {
+		event_name: string;
+		total: number;
+	}[];
+};
+
 export type PlayersAnalytics = {
 	description: string;
 	players: {

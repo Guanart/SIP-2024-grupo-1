@@ -14,9 +14,10 @@ import {
 	TextField,
 	Typography,
 	Container,
+	Box,
 } from '@mui/material';
 import { KeyboardBackspaceIcon } from '../../global/icons';
-import { Event } from '../../types';
+import { Event, EventsAnalytics } from '../../types';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -38,6 +39,7 @@ export const StartFundraising = () => {
 	const [eventId, setEventId] = useState<number | string>('');
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [averageTokenPrice, setAverageTokenPrice] = useState<number>(0);
+	const [popularEvents, setPopularEvents] = useState<EventsAnalytics>();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -64,6 +66,17 @@ export const StartFundraising = () => {
 						const { events } = await response.json();
 						setEvents(events);
 						setIsLoading(false);
+					}
+
+					response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `http://${HOST}:${PORT}/analytics/events/popular/${user.player.game.id}`,
+					});
+
+					if (response.ok) {
+						const { events } = await response.json();
+						setPopularEvents(events);
 					}
 
 					response = await fetchWithAuth({
@@ -142,7 +155,7 @@ export const StartFundraising = () => {
 			{!isLoading && (
 				<Stack
 					spacing={{ xs: 4, md: 8 }}
-					sx={{ mt: '16px', maxWidth: '900px' }}
+					sx={{ mt: '16px', maxWidth: '1200px' }}
 					justifyContent='center'
 					direction={{ xs: 'column-reverse', md: 'row' }}
 				>
@@ -251,6 +264,7 @@ export const StartFundraising = () => {
 						}}
 					>
 						<Typography variant='h6'>New fundraising</Typography>
+
 						<FormControl>
 							<InputLabel id='event'>Event</InputLabel>
 							<Select
@@ -348,6 +362,56 @@ export const StartFundraising = () => {
 							Start fundraising
 						</Button>
 					</form>
+					{popularEvents && (
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								minWidth: '300px',
+								height: 'auto',
+								gap: '8px',
+							}}
+						>
+							<Typography
+								sx={{ fontWeight: 'bold' }}
+								color='secondary'
+								variant='h6'
+							>
+								{popularEvents.description}
+							</Typography>
+							<Typography sx={{ fontWeight: 'bold' }}>
+								U$D from token sales
+							</Typography>
+							{popularEvents.events.map((event, index) => {
+								return (
+									<Box>
+										<Typography
+											component='span'
+											sx={{ fontSize: '18px' }}
+										>
+											{index +
+												1 +
+												'. ' +
+												event.event_name}
+										</Typography>
+										<Typography
+											component='span'
+											sx={{ marginLeft: '8px' }}
+										>
+											-
+										</Typography>
+										<Typography
+											component='span'
+											color='secondary'
+											sx={{ marginLeft: '8px' }}
+										>
+											U$D {event.total}
+										</Typography>
+									</Box>
+								);
+							})}
+						</Box>
+					)}
 				</Stack>
 			)}
 		</PageLayout>

@@ -190,4 +190,24 @@ export class AnalyticsController {
       }
     }
   }
+
+  @Get('events/popular/:game_id')
+  async getPopularEventsByGame(
+    @Param('game_id') game_id: number,
+  ): Promise<string> {
+    try {
+      const events = await this.analyticsService.getMorePopularEvents(game_id);
+
+      return JSON.stringify({ events });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
 }
