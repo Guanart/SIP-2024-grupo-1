@@ -80,14 +80,28 @@ export class SeedController {
         },
       });
 
-      await this.prisma.game.create({
+      const game1 = await this.prisma.game.create({
         data: {
-          name: 'Among us',
-          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Among_Us.png/375px-Among_Us.png',
+          name: 'FIFA 24',
+          icon: 'https://cdn.worldvectorlogo.com/logos/ea-sports-3.svg',
         },
       });
 
-      await this.prisma.game.create({
+      const game2 = await this.prisma.game.create({
+        data: {
+          name: 'Fortnite',
+          icon: 'https://static.wikia.nocookie.net/logopedia/images/d/db/Fortnite_S1.svg/revision/latest/scale-to-width-down/250?cb=20210330161743',
+        },
+      });
+
+      const game3 = await this.prisma.game.create({
+        data: {
+          name: 'Counter Strike',
+          icon: 'https://cdn2.steamgriddb.com/icon/f3d801966e7e0d77863c9f8b31d02529/32/256x256.png',
+        },
+      });
+
+      const game4 = await this.prisma.game.create({
         data: {
           name: 'League of Legends',
           icon: 'https://cdn.icon-icons.com/icons2/3053/PNG/512/league_of_legends_macos_bigsur_icon_190030.png',
@@ -96,8 +110,8 @@ export class SeedController {
 
       await this.prisma.game.create({
         data: {
-          name: 'Counter Strike',
-          icon: 'https://cdn2.steamgriddb.com/icon/f3d801966e7e0d77863c9f8b31d02529/32/256x256.png',
+          name: 'Among us',
+          icon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Among_Us.png/375px-Among_Us.png',
         },
       });
 

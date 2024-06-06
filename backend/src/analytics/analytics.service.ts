@@ -363,4 +363,64 @@ export class AnalyticsService {
 
     return count;
   }
+
+  async getMorePopularGames() {
+    const games = await this.prisma.game.findMany({
+      where: {},
+      include: {
+        event: { include: { fundraisings: true } },
+        player: true,
+      },
+    });
+
+    const gamesWithTotalEventsAndFundraisings = games.map((game) => {
+      const eventsWithTotalFundraising = game.event.map((event) => {
+        const totalFundraising = event.fundraisings.reduce(
+          (sum, fundraising) => sum + fundraising.current_amount,
+          0,
+        );
+
+        return {
+          ...event,
+          totalFundraising,
+        };
+      });
+
+      return {
+        ...game,
+        events: game.event.length,
+        eventsWithTotalFundraising,
+      };
+    });
+
+    console.log(gamesWithTotalEventsAndFundraisings);
+
+    const topGames = gamesWithTotalEventsAndFundraisings.map((game) => {
+      let total = 0;
+      game.eventsWithTotalFundraising.forEach((event) => {
+        total += event.totalFundraising;
+      });
+      return {
+        ...game,
+        total,
+      };
+    });
+
+    if (topGames) {
+      const data = topGames.map(({ name, total, events }) => {
+        return {
+          game: name,
+          total,
+          events,
+        };
+      });
+
+      return {
+        description: `Most popular games`,
+        game: data.slice(0, 5),
+      };
+    } else {
+      return [];
+    }
+  }
 }

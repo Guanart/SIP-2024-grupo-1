@@ -21,7 +21,7 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks/useAccessToken';
 import { PieChart, BarChart } from '@mui/x-charts';
 import { Loader } from '../../components';
-import { Analytics, PlayerAnalytic } from '../../types';
+import { Analytics, PlayerAnalytic, GameAnalytics } from '../../types';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -31,6 +31,7 @@ export const Administration = () => {
 	const { accessToken } = useAccessToken();
 	const navigate = useNavigate();
 	const [analytics, setAnalytics] = useState<Analytics>();
+	const [gameAnalytics, setGameAnalytics] = useState<GameAnalytics[]>();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [fundraisingsCount, setFunraisingsCount] = useState<number>(0);
 	const [minPercentageLimit, setMinPercentageLimit] = useState<number>(0);
@@ -61,6 +62,17 @@ export const Administration = () => {
 					if (response.ok) {
 						const { count } = await response.json();
 						setFunraisingsCount(count);
+					}
+
+					response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `http://${HOST}:${PORT}/analytics/games/popular`,
+					});
+
+					if (response.ok) {
+						const { games } = await response.json();
+						setGameAnalytics(games.game);
 						setIsLoading(false);
 					}
 				}
@@ -675,40 +687,71 @@ export const Administration = () => {
 												>
 													Amount
 												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Events
+												</TableCell>
 											</TableRow>
 										</TableHead>
 										<TableBody>
-											<TableRow
-												sx={{
-													'&:last-child td, &:last-child th':
-														{ border: 0 },
-												}}
-											>
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													1
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													League of Legends
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													U$D 1.000.000
-												</TableCell>
-											</TableRow>
+											{gameAnalytics?.map(
+												(
+													{ game, total, events },
+													index
+												) => {
+													return (
+														<TableRow
+															key={game}
+															sx={{
+																'&:last-child td, &:last-child th':
+																	{
+																		border: 0,
+																	},
+															}}
+														>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{index + 1}
+															</TableCell>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{game}
+															</TableCell>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																U$D{' '}
+																{total.toLocaleString()}
+															</TableCell>
+															<TableCell
+																align='center'
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{events}
+															</TableCell>
+														</TableRow>
+													);
+												}
+											)}
 										</TableBody>
 									</Table>
 								</TableContainer>

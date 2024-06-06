@@ -211,6 +211,24 @@ export class AnalyticsController {
     }
   }
 
+  @Get('games/popular/')
+  async getPopularGames(): Promise<string> {
+    try {
+      const games = await this.analyticsService.getMorePopularGames();
+
+      return JSON.stringify({ games });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
   @Get('/fundraisings/percentage/:min_limit/:max_limit')
   async getFundraisingsByAmountCollected(
     @Param('min_limit') min_limit: number,
