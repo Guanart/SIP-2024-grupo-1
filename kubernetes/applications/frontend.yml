@@ -15,7 +15,7 @@ spec:
         spec:
             containers:
                 - name: frontend
-                  image: 'mgimenezdev/lot-frontend:1.0.0'
+                  image: 'mgimenezdev/lot-frontend:1.0.1'
                   ports:
                       - containerPort: 80
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
