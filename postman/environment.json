@@ -4,12 +4,12 @@
 	"values": [
 		{
 			"key": "base_url",
-			"value": "http://35.237.169.80:3000",
+			"value": "http://35.243.253.70:3000",
 			"type": "default",
 			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",
-	"_postman_exported_at": "2024-06-01T21:30:01.592Z",
-	"_postman_exported_using": "Postman/11.0.11"
+	"_postman_exported_at": "2024-06-06T13:56:20.715Z",
+	"_postman_exported_using": "Postman/11.1.25"
 }
