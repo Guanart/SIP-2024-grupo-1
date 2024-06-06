@@ -214,7 +214,11 @@ export const UpdateFundraising = () => {
 						>
 							{allowedPrices.map((price) => {
 								return (
-									<MenuItem key={price} value={price}>
+									<MenuItem
+										key={price}
+										value={price}
+										id={price.toString()}
+									>
 										{price}
 									</MenuItem>
 								);
