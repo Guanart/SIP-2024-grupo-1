@@ -10,6 +10,7 @@ jest.mock('../../src/database/prisma.service', () => ({
       create: jest.fn(),
       update: jest.fn(),
       findMany: jest.fn(),
+      findUnique: jest.fn(),
     },
   })),
 }));
@@ -117,9 +118,7 @@ describe('FundraisingService', () => {
         risk_level: 'LOW',
       };
 
-      const { goal_amount } = updatedFundraising;
-
-      jest.spyOn(prisma.fundraising, 'update').mockResolvedValue({
+      jest.spyOn(prisma.fundraising, 'findUnique').mockResolvedValue({
         id: 123,
         goal_amount: 25000,
         current_amount: 0,
@@ -137,12 +136,11 @@ describe('FundraisingService', () => {
         currentFundraising,
       );
 
-      expect(prisma.fundraising.update).toHaveBeenCalledWith({
+      expect(prisma.fundraising.findUnique).toHaveBeenCalledWith({
         where: { id: 123 },
-        data: { goal_amount },
       });
 
-      expect(collectionService.update).toHaveBeenCalledWith(25000, 12.5, {
+      expect(collectionService.update).toHaveBeenCalledWith(12.5, {
         active: true,
         createdAt: expect.any(Date),
         current_amount: 0,

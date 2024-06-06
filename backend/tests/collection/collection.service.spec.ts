@@ -171,11 +171,7 @@ describe('CollectionService', () => {
         },
       });
 
-      await collectionService.update(
-        new_goal_amount,
-        new_initial_price,
-        fundraising,
-      );
+      await collectionService.update(new_initial_price, fundraising);
 
       expect(prisma.token.updateMany).toHaveBeenCalledWith({
         where: { collection_id: collection.id },
