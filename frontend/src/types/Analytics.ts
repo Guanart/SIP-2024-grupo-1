@@ -7,7 +7,7 @@ export type PlayerAnalytic = {
 };
 
 export type GameAnalytics = {
-	name: string;
+	game: string;
 	events: number;
 	total: number;
 };
