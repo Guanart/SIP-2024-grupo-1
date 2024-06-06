@@ -39,55 +39,8 @@
 				},
 				"url": {
 					"raw": "{{base_url}}/marketplace",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"marketplace"
-					]
-				},
-				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
-			},
-			"response": []
-		},
-		{
-			"name": "Delete marketplace publication",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Successful POST request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
-							"});",
-							""
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/marketplace/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"marketplace",
-						"1"
-					]
+					"host": ["{{base_url}}"],
+					"path": ["marketplace"]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
 			},
@@ -100,12 +53,8 @@
 				"header": [],
 				"url": {
 					"raw": "{{base_url}}/marketplace",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"marketplace"
-					]
+					"host": ["{{base_url}}"],
+					"path": ["marketplace"]
 				}
 			},
 			"response": []
@@ -116,18 +65,14 @@
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		}
 	],
