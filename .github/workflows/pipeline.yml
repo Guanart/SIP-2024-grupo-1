@@ -285,7 +285,7 @@ jobs:
             - name: Install cloud-native operator
               run: |
                   kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
-                  sleep 75
+                  sleep 90
 
             - name: Create secret with GCP credentials
               working-directory: kubernetes
@@ -298,7 +298,7 @@ jobs:
               run: |
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
-                  sleep 145
+                  sleep 200
 
             # Crear un nuevo ConfigMap con las credenciales de conexión Postgres
             - name: Create Postgres config
