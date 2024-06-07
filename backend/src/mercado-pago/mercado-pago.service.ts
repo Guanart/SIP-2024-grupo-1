@@ -381,6 +381,7 @@ export class MercadoPagoService {
       },
       include: {
         player: true,
+        event: true,
         collection: {
           include: {
             token: {
@@ -397,14 +398,14 @@ export class MercadoPagoService {
       throw new Error(`Fundraising with id ${fundraisingId} not found`);
     }
 
-    // Obtener el total recaudado
-    const totalAmount = fundraising.collection.token.reduce(
-      (total: number, token: any) => total + token.price,
-      0,
-    );
+    // // Obtener el total recaudado
+    // const totalAmount = fundraising.collection.token.reduce(
+    //   (total: number, token: any) => total + token.price,
+    //   0,
+    // );
 
     // Calcular la ganancia por token
-    const earningsPerToken = totalAmount / fundraising.collection.token.length;
+    const earningsPerToken = (fundraising.event.prize/fundraising.prize_percentage) / fundraising.collection.token.length;
 
     // Distribuir las ganancias a los poseedores de tokens
     await Promise.all(
@@ -423,7 +424,7 @@ export class MercadoPagoService {
           throw new Error(`Wallet with id ${walletId} not found or incomplete`);
         }
 
-        // conta la cantidad de tokens que tiene el usuario para esa Collection, a partir de la relación N a N entre Token y Wallet
+        // Cantidad de tokens que compró el usuario
         const tokenCount = await this.prisma.token_wallet.count({
           where: {
             wallet_id: walletId,
@@ -433,54 +434,19 @@ export class MercadoPagoService {
         // Calcular la ganancia del usuario
         const earnings = earningsPerToken * tokenCount;
 
-        // Realizar la transferencia de dinero a la wallet del usuario
+        // Realizar la transferencia de dinero a la wallet del usuario - TODO
         const config = new MercadoPagoConfig({ accessToken: fundraising.player.access_token });
         const payment = new Payment(config);
-        await payment.create({
-          body: {
-            payer: {
-              fundraising.player.user.id,
-            }
-            target_user_id: wallet.user.id,
-            amount: earnings,
-          },
-        });
+        // await payment.create({
+        //   body: {
+        //     payer: {
+        //       fundraising.player.user.id,
+        //     }
+        //     target_user_id: wallet.user.id,
+        //     amount: earnings,
+        //   },
+        // });
       })
-    );
-
-    await Promise.all(
-      fundraising.tokens.map(async (token) => {
-        const walletId = token.wallet.id;
-        const wallet = await this.prisma.wallet.findUnique({
-          where: {
-            id: walletId,
-          },
-          include: {
-            user: true,
-          },
-        });
-
-        if (!wallet || !wallet.user) {
-          throw new Error(`Wallet with id ${walletId} not found or incomplete`);
-        }
-
-        // Calcular la ganancia del usuario
-        const earnings = earningsPerToken * token.amount;
-
-        // Realizar la transferencia de dinero a la wallet del usuario
-        const transfer = new Transfer(this.client);
-        await transfer.create({
-          body: {
-            source_user_id: fundraising.player.user.id,
-            target_user_id: wallet.user.id,
-            amount: earnings,
-          },
-        });
-
-        console.log(
-          `Earnings of ${earnings} transferred to user with wallet id ${walletId}`,
-        );
-      }),
     );
 
     console.log('Fundraising earnings distributed successfully');
