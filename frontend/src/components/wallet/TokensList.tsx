@@ -11,6 +11,7 @@ import { FunctionComponent } from 'react';
 import { Token_wallet } from '../../types';
 import { Link } from 'react-router-dom';
 import { CurrencyExchangeIcon, DoubleArrowIcon } from '../../global/icons';
+import { toast } from 'react-toastify';
 
 type TokensListProps = {
 	tokens: Token_wallet[];
@@ -90,15 +91,29 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 						>
 							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
 						</Link>
-						<Link
-							to={`/marketplace/publication/create/${token_data.token.id}`}
-							style={{
-								textDecoration: 'none',
-								color: '#45FFCA',
-							}}
-						>
-							<CurrencyExchangeIcon sx={{ fontSize: '1.3rem' }} />
-						</Link>
+						{token_data.token.collection.fundraising.active ? (
+							<Link
+								to={`/marketplace/publication/create/${token_data.token.id}`}
+								style={{
+									textDecoration: 'none',
+									color: '#45FFCA',
+								}}
+							>
+								<CurrencyExchangeIcon
+									sx={{ fontSize: '1.3rem' }}
+								/>
+							</Link>
+						) : (
+							<CurrencyExchangeIcon
+								onClick={() =>
+									toast.error(
+										'You cannot sell tokens from a fundraising that has ended.'
+									)
+								}
+								color='secondary'
+								sx={{ fontSize: '1.3rem', cursor: 'pointer' }}
+							/>
+						)}
 					</Box>
 				</ListItem>
 			))}
