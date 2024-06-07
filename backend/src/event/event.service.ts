@@ -110,11 +110,11 @@ export class EventService {
     });
 
     if (event_player.position > event.max_players) {
-      return `Position between 1 and ${event.max_players} expected`;
+      return `Position between 1 and ${event.max_players} expected.`;
     }
 
-    if (new Date() < event.end_date) {
-      return `The event has not ended yet.`;
+    if (new Date() < event.start_date) {
+      return `The event has not started yet.`;
     }
 
     const already_used = await this.prisma.player_event.count({
