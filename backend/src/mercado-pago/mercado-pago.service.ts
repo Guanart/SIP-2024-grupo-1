@@ -434,7 +434,7 @@ export class MercadoPagoService {
         // Calcular la ganancia del usuario
         const earnings = earningsPerToken * tokenCount;
 
-        // Realizar la transferencia de dinero a la wallet del usuario - TODO
+        // Realizar la transferencia de dinero de la billetera MP de Player a la billetera del usuario - TODO
         const config = new MercadoPagoConfig({ accessToken: fundraising.player.access_token });
         const payment = new Payment(config);
         // await payment.create({
