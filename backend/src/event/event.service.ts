@@ -196,7 +196,7 @@ export class EventService {
 
       // Obtengo datos del ganador del evento
       const winner = await this.prisma.player_event.findMany({
-        where: { position: 1 },
+        where: { position: 1, event_id: event.id },
       });
 
       // Verifico si el ganador había iniciado una colecta para el evento
@@ -242,17 +242,23 @@ export class EventService {
         }),
       );
 
+      await this.prisma.event.update({
+        where: { id: event.id },
+        data: {
+          checked: true,
+        },
+      });
+
       console.log(amountOfMoneyPerWallet);
-      // TODO: Implementar entrega de premios con MP?
       //? Usando los datos de "amountOfMoneyPerWallet" se puede saber cuanto $ (total) se tiene que dar a cada wallet (wallet_id)
     });
   }
 
   // Se ejecuta todos los días a las 00:00
-  @Cron('0 0 * * *')
+  @Cron('* * * * *') //* '0 0 * * *'
   async handleCron() {
-    await this.closeEvents();
-    await this.checkFinishedEvents();
+    await this.closeEvents(); //? Cierra inscripciones de evento cuando fecha_inicio >= fecha_actual
+    await this.checkFinishedEvents(); //? Checkea eventos finalizados para calcular los premios x token
   }
 
   async createEvent(newEvent: CreateEventDto) {
