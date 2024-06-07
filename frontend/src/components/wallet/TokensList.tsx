@@ -82,15 +82,27 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 							gap: '4px',
 						}}
 					>
-						<Link
-							to={`/fundraising/${token_data.token.collection.fundraising.id}`}
-							style={{
-								textDecoration: 'none',
-								color: '#45FFCA',
-							}}
-						>
-							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
-						</Link>
+						{token_data.token.collection.fundraising.active ? (
+							<Link
+								to={`/fundraising/${token_data.token.collection.fundraising.id}`}
+								style={{
+									textDecoration: 'none',
+									color: '#45FFCA',
+								}}
+							>
+								<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
+							</Link>
+						) : (
+							<DoubleArrowIcon
+								onClick={() =>
+									toast.error(
+										'The fundraising associated with the token has ended.'
+									)
+								}
+								color='secondary'
+								sx={{ fontSize: '1.3rem', cursor: 'pointer' }}
+							/>
+						)}
 						{!token_data.token.collection.fundraising.event
 							.checked ? (
 							<Link

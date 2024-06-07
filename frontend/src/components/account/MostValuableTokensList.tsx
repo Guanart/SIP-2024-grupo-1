@@ -14,6 +14,7 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import { CurrencyExchangeIcon, DoubleArrowIcon } from '../../global/icons';
+import { toast } from 'react-toastify';
 
 export const MostValuableTokensList = () => {
 	const [tokens, setTokens] = useState<Token[]>([]);
@@ -120,24 +121,50 @@ export const MostValuableTokensList = () => {
 							gap: '4px',
 						}}
 					>
-						<Link
-							to={`/fundraising/${token.id}`}
-							style={{
-								textDecoration: 'none',
-								color: '#45FFCA',
-							}}
-						>
-							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
-						</Link>
-						<Link
-							to={`/marketplace/publication/create/${token.id}`}
-							style={{
-								textDecoration: 'none',
-								color: '#45FFCA',
-							}}
-						>
-							<CurrencyExchangeIcon sx={{ fontSize: '1.3rem' }} />
-						</Link>
+						{token.collection.fundraising.active ? (
+							<Link
+								to={`/fundraising/${token.collection.fundraising.id}`}
+								style={{
+									textDecoration: 'none',
+									color: '#45FFCA',
+								}}
+							>
+								<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
+							</Link>
+						) : (
+							<DoubleArrowIcon
+								onClick={() =>
+									toast.error(
+										'The fundraising associated with the token has ended.'
+									)
+								}
+								color='secondary'
+								sx={{ fontSize: '1.3rem', cursor: 'pointer' }}
+							/>
+						)}
+						{!token.collection.fundraising.event.checked ? (
+							<Link
+								to={`/marketplace/publication/create/${token.id}`}
+								style={{
+									textDecoration: 'none',
+									color: '#45FFCA',
+								}}
+							>
+								<CurrencyExchangeIcon
+									sx={{ fontSize: '1.3rem' }}
+								/>
+							</Link>
+						) : (
+							<CurrencyExchangeIcon
+								onClick={() =>
+									toast.error(
+										'You cannot sell tokens of an event that has ended.'
+									)
+								}
+								color='secondary'
+								sx={{ fontSize: '1.3rem', cursor: 'pointer' }}
+							/>
+						)}
 					</Box>
 				</ListItem>
 			))}
