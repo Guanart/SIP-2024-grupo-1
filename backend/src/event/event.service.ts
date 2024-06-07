@@ -231,7 +231,9 @@ export class EventService {
       // Calculo el premio $ por token
       const token_reward =
         fundraising[0].collection.token_prize_percentage *
-        fundraising[0].event.prize;
+        (fundraising[0].event.prize * (fundraising[0].prize_percentage / 100));
+
+      console.log(token_reward);
 
       console.log('Token_reward: ' + token_reward);
       //? Este array contiene un objeto por cada wallet que compro tokens en la colecta
