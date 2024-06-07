@@ -91,7 +91,8 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 						>
 							<DoubleArrowIcon sx={{ fontSize: '1.3rem' }} />
 						</Link>
-						{token_data.token.collection.fundraising.active ? (
+						{!token_data.token.collection.fundraising.event
+							.checked ? (
 							<Link
 								to={`/marketplace/publication/create/${token_data.token.id}`}
 								style={{
@@ -107,7 +108,7 @@ export const TokensList: FunctionComponent<TokensListProps> = ({ tokens }) => {
 							<CurrencyExchangeIcon
 								onClick={() =>
 									toast.error(
-										'You cannot sell tokens from a fundraising that has ended.'
+										'You cannot sell tokens of an event that has ended.'
 									)
 								}
 								color='secondary'

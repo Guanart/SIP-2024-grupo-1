@@ -20,5 +20,6 @@ export interface Event {
 	createdAt: Date;
 	updatedAt: Date;
 	active?: boolean;
+	checked?: boolean;
 	player_event: PlayerEvent[];
 }
