@@ -8,6 +8,7 @@ import { Cron } from '@nestjs/schedule';
 import { RegisterPlayerDto } from './dto/register-player.dto';
 import { SetFinalPositionDto } from './dto/set-final-position.dto';
 import { CollectionService } from 'src/collection/collection.service';
+import { MarketplacePublicationService } from 'src/marketplace/marketplace-publication.service';
 
 @Injectable()
 export class EventService {
@@ -15,6 +16,7 @@ export class EventService {
     private prisma: PrismaService,
     private fundraisingService: FundraisingService,
     private collectionService: CollectionService,
+    private marketplaceService: MarketplacePublicationService,
   ) {}
 
   async getEvents() {
@@ -188,7 +190,12 @@ export class EventService {
     });
 
     events.map(async (event) => {
-      // Verifico que administrador/a haya cargado las posiciones finales (todos los jugadores inscriptos position != 0)
+      //? Elimino marketplace_publications no completadas y asociadas a colecciones del evento que está finalizado
+      await this.marketplaceService.deleteMarketplacePublicationsOfEndedEvents(
+        event.id,
+      );
+
+      //? Verifico que administrador/a haya cargado las posiciones finales (todos los jugadores inscriptos position != 0)
       const registeredPlayers = await this.prisma.player_event.findMany({
         where: {
           event_id: event.id,

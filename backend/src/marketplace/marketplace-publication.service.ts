@@ -181,14 +181,44 @@ export class MarketplacePublicationService {
         },
       });
 
-      console.log(publication);
-
       return publication
         ? MarketplacePublication.fromObject(publication)
         : null;
     } catch (error) {
       throw new Error('Internal Server Error');
     }
+  }
+
+  async deleteMarketplacePublicationsOfEndedEvents(event_id: number) {
+    const fundraisings = await this.prisma.fundraising.findMany({
+      where: {
+        event_id,
+      },
+      include: { collection: { include: { token: true } } },
+    });
+
+    fundraisings.forEach(({ collection }) => {
+      collection.token.forEach(async (token) => {
+        const marketplacePublication =
+          await this.prisma.marketplace_publication.findFirst({
+            where: {
+              token_id: token.id,
+            },
+          });
+
+        if (!marketplacePublication) return;
+
+        const isTokenSold = await this.prisma.in_wallet.count({
+          where: { publication_id: marketplacePublication.publication_id },
+        });
+
+        if (isTokenSold === 0) {
+          await this.deleteMarketplacePublication(
+            marketplacePublication.publication_id,
+          );
+        }
+      });
+    });
   }
 
   async buyMarketplacePublication(publication_id: number, wallet_id: number) {

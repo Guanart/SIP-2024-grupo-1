@@ -9,6 +9,7 @@ import { FundraisingService } from 'src/fundraising/fundraising.service';
 import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
 import { CollectionService } from 'src/collection/collection.service';
 import { TokenService } from 'src/token/token.service';
+import { MarketplacePublicationService } from 'src/marketplace/marketplace-publication.service';
 
 @Module({
   imports: [AuthModule, ConfigModule.forRoot(), ScheduleModule.forRoot()],
@@ -20,6 +21,7 @@ import { TokenService } from 'src/token/token.service';
     MercadoPagoService,
     CollectionService,
     TokenService,
+    MarketplacePublicationService,
   ],
 })
 export class EventModule {}
