@@ -53,6 +53,10 @@ export class EventService {
       where: { id: event_player.event_id },
     });
 
+    if (new Date() >= event.start_date) {
+      return `A player cannot be registered on an event that has already started.`;
+    }
+
     const currentPlayers = await this.prisma.player_event.count({
       where: { event_id: event.id },
     });
@@ -107,6 +111,10 @@ export class EventService {
 
     if (event_player.position > event.max_players) {
       return `Position between 1 and ${event.max_players} expected`;
+    }
+
+    if (new Date() < event.end_date) {
+      return `The event has not ended yet.`;
     }
 
     const already_used = await this.prisma.player_event.count({
@@ -257,9 +265,14 @@ export class EventService {
   }
 
   // Se ejecuta todos los días a las 00:00
-  @Cron('* * * * *') //* '0 0 * * *'
-  async handleCron() {
+  @Cron('0 0 * * *')
+  async handleCron1() {
     await this.closeEvents(); //? Cierra inscripciones de evento cuando fecha_inicio >= fecha_actual
+  }
+
+  // Se ejecuta todos los días a las 23:30
+  @Cron('30 23 * * *')
+  async handleCron2() {
     await this.checkFinishedEvents(); //? Checkea eventos finalizados para calcular los premios x token
   }
 
