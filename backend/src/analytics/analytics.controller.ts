@@ -144,10 +144,16 @@ export class AnalyticsController {
     }
   }
 
-  @Get('/player/wins')
-  async getPlayerWithMoreWins(): Promise<string> {
+  @Get('/player/wins/:nPlayers')
+  async getPlayerWithMoreWins(
+    @Param("nPlayers") nPlayers: number
+  ): Promise<string> {
     try {
-      const data = await this.analyticsService.getPlayerWithMoreWins();
+      if (!nPlayers){
+        nPlayers = 3;
+      }
+      
+      const data = await this.analyticsService.getNPlayersWithMoreWins(nPlayers);
 
       return JSON.stringify({
         description: 'Player with the most events won',

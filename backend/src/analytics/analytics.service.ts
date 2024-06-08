@@ -79,6 +79,63 @@ export class AnalyticsService {
     ];
   }
 
+  // Misma funcion que la de arriba, solo que parametrizada para poder filtrar la cantidad de jugadores del top
+  async getNPlayersWithMoreWins(nPlayers: number) {
+    const player_event: {
+      player_id: number;
+      event_id: number;
+      position: number;
+    }[] = await this.prisma.player_event.findMany({
+      where: { position: 1 },
+    });
+
+    if (!player_event) return null;
+
+    const playerCount: { [key: number]: number } = {};
+
+    player_event.forEach((event) => {
+      const playerId = event.player_id;
+
+      // Si el player_id ya existe en el contador, incrementamos su valor
+      if (playerCount[playerId]) {
+        playerCount[playerId]++;
+      } else {
+        // Si el player_id no existe en el contador, lo inicializamos a 1
+        playerCount[playerId] = 1;
+      }
+    });
+
+    // Convertir el objeto playerCount a un array de pares [playerId, count]
+    const playerCountArray = Object.entries(playerCount);
+
+    // Ordenar el array en orden descendente por el número de victorias
+    playerCountArray.sort((a, b) => b[1] - a[1]);
+
+    const topPlayers = playerCountArray.slice(0, nPlayers);
+    
+    const results = [];
+
+    for (let i = 0; i < topPlayers.length; i++) {
+      // playerID del jugador nro i de la lista
+      const playerId = Number(topPlayers[i][0]);
+      const wins = topPlayers[i][1];
+
+      const player = await this.prisma.player.findUnique({
+        where: { id: playerId },
+        include: { user: true },
+      });
+
+      if (player) {
+        results.push({
+            player,
+            wins,
+        });
+      }
+    }
+
+    return results;
+  }
+
   async getPlayerWithMoreTokensSold() {
     const collections = await this.prisma.collection.findMany({
       where: {},
