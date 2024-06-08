@@ -3,7 +3,7 @@ import { MercadoPagoConfig, OAuth, Preference, Payment } from 'mercadopago';
 import { CreatePreference } from './create-preference.dto';
 import { PrismaService } from '../database/prisma.service';
 import { log } from 'console';
-import { TransactionType } from '@prisma/client';
+import { Fundraising, TransactionType } from '@prisma/client';
 import { Items } from 'mercadopago/dist/clients/commonTypes';
 import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
 
@@ -374,46 +374,29 @@ export class MercadoPagoService {
     );
   }
 
-  async distributeFundraisingEarnings(fundraisingId: number) {
-    const fundraising = await this.prisma.fundraising.findUnique({
-      where: {
-        id: fundraisingId,
-      },
-      include: {
-        player: true,
-        event: true,
-        collection: {
-          include: {
-            token: {
-              include: {
-                token_wallet: true, // token_wallet tiene un token y una wallet asociada (es la relacion N a N)
-              },
-            },
-          },
-        },
-      },
-    });
 
-    if (!fundraising) {
-      throw new Error(`Fundraising with id ${fundraisingId} not found`);
-    }
 
-    // // Obtener el total recaudado
-    // const totalAmount = fundraising.collection.token.reduce(
-    //   (total: number, token: any) => total + token.price,
-    //   0,
-    // );
 
-    // Calcular la ganancia por token
-    const earningsPerToken = (fundraising.event.prize/fundraising.prize_percentage) / fundraising.collection.token.length;
 
-    // Distribuir las ganancias a los poseedores de tokens
+
+
+
+
+
+  async distributeFundraisingEarnings(fundraising, amountOfMoneyPerWallet) {
+    /*
+      amountOfMoneyPerWallet = [
+        { wallet_id: 1, total: 100 },
+        { wallet_id: 2, total: 200 },
+        { wallet_id: 3, total: 300 },
+        ...
+      ]
+    */
     await Promise.all(
-      fundraising.collection.token.map(async (token: any) => {
-        const walletId = token.wallet.id;
+      amountOfMoneyPerWallet.map(async ({ wallet_id, total }) => {
         const wallet = await this.prisma.wallet.findUnique({
           where: {
-            id: walletId,
+            id: wallet_id,
           },
           include: {
             user: true,
@@ -421,31 +404,25 @@ export class MercadoPagoService {
         });
 
         if (!wallet || !wallet.user) {
-          throw new Error(`Wallet with id ${walletId} not found or incomplete`);
+          throw new Error(`Wallet with id ${wallet_id} not found or incomplete`);
         }
 
-        // Cantidad de tokens que compró el usuario
-        const tokenCount = await this.prisma.token_wallet.count({
-          where: {
-            wallet_id: walletId,
-          },
-        });
-        
-        // Calcular la ganancia del usuario
-        const earnings = earningsPerToken * tokenCount;
-
         // Realizar la transferencia de dinero de la billetera MP de Player a la billetera del usuario - TODO
-        const config = new MercadoPagoConfig({ accessToken: fundraising.player.access_token });
+        const config = new MercadoPagoConfig({ accessToken: wallet.access_token }); // access_token del usuario que recibirá el pago
         const payment = new Payment(config);
-        // await payment.create({
-        //   body: {
-        //     payer: {
-        //       fundraising.player.user.id,
-        //     }
-        //     target_user_id: wallet.user.id,
-        //     amount: earnings,
-        //   },
-        // });
+        const pago = await payment.create({
+          body: {
+            description: "Prueba repartir ganancias",
+            installments: 1,
+            payment_method_id: 'CVU',
+            transaction_amount: total,
+            token: 'ff8080814c11e237014c1ff593b57b4d', // Valor por defecto tomado de la documentación
+            payer: {
+              email: fundraising.player.user.email
+            }
+          },
+          });
+        console.log(pago);
       })
     );
 

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres-db:
     image: postgres:15.3
@@ -11,6 +9,10 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       TZ: '03' # Configura zona horaria del contenedor (Argentina)
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - postgres_data_sip:/var/lib/postgresql/data
+      
     ports:
       - ${DATABASE_PORT}:5432
+
+volumes:
+  postgres_data_sip:

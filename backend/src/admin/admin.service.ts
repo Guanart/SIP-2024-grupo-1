@@ -18,7 +18,7 @@ export class AdminService {
     const { players, users } = await this.analyticService.getRegisteredUsers();
 
     const playerWithMostWins =
-      await this.analyticService.getPlayerWithMoreWins();
+      await this.analyticService.getNPlayersWithMoreWins(3);
 
     const playerWithMostTokensSold =
       await this.analyticService.getPlayerWithMoreTokensSold();
