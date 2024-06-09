@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-    name: apps-application
+    name: frontend-application
     namespace: argocd
     finalizers:
         - resources-finalizer.argocd.argoproj.io
@@ -10,10 +10,10 @@ spec:
         name: in-cluster
         namespace: argocd
     source:
-        path: kubernetes/applications
+        path: kubernetes/applications/frontend
         repoURL: 'https://github.com/Guanart/SIP-2024-grupo-1.git'
         targetRevision: HEAD
-    project: applications
+    project: frontend
     syncPolicy:
         automated:
             prune: true

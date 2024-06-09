@@ -288,7 +288,6 @@ jobs:
                   sleep 90
 
             - name: Create secret with GCP credentials
-              working-directory: kubernetes
               run: |
                   echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
                   kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
@@ -302,7 +301,6 @@ jobs:
 
             # Crear un nuevo ConfigMap con las credenciales de conexión Postgres
             - name: Create Postgres config
-              working-directory: kubernetes
               run: |
                   POSTGRES_PASSWORD=$(kubectl get secret postgres-cluster-superuser -o jsonpath="{.data.password}" -n argocd | base64 --decode)
                   POSTGRES_USERNAME=$(kubectl get secret postgres-cluster-superuser -o jsonpath="{.data.username}" -n argocd | base64 --decode)
@@ -317,11 +315,43 @@ jobs:
                     DATABASE_URL: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres-cluster-rw:5432/LOT
                   EOF
 
-            - name: Create applications
+            - name: Deploy backend
               working-directory: kubernetes/argocd
               run: |
-                  kubectl apply -f applications-project.yml
-                  kubectl apply -f applications.yml
+                  kubectl apply -f backend-project.yml
+                  kubectl apply -f backend.yml
+
+            # Espera a que el backend service load balance obtenga una IP pública
+            - name: Wait for backend service to be ready
+              run: |
+                  while [[ $(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}') == "" ]]; do
+                    echo "Waiting for backend service to be ready..."
+                    sleep 10
+                  done
+
+            # Crea configuración para el frontend
+            - name: Create frontend-config
+              run: |
+                  BACKEND_SERVICE_IP=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: frontend-config
+                    namespace: argocd
+                  data:
+                    APP_BACKEND_HOST: ${BACKEND_SERVICE_IP}
+                    APP_AUTH0_AUDIENCE: "http://my-secure-api.com"
+                    APP_AUTH0_DOMAIN: "dev-f57qs7dbi1xcl5kj.us.auth0.com"
+                    APP_AUTH0_CLIENT_ID: "QDUde2yWkQWxGguu7p59G3QirNNpeXgl"
+                  EOF
+
+            - name: Deploy frontend
+              working-directory: kubernetes/argocd
+              run: |
+                  kubectl apply -f frontend-project.yml
+                  kubectl apply -f frontend.yml
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
