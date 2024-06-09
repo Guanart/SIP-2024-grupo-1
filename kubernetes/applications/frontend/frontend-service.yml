@@ -5,6 +5,7 @@ metadata:
     namespace: argocd
 spec:
     type: LoadBalancer
+    loadBalancerIP: <RESERVED_IP>
     selector:
         app: frontend
     ports:
