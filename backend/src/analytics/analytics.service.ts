@@ -31,52 +31,33 @@ export class AnalyticsService {
     player_event.forEach((event) => {
       const playerId = event.player_id;
 
-      // Si el player_id ya existe en el contador, incrementamos su valor
       if (playerCount[playerId]) {
         playerCount[playerId]++;
       } else {
-        // Si el player_id no existe en el contador, lo inicializamos a 1
         playerCount[playerId] = 1;
       }
     });
 
-    // Convertir el objeto playerCount a un array de pares [playerId, count]
     const playerCountArray = Object.entries(playerCount);
-
-    // Ordenar el array en orden descendente por el número de victorias
     playerCountArray.sort((a, b) => b[1] - a[1]);
 
     const topPlayers = playerCountArray.slice(0, 3);
 
-    const player1 = await this.prisma.player.findUnique({
-      where: { id: Number(topPlayers[0][0]) },
-      include: { user: true },
-    });
+    const playersWithWins = await Promise.all(
+      topPlayers.map(async ([playerId, wins]) => {
+        const player = await this.prisma.player.findUnique({
+          where: { id: Number(playerId) },
+          include: { user: true },
+        });
 
-    const player2 = await this.prisma.player.findUnique({
-      where: { id: Number(topPlayers[1][0]) },
-      include: { user: true },
-    });
+        return {
+          player,
+          wins,
+        };
+      })
+    );
 
-    const player3 = await this.prisma.player.findUnique({
-      where: { id: Number(topPlayers[2][0]) },
-      include: { user: true },
-    });
-
-    return [
-      {
-        player: player1,
-        wins: playerCountArray[0][1],
-      },
-      {
-        player: player2,
-        wins: playerCountArray[1][1],
-      },
-      {
-        player: player3,
-        wins: playerCountArray[2][1],
-      },
-    ];
+    return playersWithWins;
   }
 
   // Misma funcion que la de arriba, solo que parametrizada para poder filtrar la cantidad de jugadores del top

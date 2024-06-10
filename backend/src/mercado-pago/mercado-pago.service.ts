@@ -6,11 +6,13 @@ import { log } from 'console';
 import { TransactionType } from '@prisma/client';
 import { Items } from 'mercadopago/dist/clients/commonTypes';
 import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
+import { FundraisingService } from 'src/fundraising/fundraising.service';
 
 @Injectable()
 export class MercadoPagoService {
   private readonly client: MercadoPagoConfig;
   private prisma: PrismaService;
+  private fundraisingService: FundraisingService;
 
   constructor() {
     this.client = new MercadoPagoConfig({
@@ -251,6 +253,9 @@ async persistFundraisingTransaction(
     `\nFundraising transaction with id ${transaction.id} processed successfully\n`,
     transaction,
   );
+
+  this.fundraisingService.updateAmount(Number(fundraisingId));
+
 }
 
 async persistMarketplaceTransaction(

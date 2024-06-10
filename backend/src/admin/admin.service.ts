@@ -18,31 +18,37 @@ export class AdminService {
     const { players, users } = await this.analyticService.getRegisteredUsers();
 
     const playerWithMostWins =
-      await this.analyticService.getPlayerWithMoreWins();
+      await this.analyticService.getPlayerWithMoreWins() || [];
 
     const playerWithMostTokensSold =
-      await this.analyticService.getPlayerWithMoreTokensSold();
+      await this.analyticService.getPlayerWithMoreTokensSold() || { player: null, tokens: 0 };
 
     const playerWithMostMoneyCollected =
-      await this.analyticService.getPlayerWithMoreMoneyCollected();
+      await this.analyticService.getPlayerWithMoreMoneyCollected() || { player: null, amount: 0 };
 
     const playersAnalytics = [
-      {
-        description: 'Player with the most events won',
-        player: playerWithMostWins[0].player,
-        data: `${playerWithMostWins[0].wins} events`,
-      },
-      {
-        description: 'Player who sold the most tokens',
-        player: playerWithMostTokensSold.player,
-        data: `${playerWithMostTokensSold.tokens} tokens`,
-      },
-      {
-        description: 'Player who collected the most money',
-        player: playerWithMostMoneyCollected.player,
-        data: `U$D ${playerWithMostMoneyCollected.amount}`,
-      },
-    ];
+      playerWithMostWins[0]
+        ? {
+            description: 'Player with the most events won',
+            player: playerWithMostWins[0].player,
+            data: `${playerWithMostWins[0].wins} events`,
+          }
+        : null,
+      playerWithMostTokensSold.player
+        ? {
+            description: 'Player who sold the most tokens',
+            player: playerWithMostTokensSold.player,
+            data: `${playerWithMostTokensSold.tokens} tokens`,
+          }
+        : null,
+      playerWithMostMoneyCollected.player
+        ? {
+            description: 'Player who collected the most money',
+            player: playerWithMostMoneyCollected.player,
+            data: `U$D ${playerWithMostMoneyCollected.amount}`,
+          }
+        : null,
+    ].filter(Boolean); // Remove null values
 
     const { publications, activePublications, successPublications } =
       await this.analyticService.getAllPublications();

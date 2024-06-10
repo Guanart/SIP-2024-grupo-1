@@ -161,4 +161,27 @@ export class FundraisingService {
       },
     });
   }
+
+  async updateAmount(
+    currentFundraising: number,
+  ) {
+    const collection = await this.prisma.collection.findUnique({
+      where: { fundraising_id: currentFundraising },
+    });
+
+    const fundraising = await this.prisma.fundraising.findUnique({
+      where: { id: currentFundraising },
+    });
+
+    const updatedFundraising = await this.prisma.fundraising.update({
+      where: { id: currentFundraising },
+      data: { current_amount: (fundraising.current_amount + collection.current_price)}
+    });
+    if (!collection) return null;
+    return fundraising ? Fundraising.fromObject(fundraising) : null;
+  }
+
+  async sendNotification( fundraising ){
+
+  }
 }
