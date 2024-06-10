@@ -11,7 +11,7 @@ spec:
         namespace: argocd
     source:
         path: kubernetes/services
-        repoURL: 'https://github.com/Guanart/SIP-2024-grupo-1.git'
+        repoURL: 'https://github.com/matiasgimenezdev/test-pipeline.git'
         targetRevision: HEAD
     project: services
     syncPolicy:

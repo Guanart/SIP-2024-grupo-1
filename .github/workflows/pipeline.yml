@@ -260,6 +260,14 @@ jobs:
                   REGION="us-east1-b"
                   gcloud container clusters get-credentials lot --region=${REGION}
 
+            - name: Create secret with GCP credentials
+              run: |
+                  if ! kubectl get secret gcp-credentials -n argocd > /dev/null 2>&1; then
+                    echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+                    kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
+                    rm credentials.json
+                  fi
+
             - name: Install Argo CD CLI
               run: |
                   curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
@@ -284,20 +292,51 @@ jobs:
 
             - name: Install cloud-native operator
               run: |
-                  kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
-                  sleep 90
+                  if ! kubectl get deployment -n cnpg-system cnpg-controller-manager > /dev/null 2>&1; then
+                    kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
+                    sleep 90
+                  else
+                    echo "Cloud-native operator already installed."
+                  fi
 
-            - name: Create secret with GCP credentials
+            - name: Wait for cloud-native operator to be running
               run: |
-                  echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
-                  kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
+                  echo "Waiting for cloud-native operator to be running..."
+                  while true; do
+                    READY_REPLICAS=$(kubectl get deployment cnpg-controller-manager -n cnpg-system -o jsonpath='{.status.readyReplicas}')
+                    if [[ "$READY_REPLICAS" -ge 1 ]]; then
+                      echo "Cloud-native operator is running."
+                      break
+                    else
+                      echo "Cloud-native operator is not ready yet. Waiting for 10 seconds..."
+                      sleep 10
+                    fi
+                  done
 
             - name: Create infra services
               working-directory: kubernetes/argocd
               run: |
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
-                  sleep 200
+
+            - name: Wait for PostgreSQL to be running
+              run: |
+                  echo "Waiting for PostgreSQL to be running..."
+                  while true; do
+                    kubectl get pods -n argocd -o wide  # Added for debugging
+                    STATUS=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster -o jsonpath='{.items[*].status.containerStatuses[*].ready}')
+                    
+                    READY_COUNT=$(echo $STATUS | tr ' ' '\n' | grep -c "true")
+                    TOTAL_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --no-headers | wc -l)
+                    
+                    if [[ "$READY_COUNT" -eq "$TOTAL_COUNT" ]]; then
+                      echo "PostgreSQL is running."
+                      break
+                    else
+                      echo "PostgreSQL is not ready yet. Waiting for 10 seconds..."
+                      sleep 10
+                    fi
+                  done
 
             # Crear un nuevo ConfigMap con las credenciales de conexión Postgres
             - name: Create Postgres config

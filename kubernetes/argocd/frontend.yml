@@ -13,7 +13,7 @@ spec:
         path: kubernetes/applications/frontend
         repoURL: 'https://github.com/Guanart/SIP-2024-grupo-1.git'
         targetRevision: HEAD
-    project: frontend
+    project: frontend-project
     syncPolicy:
         automated:
             prune: true

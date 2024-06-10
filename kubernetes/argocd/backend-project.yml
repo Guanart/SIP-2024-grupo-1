@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-    name: applications
+    name: backend-project
     namespace: argocd
 spec:
     description: 'Root application project for managing application components'
