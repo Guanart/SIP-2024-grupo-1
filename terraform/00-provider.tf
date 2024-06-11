@@ -7,8 +7,8 @@ terraform {
   }
 
   backend "gcs" {
-    bucket  = "terraform_state_cloud"
-    prefix  = "lot_cluster/state"
+    # bucket  = "terraform_state_cloud"
+    # prefix  = "lot_cluster/state"
   }
 
   required_version = ">= 1.4.5"
