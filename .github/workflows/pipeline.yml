@@ -294,6 +294,9 @@ jobs:
             - name: Create Auth0 config
               env:
                   AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+                  AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN}}
+                  AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID}}
               run: |
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1
@@ -303,22 +306,10 @@ jobs:
                     namespace: argocd
                   data:
                     AUTH0_CLIENT_SECRET: $AUTH0_CLIENT_SECRET
-                  EOF
-
-            - name: Create Mercado Pago config
-              env:
-                  MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
-                  MP_CLIENT_SECRET: ${{ secrets.MP_CLIENT_SECRET }}
-              run: |
-                  cat <<EOF | kubectl apply -f -
-                  apiVersion: v1
-                  kind: ConfigMap
-                  metadata:
-                    name: mercado-pago-config
-                    namespace: argocd
-                  data:
-                    MP_CLIENT_SECRET: $MP_CLIENT_SECRET
-                    MP_ACCESS_TOKEN: $MP_ACCESS_TOKEN
+                    AUTH0_AUDIENCE: $AUTH0_AUDIENCE
+                    AUTH0_DOMAIN: $AUTH0_DOMAIN
+                    AUTH0_ISSUER_URL: https://$AUTH0_DOMAIN/
+                    AUTH0_CLIENT_ID: $AUTH0_CLIENT_ID
                   EOF
 
             - name: Create Mailtrap config
@@ -333,7 +324,7 @@ jobs:
                     namespace: argocd
                   data:
                     MAILTRAP_USER:"4f9f1e32df1b58"
-                    MAILTRAP_PASSWORD=$MAILTRAP_PASSWORD
+                    MAILTRAP_PASSWORD:$MAILTRAP_PASSWORD
                   EOF
 
             - name: Deploy backend
@@ -487,6 +478,32 @@ jobs:
                       "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
                     }' \
                     > /dev/null 2>&1
+
+            - name: Create Mercado Pago config
+              env:
+                  MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
+                  MP_CLIENT_SECRET: ${{ secrets.MP_CLIENT_SECRET }}
+              run: |
+                  FRONTEND_SERVICE=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  APP_URL: http://$BACKEND_SERVICE:3000
+                  REACT_APP_URL: http://$FRONTEND_SERVICE:5173
+
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: mercado-pago-config
+                    namespace: argocd
+                  data:
+                    MP_CLIENT_SECRET: $MP_CLIENT_SECRET
+                    MP_ACCESS_TOKEN: $MP_ACCESS_TOKEN
+                    MP_APP_ID: '1517187722603608'
+                    APP_URL: $APP_URL
+                    REACT_APP_URL: $REACT_APP_URL
+                    MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
+                  EOF
 
     run-integration-tests:
         name: Run integration tests
