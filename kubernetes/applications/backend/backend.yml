@@ -15,7 +15,7 @@ spec:
         spec:
             containers:
                 - name: backend
-                  image: 'mgimenezdev/lot-backend:1.0.0'
+                  image: 'grupo4sdypp2024/lot-backend:1.0.0'
                   ports:
                       - containerPort: 3000
                   env:

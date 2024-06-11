@@ -5,7 +5,7 @@ variable "credentials" {
 
 variable "project" {
   type    = string
-  default = "" # Setear el ID del proyecto de GCP que vamos a utilizar para desplegar
+  default = "sip-2024-grupo-1" 
 }
 
 variable "region" {
