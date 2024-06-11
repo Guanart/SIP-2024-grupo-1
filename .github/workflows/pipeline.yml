@@ -354,6 +354,7 @@ jobs:
                   fail-build: true
                   severity-cutoff: critical
 
+            # setear secret "AUTH0_AUDIENCE=http://my-secure-api.com"
             - name: Generate .env.prod
               env:
                   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
@@ -374,7 +375,7 @@ jobs:
                   # Escribir las variables de entorno en .env.prod
                   echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
                   echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
-                  echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
+                  echo "APP_AUTH0_AUDIENCE=http://my-secure-api.com" >> frontend/.env.prod
                   echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
                   echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
 
@@ -403,25 +404,26 @@ jobs:
                   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
                   CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
                   CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
                   SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
               run: |
-                  # Request Access Token
-                  RESPONSE=$(curl --silent --request POST \
-                    --url "https://$AUTH0_DOMAIN/oauth/token" \
-                    --header 'content-type: application/json' \
-                    --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"$AUDIENCE\",\"grant_type\":\"client_credentials\"}")
+                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"
 
-                  # Check for errors
+                  # Obtener el token de acceso de Auth0
+                  RESPONSE=$(curl --silent --request POST \
+                                  --url "https://$AUTH0_DOMAIN/oauth/token" \
+                                  --header 'content-type: application/json' \
+                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"$AUDIENCE\",\"grant_type\":\"client_credentials\"}")
+
+                  # Verificar errores en la solicitud cURL
                   if [ $? -ne 0 ]; then
                     echo "Failed to obtain Access Token."
                     exit 1
                   fi
 
-                  # Extract Access Token from the response
-                  ACCESS_TOKEN=$(echo "$RESPONSE" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+                  # Extraer Access Token de la respuesta JSON
+                  ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
-                  # Check if Access Token is empty
+                  # Verificar si Access Token está vacío
                   if [ -z "$ACCESS_TOKEN" ]; then
                     echo "Failed to extract Access Token from the response."
                     exit 1
@@ -429,9 +431,10 @@ jobs:
 
                   PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-                  # Update SPA configuration
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP"
+                  # Actualizar la URL de retorno con la IP pública y el puerto correcto
+                  NEW_CALLBACK_URL="http://$PUBLIC_IP:5173"
 
+                  # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
                     --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPA_CLIENT_ID" \
                     --header "authorization: Bearer $ACCESS_TOKEN" \
@@ -439,8 +442,9 @@ jobs:
                     --data '{
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
-                    }' \
+                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
+                    }'
+                  \ 
                     > /dev/null 2>&1
 
     run-integration-tests:
