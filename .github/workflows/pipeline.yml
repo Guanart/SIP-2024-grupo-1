@@ -487,8 +487,8 @@ jobs:
                   FRONTEND_SERVICE=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-                  APP_URL= http://$BACKEND_SERVICE:3000
-                  REACT_APP_URL= http://$FRONTEND_SERVICE:5173
+                  APP_URL=http://$BACKEND_SERVICE:3000
+                  REACT_APP_URL=http://$FRONTEND_SERVICE:5173
 
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1
