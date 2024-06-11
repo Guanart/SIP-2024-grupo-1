@@ -476,7 +476,7 @@ jobs:
                     exit 1
                   fi
 
-                  PUBLIC_IP=$(kubectl get svc frontend-service -n your-namespace -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
                   # Update SPA configuration
                   NEW_CALLBACK_URL="http://example.com/callback"
