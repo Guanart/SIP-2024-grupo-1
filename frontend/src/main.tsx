@@ -128,6 +128,9 @@ const publicRoutes = [
 const AUTH0_AUDIENCE = import.meta.env.APP_AUTH0_AUDIENCE;
 const AUTH0_DOMAIN = import.meta.env.APP_AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = import.meta.env.APP_AUTH0_CLIENT_ID;
+console.log('AUTH0_AUDIENCE: ' + AUTH0_AUDIENCE);
+console.log('AUTH0_DOMAIN: ' + AUTH0_DOMAIN);
+console.log('AUTH0_CLIENT_ID: ' + AUTH0_CLIENT_ID);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
@@ -142,7 +145,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 						audience: AUTH0_AUDIENCE,
 						scope: 'read:current_user profile email offline_access ',
 					}}
-					cacheLocation="localstorage"
+					cacheLocation='localstorage'
 				>
 					<Routes>
 						<Route element={<Protected />}>
