@@ -10,6 +10,21 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: GCP authentication
+              uses: google-github-actions/auth@v2
+              with:
+                  credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+            - name: GCP kubectl plugin
+              uses: google-github-actions/setup-gcloud@v2
+              with:
+                  version: '>= 363.0.0'
+                  install_components: 'kubectl'
+
+            - name: Get Kubernetes cluster credentials
+              run: |
+                  REGION="us-east1-b"
+                  gcloud container clusters get-credentials lot --region=${REGION}
+
             - name: Run vulnerability check on backend
               working-directory: backend
               run: |
@@ -84,6 +99,22 @@ jobs:
               run: |
                   pip install -r requirements.txt
                   bash run-tests.sh
+
+            - name: Generate .env.prod
+              env:
+                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+                  CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+                  CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+                  SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
+              run: |
+                  BACKEND_SERVICE_IP = $(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  echo "APP_BACKEND_HOST=$BACKEND_SERVICE_IP" > frontend/.env.prod
+                  echo "APP_BACKEND_PORT=3000" > frontend/.env.prod
+                  echo "APP_AUTH0_AUDIENCE=$AUDIENCE" > frontend/.env.prod
+                  echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" > frontend/.env.prod
+                  echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" > frontend/.env.prod
 
             - name: Push frontend image
               uses: docker/build-push-action@v5
@@ -267,54 +298,6 @@ jobs:
                     kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
                     rm credentials.json
                   fi
-
-            # - name: Add Jetstack Helm repository
-            #   run: |
-            #       helm repo add jetstack https://charts.jetstack.io --force-update
-
-            # - name: Install cert-manager
-            #   run: |
-            #       helm install \
-            #       cert-manager jetstack/cert-manager \
-            #       --namespace cert-manager \
-            #       --create-namespace \
-            #       --version 1.14.5 \
-            #       --set crds.enabled=true
-            #       --set podDnsPolicy=None \
-            #       --set replicaCount=1 \
-            #       --set installCRDs=true \
-            #       --set "extraArgs[1]=--dns01-recursive-nameservers-only" \
-            #       --set "podDnsConfig.nameservers[0]=1.1.1.1" \
-            #       --set "podDnsConfig.nameservers[1]=9.9.9.9"
-
-            # - name: Install ingress-nginx
-            #   run: |
-            #       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-            #       helm repo update
-            #       helm install quickstart ingress-nginx/ingress-nginx
-
-            # - name: Wait for Ingress NGINX External IP
-            #   run: |
-            #       while [ "$(kubectl get svc quickstart-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" == "<pending>" ]; do
-            #         echo "Waiting for External IP to be assigned..."
-            #         sleep 10
-            #       done
-            #       echo "External IP assigned."
-
-            # - name: Install cert-manager
-            #   run: |
-            #       kubectl create ns cert-manager || echo " namespace already exists"
-            #       kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
-
-            # - name: Create Cloudflare API Token Secret
-            #   env:
-            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
-            #       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-            #   run: |
-            #       kubectl create secret generic cloudflare-token-secret \
-            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
-            #         --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
-            #         --namespace services-cert-manager || echo " secret already exists"
 
             - name: Install Argo CD CLI
               run: |
