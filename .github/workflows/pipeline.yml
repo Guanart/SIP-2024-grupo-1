@@ -268,6 +268,54 @@ jobs:
                     rm credentials.json
                   fi
 
+            # - name: Add Jetstack Helm repository
+            #   run: |
+            #       helm repo add jetstack https://charts.jetstack.io --force-update
+
+            # - name: Install cert-manager
+            #   run: |
+            #       helm install \
+            #       cert-manager jetstack/cert-manager \
+            #       --namespace cert-manager \
+            #       --create-namespace \
+            #       --version 1.14.5 \
+            #       --set crds.enabled=true
+            #       --set podDnsPolicy=None \
+            #       --set replicaCount=1 \
+            #       --set installCRDs=true \
+            #       --set "extraArgs[1]=--dns01-recursive-nameservers-only" \
+            #       --set "podDnsConfig.nameservers[0]=1.1.1.1" \
+            #       --set "podDnsConfig.nameservers[1]=9.9.9.9"
+
+            # - name: Install ingress-nginx
+            #   run: |
+            #       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+            #       helm repo update
+            #       helm install quickstart ingress-nginx/ingress-nginx
+
+            # - name: Wait for Ingress NGINX External IP
+            #   run: |
+            #       while [ "$(kubectl get svc quickstart-ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" == "<pending>" ]; do
+            #         echo "Waiting for External IP to be assigned..."
+            #         sleep 10
+            #       done
+            #       echo "External IP assigned."
+
+            # - name: Install cert-manager
+            #   run: |
+            #       kubectl create ns cert-manager || echo " namespace already exists"
+            #       kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.5.3/cert-manager.yaml
+
+            # - name: Create Cloudflare API Token Secret
+            #   env:
+            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            #       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+            #   run: |
+            #       kubectl create secret generic cloudflare-token-secret \
+            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
+            #         --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
+            #         --namespace services-cert-manager || echo " secret already exists"
+
             - name: Install Argo CD CLI
               run: |
                   curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
@@ -322,8 +370,7 @@ jobs:
             - name: Wait for PostgreSQL to be running
               run: |
                   echo "Waiting for PostgreSQL to be running..."
-                  while true; do
-                    kubectl get pods -n argocd -o wide  # Added for debugging
+                  while ! [[ "$POSTGRES_READY" ]]; do
                     STATUS=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster -o jsonpath='{.items[*].status.containerStatuses[*].ready}')
                     
                     READY_COUNT=$(echo $STATUS | tr ' ' '\n' | grep -c "true")
@@ -331,7 +378,7 @@ jobs:
                     
                     if [[ "$READY_COUNT" -eq "$TOTAL_COUNT" ]]; then
                       echo "PostgreSQL is running."
-                      break
+                      POSTGRES_READY=true
                     else
                       echo "PostgreSQL is not ready yet. Waiting for 10 seconds..."
                       sleep 10
@@ -391,6 +438,75 @@ jobs:
               run: |
                   kubectl apply -f frontend-project.yml
                   kubectl apply -f frontend.yml
+
+            - name: Wait for frontend service to be ready
+              working-directory: kubernetes/argocd
+              run: |
+                  while [[ -z "$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]]; do
+                    echo "Waiting for frontend-service to be ready..."
+                    sleep 10
+                  done
+
+            - name: Update Auth0 callbacks
+              env:
+                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+                  CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+                  CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+                  SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
+              run: |
+                  # Request Access Token
+                  RESPONSE=$(curl --silent --request POST \
+                    --url "https://$AUTH0_DOMAIN/oauth/token" \
+                    --header 'content-type: application/json' \
+                    --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"$AUDIENCE\",\"grant_type\":\"client_credentials\"}")
+
+                  # Check for errors
+                  if [ $? -ne 0 ]; then
+                    echo "Failed to obtain Access Token."
+                    exit 1
+                  fi
+
+                  # Extract Access Token from the response
+                  ACCESS_TOKEN=$(echo "$RESPONSE" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+                  # Check if Access Token is empty
+                  if [ -z "$ACCESS_TOKEN" ]; then
+                    echo "Failed to extract Access Token from the response."
+                    exit 1
+                  fi
+
+                  PUBLIC_IP=$(kubectl get svc frontend-service -n your-namespace -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  # Update SPA configuration
+                  NEW_CALLBACK_URL="http://example.com/callback"
+                  NEW_LOGOUT_URL="http://example.com/logout"
+                  NEW_WEB_ORIGIN="http://example.com"
+
+                  curl --request PATCH \
+                    --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPA_CLIENT_ID" \
+                    --header "authorization: Bearer $ACCESS_TOKEN" \
+                    --header 'content-type: application/json' \
+                    --data '{
+                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
+                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_LOGOUT_URL"'"],
+                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_WEB_ORIGIN"'"]
+                    }'
+
+                  # Update SPA configuration
+                  NEW_CALLBACK_URL="http://$PUBLIC_IP"
+                  NEW_LOGOUT_URL="http://$PUBLIC_IP"
+                  NEW_WEB_ORIGIN="http://$PUBLIC_IP"
+
+                  curl --request PATCH \
+                    --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPACLIENTID" \
+                    --header "authorization: Bearer $ACCESS_TOKEN" \
+                    --header 'content-type: application/json' \
+                    --data '{
+                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
+                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_LOGOUT_URL"'"],
+                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_WEB_ORIGIN"'"]
+                    }'
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
