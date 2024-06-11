@@ -505,6 +505,7 @@ jobs:
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
                   EOF
 
+    # TODO: Fix selenium tests
     # run-integration-tests:
     #     name: Run integration tests
     #     if: startsWith(github.event.head_commit.message, '(up)')
