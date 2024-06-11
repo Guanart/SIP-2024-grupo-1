@@ -406,13 +406,11 @@ jobs:
                   CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
               run: |
-                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"
-
                   # Obtener el token de acceso de Auth0
                   RESPONSE=$(curl --silent --request POST \
                                   --url "https://$AUTH0_DOMAIN/oauth/token" \
                                   --header 'content-type: application/json' \
-                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"$AUDIENCE\",\"grant_type\":\"client_credentials\"}")
+                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}")
 
                   # Verificar errores en la solicitud cURL
                   if [ $? -ne 0 ]; then
