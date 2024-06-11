@@ -499,7 +499,7 @@ jobs:
                   data:
                     MP_CLIENT_SECRET: $MP_CLIENT_SECRET
                     MP_ACCESS_TOKEN: $MP_ACCESS_TOKEN
-                    MP_APP_ID: 1517187722603608
+                    MP_APP_ID: '1517187722603608'
                     APP_URL: $APP_URL
                     REACT_APP_URL: $REACT_APP_URL
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
