@@ -410,7 +410,7 @@ jobs:
                   RESPONSE=$(curl --silent --request POST \
                                   --url "https://$AUTH0_DOMAIN/oauth/token" \
                                   --header 'content-type: application/json' \
-                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/\",\"grant_type\":\"client_credentials\"}")
+                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"https://$AUTH0_DOMAIN/api/v2/\",\"grant_type\":\"client_credentials\"}")
 
                   # Verificar errores en la solicitud cURL
                   if [ $? -ne 0 ]; then
@@ -441,7 +441,8 @@ jobs:
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
-                    }' \ > /dev/null 2>&1
+                    }' \
+                    > /dev/null 2>&1
 
     run-integration-tests:
         name: Run integration tests
