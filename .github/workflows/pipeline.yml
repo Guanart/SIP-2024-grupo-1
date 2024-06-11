@@ -360,7 +360,6 @@ jobs:
                   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
                   CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
                   CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
                   SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
               run: |
                   # Obtener el servicio backend
@@ -372,10 +371,11 @@ jobs:
                     exit 1
                   fi
 
+                  AUDIENCE=http://my-secure-api.com
                   # Escribir las variables de entorno en .env.prod
                   echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
                   echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
-                  echo "APP_AUTH0_AUDIENCE=http://my-secure-api.com" >> frontend/.env.prod
+                  echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
                   echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
                   echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
 
@@ -406,7 +406,7 @@ jobs:
                   CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
               run: |
-                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"  # Usar la audiencia correcta
+                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"
 
                   # Obtener el token de acceso de Auth0
                   RESPONSE=$(curl --silent --request POST \
