@@ -323,8 +323,8 @@ jobs:
                     name: mailtrap-config
                     namespace: argocd
                   data:
-                    MAILTRAP_USER:"4f9f1e32df1b58"
-                    MAILTRAP_PASSWORD:$MAILTRAP_PASSWORD
+                    MAILTRAP_USER: 4f9f1e32df1b58
+                    MAILTRAP_PASSWORD: $MAILTRAP_PASSWORD
                   EOF
 
             - name: Deploy backend
