@@ -264,13 +264,10 @@ jobs:
               run: |
                   echo "Waiting for PostgreSQL to be running..."
                   while [ -z "$POSTGRES_READY" ]; do
-                    STATUS=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster -o jsonpath='{.items[*].status.containerStatuses[*].ready}')
-
-                    READY_COUNT=$(echo "$STATUS" | grep -c "true")
+                    RUNNING_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --field-selector=status.phase=Running --no-headers | wc -l)
                     TOTAL_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --no-headers | wc -l)
                     
-                    if [ "$READY_COUNT" -eq "$TOTAL_COUNT" ]; then
-                      echo "PostgreSQL is running."
+                    if [ "$RUNNING_COUNT" -eq "$TOTAL_COUNT" ]; then
                       POSTGRES_READY=true
                     else
                       echo "PostgreSQL is not ready yet. Waiting for 10 seconds..."
