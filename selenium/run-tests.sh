@@ -6,8 +6,6 @@ FRONTEND_IP=$1
 # Establecer la variable de entorno FRONTEND_IP
 export FRONTEND_IP=$FRONTEND_IP
 
-# Instalar las dependencias de Python
-pip install -r requirements.txt
 
 python3 login.py \ 
 python3 account-edit.py \ 
