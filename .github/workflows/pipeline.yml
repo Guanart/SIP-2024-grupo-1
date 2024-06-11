@@ -291,6 +291,51 @@ jobs:
                     DATABASE_URL: postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@postgres-cluster-rw:5432/LOT
                   EOF
 
+            - name: Create Auth0 config
+              env:
+                  AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+              run: |
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: auth0-config
+                    namespace: argocd
+                  data:
+                    AUTH0_CLIENT_SECRET: $AUTH0_CLIENT_SECRET
+                  EOF
+
+            - name: Create Mercado Pago config
+              env:
+                  MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
+                  MP_CLIENT_SECRET: ${{ secrets.MP_CLIENT_SECRET }}
+              run: |
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: mercado-pago-config
+                    namespace: argocd
+                  data:
+                    MP_CLIENT_SECRET: $MP_CLIENT_SECRET
+                    MP_ACCESS_TOKEN: $MP_ACCESS_TOKEN
+                  EOF
+
+            - name: Create Mailtrap config
+              env:
+                  MAILTRAP_PASSWORD: ${{ secrets.MAILTRAP_PASSWORD }}
+              run: |
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: mailtrap-config
+                    namespace: argocd
+                  data:
+                    MAILTRAP_USER:"4f9f1e32df1b58"
+                    MAILTRAP_PASSWORD=$MAILTRAP_PASSWORD
+                  EOF
+
             - name: Deploy backend
               working-directory: kubernetes/argocd
               run: |
@@ -354,7 +399,6 @@ jobs:
                   fail-build: true
                   severity-cutoff: critical
 
-            # setear secret "AUTH0_AUDIENCE=http://my-secure-api.com"
             - name: Generate .env.prod
               env:
                   AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
