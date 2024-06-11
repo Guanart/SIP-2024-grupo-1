@@ -539,9 +539,18 @@ jobs:
             - name: Run Selenium integration tests
               working-directory: selenium
               run: |
-                  pip install -r requirements.txt &&
-                  FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }} &&
-                  bash run-tests.sh $FRONTEND_IP
+                  pip install -r requirements.txt
+                  FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
+                  export FRONTEND_IP=$FRONTEND_IP
+
+                  python3 login.py
+                  python3 account-edit.py
+                  python3 list-marketplace.py
+                  python3 delete-marketplace-publication.py
+                  python3 create-marketplace-publication.py
+                  python3 list-fundraising.py
+                  python3 update-fundraising.py
+                  python3 start-fundraising.py
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
