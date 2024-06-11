@@ -304,6 +304,11 @@ jobs:
                     sleep 10
                   done
 
+            - name: Load database seed
+              run: |
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  curl http://$BACKEND_SERVICE:3000/seed
+
             - name: Update Postman environments
               run: |
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
