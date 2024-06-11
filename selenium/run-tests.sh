@@ -6,11 +6,11 @@ FRONTEND_IP=$1
 # Establecer la variable de entorno FRONTEND_IP
 export FRONTEND_IP=$FRONTEND_IP
 
-python3 selenium/login.py
-python3 selenium/account-edit.py
-python3 selenium/list-marketplace.py
-python3 selenium/delete-marketplace-publication.py
-python3 selenium/create-marketplace-publication.py
-python3 selenium/list-fundraising.py
-python3 selenium/update-fundraising.py
-python3 selenium/start-fundraising.py
+python3 login.py
+python3 account-edit.py
+python3 list-marketplace.py
+python3 delete-marketplace-publication.py
+python3 create-marketplace-publication.py
+python3 list-fundraising.py
+python3 update-fundraising.py
+python3 start-fundraising.py
