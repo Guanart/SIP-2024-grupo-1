@@ -3,141 +3,6 @@ on:
     push:
         branches: ['main']
 jobs:
-    build-images:
-        name: Build and Push Docker Images
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: GCP authentication
-              uses: google-github-actions/auth@v2
-              with:
-                  credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
-            - name: GCP kubectl plugin
-              uses: google-github-actions/setup-gcloud@v2
-              with:
-                  version: '>= 363.0.0'
-                  install_components: 'kubectl'
-
-            - name: Get Kubernetes cluster credentials
-              run: |
-                  REGION="us-east1-b"
-                  gcloud container clusters get-credentials lot --region=${REGION}
-
-            - name: Run vulnerability check on backend
-              working-directory: backend
-              run: |
-                  bash check-dependencies.sh
-
-            - name: Run vulnerability check on frontend
-              working-directory: frontend
-              run: |
-                  npm install
-                  bash check-dependencies.sh
-
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
-                  password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-            - name: Build backend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./backend
-                  push: false
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-
-            - name: Scan backend image
-              uses: anchore/scan-action@v3
-              with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-                  fail-build: true
-                  severity-cutoff: critical
-
-            - name: Build frontend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./frontend
-                  push: false
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
-
-            - name: Scan frontend image
-              uses: anchore/scan-action@v3
-              with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
-                  fail-build: true
-                  severity-cutoff: critical
-
-            - name: Run backend unit tests
-              working-directory: backend
-              run: |
-                  npm install
-                  npm run test
-
-            - name: Run Accounts API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/accounts.json
-                  environment: postman/environment.json
-
-            - name: Run Fundraisings API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/fundraisings.json
-                  environment: postman/environment.json
-
-            - name: Run Marketplace API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/marketplace.json
-                  environment: postman/environment.json
-
-            - name: Run Selenium integration tests
-              working-directory: selenium
-              run: |
-                  pip install -r requirements.txt
-                  bash run-tests.sh
-
-            - name: Generate .env.prod
-              env:
-                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-                  CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-                  CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
-                  SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
-              run: |
-                  # Obtener el servicio backend
-                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-                  # Verificar si backend-service está vacío
-                  if [ -z "$BACKEND_SERVICE" ]; then
-                    echo "Error: backend-service is empty"
-                    exit 1
-                  fi
-
-                  # Escribir las variables de entorno en .env.prod
-                  echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
-                  echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
-                  echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
-                  echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
-                  echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
-
-            - name: Push frontend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./frontend
-                  push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
-
-            - name: Push backend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./backend
-                  push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-
     configure-backend:
         name: Configure backend for terraform state
         if: startsWith(github.event.head_commit.message, '(up)')
@@ -299,6 +164,44 @@ jobs:
                   REGION="us-east1-b"
                   gcloud container clusters get-credentials lot --region=${REGION}
 
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                  password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+            - name: Run vulnerability check on backend
+              working-directory: backend
+              run: |
+                  bash check-dependencies.sh
+
+            - name: Run backend unit tests
+              working-directory: backend
+              run: |
+                  npm install
+                  npm run test
+
+            - name: Build backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+
+            - name: Scan backend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
+
+            - name: Push backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: true
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+
             - name: Create secret with GCP credentials
               run: |
                   if ! kubectl get secret gcp-credentials -n argocd > /dev/null 2>&1; then
@@ -398,6 +301,89 @@ jobs:
                   kubectl apply -f backend-project.yml
                   kubectl apply -f backend.yml
 
+            - name: Wait for backend service to be ready
+              run: |
+                  while [[ -z "$(kubectl get svc backend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]]; do
+                    echo "Waiting for backend-service to be ready..."
+                    sleep 10
+                  done
+
+            - name: Update Postman environments
+              run: |
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
+                  jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
+                  mv postman/environment_temp.json postman/environment.json
+
+            - name: Run Accounts API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/accounts.json
+                  environment: postman/environment.json
+
+            - name: Run Fundraisings API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/fundraisings.json
+                  environment: postman/environment.json
+
+            - name: Run Marketplace API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/marketplace.json
+                  environment: postman/environment.json
+
+            - name: Run vulnerability check on frontend
+              working-directory: frontend
+              run: |
+                  npm install
+                  bash check-dependencies.sh
+
+            - name: Build frontend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./frontend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+
+            - name: Scan frontend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
+
+            - name: Generate .env.prod
+              env:
+                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+                  CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+                  CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+                  AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+                  SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
+              run: |
+                  # Obtener el servicio backend
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  # Verificar si backend-service está vacío
+                  if [ -z "$BACKEND_SERVICE" ]; then
+                    echo "Error: backend-service is empty"
+                    exit 1
+                  fi
+
+                  # Escribir las variables de entorno en .env.prod
+                  echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
+                  echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
+                  echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
+                  echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
+                  echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
+
+            - name: Push frontend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./frontend
+                  push: true
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+
             - name: Deploy frontend
               working-directory: kubernetes/argocd
               run: |
@@ -405,7 +391,6 @@ jobs:
                   kubectl apply -f frontend.yml
 
             - name: Wait for frontend service to be ready
-              working-directory: kubernetes/argocd
               run: |
                   while [[ -z "$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]]; do
                     echo "Waiting for frontend-service to be ready..."
@@ -456,6 +441,42 @@ jobs:
                       "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
                     }' \
                     > /dev/null 2>&1
+
+    run-integration-tests:
+        name: Run integration tests
+        if: startsWith(github.event.head_commit.message, '(up)')
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4.1.6
+
+            - name: GCP authentication
+              uses: google-github-actions/auth@v2
+              with:
+                  credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+
+            - name: GCP kubectl plugin
+              uses: google-github-actions/setup-gcloud@v2
+              with:
+                  version: '>= 363.0.0'
+                  install_components: 'kubectl'
+
+            - name: Get Kubernetes cluster credentials
+              run: |
+                  REGION="us-east1-b"
+                  gcloud container clusters get-credentials lot --region=${REGION}
+
+            - name: Get frontend LoadBalancer IP
+              id: get-frontend-ip
+              run: |
+                  FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  echo "::set-output name=frontend-ip::$FRONTEND_IP"
+
+            - name: Run Selenium integration tests
+              working-directory: selenium
+              run: |
+                  FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
+                  bash run-tests.sh $FRONTEND_IP
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure

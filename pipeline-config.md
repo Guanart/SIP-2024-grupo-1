@@ -9,10 +9,10 @@ DOCKER_HUB_PASSWORD =
 GOOGLE_CLOUD_PROJECT_ID =
 GOOGLE_CLOUD_CREDENTIALS =
 AUTH0_AUDIENCE =
-AUTH0_CLIENT_ID =
-AUTH0_CLIENT_SECRET =
+AUTH0_CLIENT_ID = # Client ID de la API de Auth0
+AUTH0_CLIENT_SECRET = # Client ID de la API de Auth0
 AUTH0_DOMAIN =
-AUTH0_SPA_CLIENT_ID =
+AUTH0_SPA_CLIENT_ID = # Client ID de la SPA de Auth0
 
 # CLOUDFLARE_ZONE_ID =
 # CLOUDFLARE_TOKEN =
@@ -27,33 +27,7 @@ variable "project" {
 }
 ```
 
-3. Configurar el webdriver de Selenium con la IP del servicio del frontend
-
-```
-chrome_options.add_argument("--unsafely-treat-insecure-origin-as-secure=http://<IP_FRONTEND>:5173")
-driver.get("http://<IP_FRONTEND>:5173/")
-```
-
-4. Configurar las environments de Newman con la IP del servicio del backend
-
-```
-"values": [
-	{
-		"key": "base_url",
-		"value": "http://<IP_BACKEND>:3000",
-		"type": "default",
-		"enabled": true
-	}
-],
-```
-
-5. Actualizar .env.prod con la IP del backend
-
-```
-APP_BACKEND_HOST="<BACKEND_SERVICE_IP>"
-```
-
-6. Configurar la imagen docker a utilizar en deployments de `backend` y `frotend` dentro de `kubernetes/applications`
+3. Configurar la imagen docker a utilizar en deployments de `backend` y `frotend` dentro de `kubernetes/applications`
 
 ```
 image: ' '

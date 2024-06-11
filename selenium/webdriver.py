@@ -1,18 +1,28 @@
 import time
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
 def get():
+    # Obtener la IP del frontend desde la variable de entorno
+    frontend_ip = os.getenv('FRONTEND_IP', 'localhost')
+
+    # Construir la URL base
+    base_url = f"http://{frontend_ip}:5173"
+
     chrome_options = Options()
     chrome_options.add_argument('--headless=new')
     chrome_options.add_argument(
-        "--unsafely-treat-insecure-origin-as-secure=http://34.23.248.112:5173")
-    driver = webdriver.Chrome(options=chrome_options)
-    driver.get("http://34.23.248.112:5173/")
+        f"--unsafely-treat-insecure-origin-as-secure={base_url}")
 
-    # driver = webdriver.Chrome()
-    # driver.get("http://localhost:5173/")
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.get(base_url)
+
     time.sleep(10)
 
     return driver
+
+
+if __name__ == "__main__":
+    driver = get()
