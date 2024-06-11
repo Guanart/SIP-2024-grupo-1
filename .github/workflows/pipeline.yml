@@ -444,9 +444,7 @@ jobs:
                   PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
                   # Update SPA configuration
-                  NEW_CALLBACK_URL="http://example.com/callback"
-                  NEW_LOGOUT_URL="http://example.com/logout"
-                  NEW_WEB_ORIGIN="http://example.com"
+                  NEW_CALLBACK_URL="http://$PUBLIC_IP"
 
                   curl --request PATCH \
                     --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPA_CLIENT_ID" \
@@ -454,23 +452,8 @@ jobs:
                     --header 'content-type: application/json' \
                     --data '{
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_LOGOUT_URL"'"],
-                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_WEB_ORIGIN"'"]
-                    }'
-
-                  # Update SPA configuration
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP"
-                  NEW_LOGOUT_URL="http://$PUBLIC_IP"
-                  NEW_WEB_ORIGIN="http://$PUBLIC_IP"
-
-                  curl --request PATCH \
-                    --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPACLIENTID" \
-                    --header "authorization: Bearer $ACCESS_TOKEN" \
-                    --header 'content-type: application/json' \
-                    --data '{
-                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_LOGOUT_URL"'"],
-                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_WEB_ORIGIN"'"]
+                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
+                      "allowed_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
                     }' \
                     > /dev/null 2>&1
 
