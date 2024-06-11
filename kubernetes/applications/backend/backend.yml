@@ -16,6 +16,7 @@ spec:
             containers:
                 - name: backend
                   image: 'grupo4sdypp2024/lot-backend:1.0.0'
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 3000
                   env:

@@ -16,6 +16,7 @@ spec:
             containers:
                 - name: frontend
                   image: 'grupo4sdypp2024/lot-frontend:1.0.0'
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 80
 
