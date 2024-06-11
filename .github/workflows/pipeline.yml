@@ -487,8 +487,8 @@ jobs:
                   FRONTEND_SERVICE=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-                  APP_URL: http://$BACKEND_SERVICE:3000
-                  REACT_APP_URL: http://$FRONTEND_SERVICE:5173
+                  APP_URL= http://$BACKEND_SERVICE:3000
+                  REACT_APP_URL= http://$FRONTEND_SERVICE:5173
 
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1
@@ -499,7 +499,7 @@ jobs:
                   data:
                     MP_CLIENT_SECRET: $MP_CLIENT_SECRET
                     MP_ACCESS_TOKEN: $MP_ACCESS_TOKEN
-                    MP_APP_ID: '1517187722603608'
+                    MP_APP_ID: 1517187722603608
                     APP_URL: $APP_URL
                     REACT_APP_URL: $REACT_APP_URL
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
