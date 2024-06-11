@@ -16,6 +16,7 @@ spec:
             containers:
                 - name: backend
                   image: 'grupo4sdypp2024/lot-backend:1.0.0'
+                  imagePullPolicy: Always
                   ports:
                       - containerPort: 3000
                   env:
@@ -24,21 +25,56 @@ spec:
                             configMapKeyRef:
                                 name: postgres-config
                                 key: DATABASE_URL
+                      - name: AUTH0_CLIENT_SECRET
+                        valueFrom:
+                            configMapKeyRef:
+                                name: auth0-config
+                                key: AUTH0_CLIENT_SECRET
                       - name: AUTH0_ISSUER_URL
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
+                                name: auth0-config
                                 key: AUTH0_ISSUER_URL
                       - name: AUTH0_AUDIENCE
                         valueFrom:
                             configMapKeyRef:
-                                name: backend-config
+                                name: auth0-config
                                 key: AUTH0_AUDIENCE
                       - name: PORT
                         valueFrom:
                             configMapKeyRef:
                                 name: backend-config
                                 key: PORT
+                      - name: APP_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mercado-pago-config
+                                key: APP_URL
+                      - name: REACT_APP_URL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mercado-pago-config
+                                key: REACT_APP_URL
+                      - name: MP_APP_ID
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mercado-pago-config
+                                key: MP_APP_ID
+                      - name: MP_REDIRECT_URI
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mercado-pago-config
+                                key: MP_REDIRECT_URI
+                      - name: MAILTRAP_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mailtrap-config
+                                key: MAILTRAP_USER
+                      - name: MAILTRAP_PASSWORD
+                        valueFrom:
+                            configMapKeyRef:
+                                name: mailtrap-config
+                                key: MAILTRAP_PASSWORD
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
             tolerations:
                 - key: instance_type

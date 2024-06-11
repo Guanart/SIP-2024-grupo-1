@@ -5,10 +5,11 @@ audit_output=$(npm audit | head -n 1)
 
 expected="found 0 vulnerabilities"
 
-if [ "$audit_output" != "$expected" ]; then
+while [ "$audit_output" != "$expected" ]; do
+    npm audit fix
     echo "Error: vulnerabilities found"
-    exit 1
-fi
+    audit_output=$(npm audit | head -n 1)
+done
 
 # outdated_output=$(npm outdated)
 
