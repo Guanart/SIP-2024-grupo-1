@@ -407,32 +407,6 @@ jobs:
                   kubectl apply -f backend-project.yml
                   kubectl apply -f backend.yml
 
-            # Espera a que el backend service load balance obtenga una IP pública
-            - name: Wait for backend service to be ready
-              run: |
-                  while [[ $(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}') == "" ]]; do
-                    echo "Waiting for backend service to be ready..."
-                    sleep 10
-                  done
-
-            # Crea configuración para el frontend
-            - name: Create frontend-config
-              run: |
-                  BACKEND_SERVICE_IP=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-                  cat <<EOF | kubectl apply -f -
-                  apiVersion: v1
-                  kind: ConfigMap
-                  metadata:
-                    name: frontend-config
-                    namespace: argocd
-                  data:
-                    APP_BACKEND_HOST: ${BACKEND_SERVICE_IP}
-                    APP_AUTH0_AUDIENCE: "http://my-secure-api.com"
-                    APP_AUTH0_DOMAIN: "dev-f57qs7dbi1xcl5kj.us.auth0.com"
-                    APP_AUTH0_CLIENT_ID: "QDUde2yWkQWxGguu7p59G3QirNNpeXgl"
-                  EOF
-
             - name: Deploy frontend
               working-directory: kubernetes/argocd
               run: |
