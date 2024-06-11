@@ -18,37 +18,6 @@ spec:
                   image: 'mgimenezdev/lot-frontend:1.0.0'
                   ports:
                       - containerPort: 80
-                  env:
-                      - name: APP_BACKEND_HOST
-                        valueFrom:
-                            configMapKeyRef:
-                                name: frontend-config
-                                key: APP_BACKEND_HOST
-                      - name: APP_BACKEND_HOST
-                        valueFrom:
-                            configMapKeyRef:
-                                name: frontend-config
-                                key: APP_BACKEND_HOST
-                      - name: APP_BACKEND_PORT
-                        valueFrom:
-                            configMapKeyRef:
-                                name: backend-config
-                                key: PORT
-                      - name: APP_AUTH0_AUDIENCE
-                        valueFrom:
-                            configMapKeyRef:
-                                name: frontend-config
-                                key: APP_AUTH0_AUDIENCE
-                      - name: APP_AUTH0_DOMAIN
-                        valueFrom:
-                            configMapKeyRef:
-                                name: frontend-config
-                                key: APP_AUTH0_DOMAIN
-                      - name: APP_AUTH0_CLIENT_ID
-                        valueFrom:
-                            configMapKeyRef:
-                                name: frontend-config
-                                key: APP_AUTH0_CLIENT_ID
 
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
             tolerations:

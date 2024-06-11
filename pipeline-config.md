@@ -47,7 +47,13 @@ driver.get("http://<IP_FRONTEND>:5173/")
 ],
 ```
 
-5. Configurar la imagen docker a utilizar en deployments de `backend` y `frotend` dentro de `kubernetes/applications`
+5. Actualizar .env.prod con la IP del backend
+
+```
+APP_BACKEND_HOST="<BACKEND_SERVICE_IP>"
+```
+
+6. Configurar la imagen docker a utilizar en deployments de `backend` y `frotend` dentro de `kubernetes/applications`
 
 ```
 image: ' '
