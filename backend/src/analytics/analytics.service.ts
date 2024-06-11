@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
+import { Fundraising } from 'src/fundraising/fundraising.entity';
 
 @Injectable()
 export class AnalyticsService {
@@ -116,6 +117,39 @@ export class AnalyticsService {
 
     return results;
   }
+
+  async getFundraisingsByPlayer(id: number, dateFrom?: Date, dateTo?: Date) {
+    const fundraisings = await this.prisma.fundraising.findMany({
+      where: {
+        player_id: id,
+        active: false,
+        AND: [
+          dateFrom ? { createdAt: { gte: dateFrom } } : {},
+          dateTo ? { createdAt: { lte: dateTo } } : {},
+        ]
+      },
+      include: {
+        collection: true,
+        event: {
+          include: {
+            player_event: {
+              where: {
+                player_id: id,
+              }
+            }
+            }
+          },
+        },
+      },
+    )
+    return fundraisings;
+  }
+
+  /*
+  async getEventsByName(name: string) {
+    
+  }
+  */
 
   async getPlayerWithMoreTokensSold() {
     const collections = await this.prisma.collection.findMany({

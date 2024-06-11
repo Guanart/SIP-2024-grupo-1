@@ -3,6 +3,7 @@ import {
   NotFoundException,
   // UseGuards,
   // SetMetadata,
+  Query,
   BadRequestException,
   InternalServerErrorException,
   Get,
@@ -144,25 +145,150 @@ export class AnalyticsController {
     }
   }
 
-  @Get('/player/wins/:nPlayers')
-  async getPlayerWithMoreWins(
-    @Param("nPlayers") nPlayers: number
+  /*
+  {
+   "description":"Fundraisings by player",
+   "fundraisings":[
+      {
+         "id":4,
+         "goal_amount":150000,
+         "current_amount":50000,
+         "prize_percentage":40,
+         "risk_level":"LOW",
+         "active":false,
+         "player_id":1,
+         "event_id":5,
+         "createdAt":"2024-06-11T14:19:36.608Z",
+         "updatedAt":"2024-06-11T14:19:36.608Z",
+         "collection":null,
+         "event":{
+            "id":5,
+            "start_date":"2024-05-28T14:19:36.562Z",
+            "end_date":"2024-06-04T14:19:36.562Z",
+            "max_players":10,
+            "prize":2000000,
+            "name":"Superleague X",
+            "game_id":1,
+            "createdAt":"2024-06-11T14:19:36.563Z",
+            "updatedAt":"2024-06-11T14:19:36.563Z",
+            "active":false,
+            "checked":true,
+            "player_event":[
+               {
+                  "player_id":1,
+                  "event_id":5,
+                  "position":1
+               }
+            ]
+         }
+      }
+   ]
+}
+   */
+
+  @Get('/player/fundraisings/:id_player')
+  async getFundraisingsByPlayer(
+    @Param("id_player") idPlayer: number,
+    @Query('dateFrom') dateFrom?: Date,
+    @Query('dateTo') dateTo?: Date,
   ): Promise<string> {
     try {
-      if (!nPlayers){
+      const data = await this.analyticsService.getFundraisingsByPlayer(idPlayer, dateFrom, dateTo);
+      if (!data){
+        throw new BadRequestException();
+      }
+      const cantFundraisings = data.length;
+      let cantWon = 0;
+      data.forEach(fundraising => {
+        if (fundraising.event.player_event[0].position === 1) {
+          cantWon++;
+        }
+      });
+      
+      let summaryTokenPrize = 0;
+      let winnedFundraisings = 0;
+      data.forEach(fundraising => {
+        if (fundraising.collection) {
+          summaryTokenPrize = summaryTokenPrize + fundraising.collection.token_prize_percentage;
+        }
+        if (fundraising.event.player_event[0].position == 1) {
+          winnedFundraisings++
+        }
+      });
+      
+      return JSON.stringify({
+        description: 'Fundraisings by player',
+        fundraisings: data,
+        summary: {
+          cantFundraisings: cantFundraisings,
+          cantWon: cantWon,
+          winPercentage: cantWon / cantFundraisings,
+          averageTokenPrizePercentage: summaryTokenPrize / cantFundraisings
+        }
+      });
+    } catch (exception){
+      console.log(exception);
+      if (
+        
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
+  /*
+  @Get('/event/summary/:event_name')
+  async getEventSummary(
+    @Query('event_name') eventName: string,
+  ): Promise<string> {
+    try {
+      const data = await this.analyticsService.getEventsByName(eventName);
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+    */
+
+  @Get('/player/wins')
+  async getPlayerWithMoreWins(
+    @Query('nPlayers') nPlayers?: number,
+  ): Promise<string> {
+    try {
+      if (nPlayers == null || isNaN(nPlayers) ) {
         nPlayers = 3;
       }
       
       const data = await this.analyticsService.getNPlayersWithMoreWins(nPlayers);
 
+      const resultPlayers = [];
+      const resultWins = [];
+
+      for (let i = 0; i < nPlayers; i++) {
+        // playerID del jugador nro i de la lista
+        const player = data[i];
+        const wins = data[i].wins;
+        if (player){
+          resultPlayers.push(player);
+          resultWins.push(`${wins} events`);
+        }
+      }
+      
+
       return JSON.stringify({
         description: 'Player with the most events won',
-        players: [data[0], data[1], data[2]],
-        data: [
-          `${data[0].wins} events`,
-          `${data[1].wins} events`,
-          `${data[2].wins} events`,
-        ],
+        players: resultPlayers,
+        data: resultWins,
       });
     } catch (exception) {
       if (

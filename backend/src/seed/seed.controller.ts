@@ -1,13 +1,243 @@
 import { Controller, Get } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { TransactionType } from '@prisma/client';
+import { RiskLevel, TransactionType } from '@prisma/client';
 
 @Controller('seed')
 export class SeedController {
   constructor(private prisma: PrismaService) {}
 
+  @Get('/step1')
+  async Step1(): Promise<string> {
+    try {
+      // Create 150 Users (100 players and 50 non-players)
+      const userPromises = Array.from({ length: 150 }, (_, i) => {
+        return this.prisma.user.create({
+          data: {
+            email: `user${i}@lot.com`,
+            auth0_id: `auth0|${Math.random().toString(36).substring(7)}`,
+            username: `User ${i}`,
+            avatar: `https://example.com/avatar${i}.png`,
+          },
+        });
+      });
+      const users = await Promise.all(userPromises);
+  
+      // Create Wallets
+      const walletPromises = users.map(user => {
+        return this.prisma.wallet.create({
+          data: { user_id: user.id },
+        });
+      });
+      await Promise.all(walletPromises);
+  
+      // Create Games
+      const gameNames = ['Valorant', 'FIFA 24', 'Fortnite', 'Counter Strike', 'League of Legends', 'Among Us'];
+      const gamePromises = gameNames.map((name, i) => {
+        return this.prisma.game.create({
+          data: {
+            name,
+            icon: `https://example.com/game-icon${i}.png`,
+          },
+        });
+      });
+      await Promise.all(gamePromises);
+  
+      // Create Ranks
+      const rankDescriptions = ['Iron', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Challenger'];
+      const rankPromises = rankDescriptions.map(description => {
+        return this.prisma.rank.create({
+          data: { description },
+        });
+      });
+      await Promise.all(rankPromises);
+  
+      return 'Step 1: Users, Wallets, Games, and Ranks created successfully';
+    } catch (exception) {
+      console.log(exception);
+      return 'Failed to execute step 1. Please try again later';
+    }
+  }
+  
+  
+  @Get('/step2')
+async Step2(): Promise<string> {
+  try {
+    // Fetch existing users, games, and ranks
+    const users = await this.prisma.user.findMany({ include: {wallet: true}});
+    const games = await this.prisma.game.findMany();
+    const ranks = await this.prisma.rank.findMany();
+    const wallets = await this.prisma.wallet.findMany({ include: { token_wallet: true } });
+
+    // Separate players and non-players
+    const players = users.slice(0, 100);
+    const nonPlayers = users.slice(100);
+
+    // Create Players
+    const playerPromises = players.map((user, i) => {
+      const randomGame = games[Math.floor(Math.random() * games.length)];
+      const randomRank = ranks[Math.floor(Math.random() * ranks.length)];
+      return this.prisma.player.create({
+        data: {
+          user_id: user.id,
+          biography: `Biography of User ${i}`,
+          rank_id: randomRank.id,
+          game_id: randomGame.id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+    });
+    const createdPlayers = await Promise.all(playerPromises);
+
+    // Create Events
+    const eventPromises = Array.from({ length: 50 }, (_, i) => {
+      const randomGame = games[Math.floor(Math.random() * games.length)];
+      return this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: Math.floor(Math.random() * 50) + 10,
+          prize: Math.random() * 1000000,
+          name: `Event ${i}`,
+          game_id: randomGame.id,
+        },
+      });
+    });
+    const events = await Promise.all(eventPromises);
+
+    // Create Player Events
+    const playerEventPromises = createdPlayers.map(player => {
+      const randomEvent = events[Math.floor(Math.random() * events.length)];
+      return this.prisma.player_event.create({
+        data: {
+          event_id: randomEvent.id,
+          player_id: player.id,
+          position: Math.floor(Math.random() * 10) + 1,
+        },
+      });
+    });
+    await Promise.all(playerEventPromises);
+
+    // Create Fundraisings
+    const fundraisingPromises = Array.from({ length: 300 }, () => {
+      const randomPlayer = createdPlayers[Math.floor(Math.random() * createdPlayers.length)];
+      const randomEvent = events[Math.floor(Math.random() * events.length)];
+      return this.prisma.fundraising.create({
+        data: {
+          goal_amount: Math.random() * 100000,
+          current_amount: Math.random() * 100000,
+          prize_percentage: Math.random(),
+          player_id: randomPlayer.id,
+          event_id: randomEvent.id,
+          risk_level: ['LOW', 'MEDIUM', 'HIGH'][Math.floor(Math.random() * 3)] as RiskLevel,
+        },
+      });
+    });
+    const fundraisings = await Promise.all(fundraisingPromises);
+
+    // Create Collections
+    const collectionPromises = fundraisings.map(fundraising => {
+      return this.prisma.collection.create({
+        data: {
+          previous_price: Math.random() * 100,
+          current_price: Math.random() * 100,
+          initial_amount: Math.floor(Math.random() * 1000) + 100,
+          token_prize_percentage: Math.random(),
+          previous_token_prize_percentage: Math.random(),
+          fundraising_id: fundraising.id,
+          amount_left: Math.floor(Math.random() * 1000),
+        },
+        include: { token: true },
+      });
+    });
+    const collections = await Promise.all(collectionPromises);
+
+    // Create Tokens in batches to avoid exhausting the connection pool
+    const createTokensInBatches = async (batchSize: number) => {
+      for (let i = 0; i < collections.length; i += batchSize) {
+        const batch = collections.slice(i, i + batchSize);
+        const tokenPromises = batch.flatMap(collection => {
+          return Array.from({ length: collection.initial_amount }, () => {
+            return this.prisma.token.create({
+              data: {
+                price: collection.current_price,
+                collection_id: collection.id,
+              },
+            });
+          });
+        });
+        return await Promise.all(tokenPromises);
+      }
+    };
+    const tokens = await createTokensInBatches(10);
+
+    // Create Transactions and Token Wallets for non-players
+    const createTransactionsInBatches = async (batchSize: number) => {
+      for (let i = 0; i < nonPlayers.length; i += batchSize) {
+        const batch = nonPlayers.slice(i, i + batchSize);
+        const transactionPromises = batch.flatMap(user => {
+          const randomTokens = tokens.sort(() => 0.5 - Math.random()).slice(0, 5);
+          return randomTokens.flatMap(token => [
+            this.prisma.token_wallet.create({
+              data: {
+                token_id: token.id,
+                wallet_id: user.wallet.id,
+              },
+            }),
+            this.prisma.transaction.create({
+              data: {
+                wallet_id: user.wallet.id,
+                token_id: token.id,
+                type: 'BUY' as TransactionType,
+              },
+            }),
+          ]);
+        });
+        await Promise.all(transactionPromises);
+      }
+    };
+    await createTransactionsInBatches(10);
+
+    // Create Marketplace Publications in batches
+    const createMarketplaceInBatches = async (batchSize: number) => {
+      for (let i = 0; i < 500; i += batchSize) {
+        const batch = tokens.slice(i, i + batchSize);
+        const marketplacePromises = batch.map((token, i) => {
+          const wallet = wallets[Math.floor(Math.random() * wallets.length)];
+          return this.prisma.marketplace_publication.create({
+            data: {
+              token_id: token.id,
+              price: Math.random() * 100,
+              out_wallet_id: wallet.id,
+            },
+          });
+        });
+        await Promise.all(marketplacePromises);
+      }
+    };
+    await createMarketplaceInBatches(10); // Adjust the batch size as needed
+
+    return 'Step 2: Players, Events, Fundraisings, Collections, Tokens, Transactions, and Marketplace Publications created successfully';
+  } catch (exception) {
+    console.log(exception);
+    return 'Failed to execute step 2. Please try again later';
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
   @Get('/')
-  async findOne(): Promise<string> {
+  async findTwo(): Promise<string> {
     try {
       const user = await this.prisma.user.create({
         data: {
