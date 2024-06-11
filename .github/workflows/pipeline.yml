@@ -406,7 +406,7 @@ jobs:
                   CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
                   SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
               run: |
-                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"
+                  AUDIENCE="https://dev-f57qs7dbi1xcl5kj.us.auth0.com/api/v2/"  # Usar la audiencia correcta
 
                   # Obtener el token de acceso de Auth0
                   RESPONSE=$(curl --silent --request POST \
@@ -443,9 +443,7 @@ jobs:
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
-                    }'
-                  \ 
-                    > /dev/null 2>&1
+                    }' \ > /dev/null 2>&1
 
     run-integration-tests:
         name: Run integration tests
