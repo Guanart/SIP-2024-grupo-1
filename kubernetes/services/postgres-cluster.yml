@@ -21,7 +21,7 @@ spec:
     serviceAccountTemplate:
         metadata:
             annotations:
-                iam.gke.io/gcp-service-account: cnpg-backup@starlit-verve-424519-e5.iam.gserviceaccount.com # @<project_id>
+                iam.gke.io/gcp-service-account: cnpg-backup@sip-2024-grupo-1.iam.gserviceaccount.com
     monitoring:
         enablePodMonitor: true
 ---

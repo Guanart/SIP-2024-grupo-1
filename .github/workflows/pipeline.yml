@@ -236,7 +236,6 @@ jobs:
               run: |
                   if ! kubectl get deployment -n cnpg-system cnpg-controller-manager > /dev/null 2>&1; then
                     kubectl apply --server-side -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.23/releases/cnpg-1.23.1.yaml
-                    sleep 90
                   else
                     echo "Cloud-native operator already installed."
                   fi
