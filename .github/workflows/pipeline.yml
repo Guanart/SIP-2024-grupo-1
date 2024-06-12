@@ -291,6 +291,20 @@ jobs:
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
 
+            - name: Wait for certificate to be ready
+              run: |
+                  CERT_NAME="frontend-certificate"
+                  NAMESPACE="cert-manager"
+                  while true; do
+                    STATUS=$(kubectl get certificate $CERT_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}")
+                    if [ "$STATUS" == "True" ]; then
+                      echo "Certificate is ready."
+                      break
+                    fi
+                    echo "Waiting for certificate to be ready..."
+                    sleep 10
+                  done
+
             - name: Wait for PostgreSQL to be running
               run: |
                   POSTGRES_READY=""
