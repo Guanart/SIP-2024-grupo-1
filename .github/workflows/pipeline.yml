@@ -295,14 +295,20 @@ jobs:
               run: |
                   CERTIFICATE_NAME="frontend-certificate"
                   NAMESPACE="cert-manager"
-                  CERTIFICATE_READY=""
+                  CERTIFICATE_READY="false"
 
-                  while [ -z "$CERTIFICATE_READY" ]; do
-                    STATUS=$(kubectl get certificate $CERTIFICATE_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}")
-                    if [ "$STATUS" == "True" ]; then
-                      CERTIFICATE_READY=true
+                  while [ "$CERTIFICATE_READY" == "false" ]; do
+                    STATUS=$(kubectl get certificate $CERTIFICATE_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}" 2>/dev/null)
+                    
+                    if [ $? -ne 0 ]; then
+                      echo "Certificate not found. Waiting for certificate to be created..."
+                    elif [ "$STATUS" == "True" ]; then
+                      CERTIFICATE_READY="true"
+                      echo "Certificate is ready."
+                    else
+                      echo "Waiting for certificate to be ready..."
                     fi
-                    echo "Waiting for certificate to be ready..."
+
                     sleep 10
                   done
 
