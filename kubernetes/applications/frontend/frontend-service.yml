@@ -11,3 +11,7 @@ spec:
         - protocol: TCP
           port: 443
           targetPort: 443
+        # Comentado para prueba de https
+        # - protocol: TCP
+        #   port: 5173
+        #   targetPort: 80
