@@ -264,18 +264,17 @@ jobs:
             - name: Install cert-manager
               run: |
                   if helm repo list | grep -q "jetstack"; then
-                    echo "El repositorio jetstack ya está agregado."
+                    echo "The jetstack repository is already added"
                   else
-                    # Agregar el repositorio Jetstack
                     helm repo add jetstack https://charts.jetstack.io --force-update
-                    echo "El repositorio jetstack ha sido agregado."
+                    echo "The jetstack repository has been added"
                   fi
 
                   NAMESPACE="cert-manager"
 
                   # Verificar si cert-manager ya está instalado en el namespace
                   if helm list -n $NAMESPACE | grep -q "cert-manager"; then
-                    echo "cert-manager ya está instalado en el namespace $NAMESPACE."
+                    echo "cert-manager is already installed in namespace $NAMESPACE."
                   else
                     # Instalar cert-manager
                     helm install \
