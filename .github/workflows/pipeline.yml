@@ -400,7 +400,7 @@ jobs:
               with:
                   context: ./backend
                   push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
 
             - name: Clean up generated TLS certificates
               working-directory: backend

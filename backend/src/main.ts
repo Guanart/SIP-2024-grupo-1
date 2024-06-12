@@ -10,13 +10,12 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const httpsOptions = {
-    key: readFileSync(__dirname + '../tls.key', 'utf-8'),
-    cert: readFileSync(__dirname + '../tls.crt', 'utf-8'),
+    key: readFileSync(__dirname + '/../tls.key', 'utf-8'),
+    cert: readFileSync(__dirname + '/../tls.crt', 'utf-8'),
   };
 
   const server = express();
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
-  // const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
     new ValidationPipe({
