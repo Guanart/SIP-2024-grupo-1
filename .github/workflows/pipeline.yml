@@ -215,9 +215,7 @@ jobs:
             #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
             #   run: |
             #       kubectl create secret generic cloudflare-token-secret \
-            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
-            #         --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
-            #         --namespace cert-manager || echo " secret already exists"
+            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN -n cert-manager
 
             - name: Install Argo CD CLI
               run: |
@@ -430,6 +428,11 @@ jobs:
                   npm install
                   bash check-dependencies.sh
 
+            - name: Generate TLS certificates
+              run: |
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > ./frontend/tls.crt
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > ./frontend/tls.key
+
             - name: Build frontend image
               uses: docker/build-push-action@v5
               with:
@@ -475,6 +478,10 @@ jobs:
                   push: true
                   tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
 
+            - name: Clean up generated TLS certificates
+              run: |
+                  rm -rf ./frontend/tls.crt ./frontend/tls.key
+
             - name: Deploy frontend
               working-directory: kubernetes/argocd
               run: |
@@ -518,8 +525,13 @@ jobs:
 
                   PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
+                  if [ -z "$PUBLIC_IP" ]; then
+                      echo "Failed to fetch frontend IP"
+                      exit 1
+                  fi
+
                   # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP:5173"
+                  NEW_CALLBACK_URL="http://$PUBLIC_IP:80"
 
                   # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
@@ -532,6 +544,51 @@ jobs:
                       "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
                     }' \
                     > /dev/null 2>&1
+
+            # - name: Update Cloudflare DNS
+            #   env:
+            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            #       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+            #   run: |
+            #       # Fetch the external IP of the frontend LoadBalancer service
+            #       PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+            #       if [ -z "$PUBLIC_IP" ]; then
+            #           echo "Failed to fetch frontend IP"
+            #           exit 1
+            #       fi
+
+            #       echo "getting RECORDS from Cloudflare"
+            #       # Fetch all A records from Cloudflare
+            #       RECORDS_JSON=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=A" \
+            #         -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+            #         -H "Content-Type: application/json")
+
+            #       # Parse JSON to get individual records and update them with the new IP
+            #       echo "$RECORDS_JSON" | jq -c '.result[] | {id, name, content}' | while read -r record; do
+            #           RECORD_ID=$(echo $record | jq -r '.id')
+            #           RECORD_NAME=$(echo $record | jq -r '.name')
+
+            #           echo "Updating DNS record $RECORD_NAME with IP $PUBLIC_IP"
+
+            #           # Update the DNS record
+            #           RESPONSE=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$RECORD_ID" \
+            #             -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+            #             -H "Content-Type: application/json" \
+            #             --data '{
+            #               "type": "A",
+            #               "name": "'"$RECORD_NAME"'",
+            #               "content": "'"$PUBLIC_IP"'",
+            #               "ttl": 1,
+            #               "proxied": false
+            #             }')
+
+            #           echo "Update response: $RESPONSE"
+            #           SUCCESS=$(echo $RESPONSE | jq -r '.success')
+            #           if [ "$SUCCESS" != "true" ]; then
+            #               echo "Failed to update DNS record $RECORD_NAME: $(echo $RESPONSE | jq -r '.errors[] .message')"
+            #           fi
+            #       done
 
             - name: Create Mercado Pago config
               env:
