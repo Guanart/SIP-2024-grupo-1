@@ -290,25 +290,20 @@ jobs:
               run: |
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
+                  sleep 30
 
             - name: Wait for certificate to be ready
               run: |
                   CERTIFICATE_NAME="frontend-certificate"
                   NAMESPACE="cert-manager"
-                  CERTIFICATE_READY="false"
+                  CERTIFICATE_READY=""
 
-                  while [ "$CERTIFICATE_READY" == "false" ]; do
-                    STATUS=$(kubectl get certificate $CERTIFICATE_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}" 2>/dev/null)
-                    
-                    if [ $? -ne 0 ]; then
-                      echo "Certificate not found. Waiting for certificate to be created..."
-                    elif [ "$STATUS" == "True" ]; then
-                      CERTIFICATE_READY="true"
-                      echo "Certificate is ready."
-                    else
-                      echo "Waiting for certificate to be ready..."
+                  while [ -z "$CERTIFICATE_READY" ]; do
+                    STATUS=$(kubectl get certificate $CERTIFICATE_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}")
+                    if [ "$STATUS" == "True" ]; then
+                      CERTIFICATE_READY=true
                     fi
-
+                    echo "Waiting for certificate to be ready..."
                     sleep 10
                   done
 
@@ -547,7 +542,8 @@ jobs:
                   fi
 
                   # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL="https://leagueoftoken.online"
+                  NEW_CALLBACK_URL_HTTPS="https://leagueoftoken.online"
+                  NEW_CALLBACK_URL_HTTP="http://leagueoftoken.online"
 
                   # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
@@ -555,9 +551,9 @@ jobs:
                     --header "authorization: Bearer $ACCESS_TOKEN" \
                     --header 'content-type: application/json' \
                     --data '{
-                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
+                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'"],
+                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'"],
+                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'"],
                     }' \
                     > /dev/null 2>&1
 
@@ -613,7 +609,7 @@ jobs:
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
                   APP_URL=http://$BACKEND_SERVICE:3000
-                  REACT_APP_URL=https://leagueoftoken.online
+                  REACT_APP_URL=http://leagueoftoken.online
 
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1

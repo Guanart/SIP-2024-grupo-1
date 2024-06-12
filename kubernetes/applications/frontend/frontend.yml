@@ -18,7 +18,10 @@ spec:
                   image: 'grupo4sdypp2024/lot-frontend:1.0.0'
                   imagePullPolicy: Always
                   ports:
+                      - containerPort: 80
+                        name: http
                       - containerPort: 443
+                        name: https
 
             # Agrega toleration para asegurar que los pods se creen unicamente en el node group de aplicaciones
             tolerations:
