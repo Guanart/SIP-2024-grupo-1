@@ -1,7 +1,7 @@
 name: LOT pipeline
 on:
     push:
-        branches: ['https-certificate']
+        branches: ['main']
 jobs:
     configure-backend:
         name: Configure backend for terraform state
