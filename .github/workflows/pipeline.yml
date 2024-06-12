@@ -273,6 +273,7 @@ jobs:
                     echo "El repositorio jetstack ha sido agregado."
                   fi
 
+                  NAMESPACE="cert-manager"
 
                   # Verificar si cert-manager ya está instalado en el namespace
                   if helm list -n $NAMESPACE | grep -q "cert-manager"; then
