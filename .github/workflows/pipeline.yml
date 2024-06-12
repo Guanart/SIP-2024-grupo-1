@@ -170,30 +170,30 @@ jobs:
                   username: ${{ secrets.DOCKER_HUB_USERNAME }}
                   password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-            # - name: Run vulnerability check on backend
-            #   working-directory: backend
-            #   run: |
-            #       bash check-dependencies.sh
+            - name: Run vulnerability check on backend
+              working-directory: backend
+              run: |
+                  bash check-dependencies.sh
 
-            # - name: Run backend unit tests
-            #   working-directory: backend
-            #   run: |
-            #       npm install
-            #       npm run test
+            - name: Run backend unit tests
+              working-directory: backend
+              run: |
+                  npm install
+                  npm run test
 
-            # - name: Build backend image
-            #   uses: docker/build-push-action@v5
-            #   with:
-            #       context: ./backend
-            #       push: false
-            #       tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+            - name: Build backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
 
-            # - name: Scan backend image
-            #   uses: anchore/scan-action@v3
-            #   with:
-            #       image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-            #       fail-build: true
-            #       severity-cutoff: critical
+            - name: Scan backend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
 
             - name: Push backend image
               uses: docker/build-push-action@v5
@@ -294,7 +294,7 @@ jobs:
 
             - name: Wait for certificate to be ready
               run: |
-                  CERTIFICATE_NAME="frontend-certificate"
+                  CERTIFICATE_NAME="certificate"
                   NAMESPACE="cert-manager"
                   CERTIFICATE_READY=""
 
@@ -412,42 +412,42 @@ jobs:
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   curl http://$BACKEND_SERVICE:3000/seed
 
-            # - name: Update Postman environments
-            #   run: |
-            #       BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-            #       jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
-            #       jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
-            #       mv postman/environment_temp.json postman/environment.json
+            - name: Update Postman environments
+              run: |
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
+                  jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
+                  mv postman/environment_temp.json postman/environment.json
 
-            # - name: Run Accounts API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/accounts.json
-            #       environment: postman/environment.json
+            - name: Run Accounts API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/accounts.json
+                  environment: postman/environment.json
 
-            # - name: Run Fundraisings API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/fundraisings.json
-            #       environment: postman/environment.json
+            - name: Run Fundraisings API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/fundraisings.json
+                  environment: postman/environment.json
 
-            # - name: Run Marketplace API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/marketplace.json
-            #       environment: postman/environment.json
+            - name: Run Marketplace API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/marketplace.json
+                  environment: postman/environment.json
 
-            # - name: Run vulnerability check on frontend
-            #   working-directory: frontend
-            #   run: |
-            #       npm install
-            #       bash check-dependencies.sh
+            - name: Run vulnerability check on frontend
+              working-directory: frontend
+              run: |
+                  npm install
+                  bash check-dependencies.sh
 
             - name: Generate TLS certificates
               working-directory: frontend
               run: |
-                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
-                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
                   ls -lah
 
             - name: Build frontend image

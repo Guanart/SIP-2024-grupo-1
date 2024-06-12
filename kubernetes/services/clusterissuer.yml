@@ -21,13 +21,14 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-    name: frontend-certificate
+    name: certificate
     namespace: cert-manager
 spec:
-    secretName: frontend-tls
+    secretName: certificate-tls
     issuerRef:
         name: letsencrypt-prod
         kind: ClusterIssuer
     commonName: 'leagueoftoken.online'
     dnsNames:
-        - 'leagueoftoken.online'
+        - 'frontend.leagueoftoken.online'
+        - 'api.leagueoftoken.online'

@@ -1,7 +1,32 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#     name: frontend-ingress
+#     annotations:
+#         cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+#     namespace: argocd
+# spec:
+#     rules:
+#         - host: leagueoftoken.online
+#           http:
+#               paths:
+#                   - backend:
+#                         service:
+#                             port:
+#                                 number: 443
+#                             name: frontend-service
+#                     path: /
+#                     pathType: Prefix
+#     tls:
+#         - hosts:
+#               - leagueoftoken.online
+#           secretName: frontend-ingress-secret
+#     ingressClassName: nginx
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: frontend-ingress
+    name: main-ingress
     annotations:
         cert-manager.io/cluster-issuer: 'letsencrypt-prod'
     namespace: argocd
@@ -10,15 +35,26 @@ spec:
         - host: leagueoftoken.online
           http:
               paths:
-                  - backend:
+                  - path: /
+                    pathType: Prefix
+                    backend:
                         service:
+                            name: frontend-service
                             port:
                                 number: 443
-                            name: frontend-service
-                    path: /
+        - host: api.leagueoftoken.online
+          http:
+              paths:
+                  - path: /
                     pathType: Prefix
+                    backend:
+                        service:
+                            name: backend-service
+                            port:
+                                number: 3000
     tls:
         - hosts:
-              - leagueoftoken.online
-          secretName: frontend-ingress-secret
+              - frontend.leagueoftoken.online
+              - api.leagueoftoken.online
+          secretName: main-ingress-secret
     ingressClassName: nginx
