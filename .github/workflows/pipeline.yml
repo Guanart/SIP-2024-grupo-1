@@ -531,7 +531,7 @@ jobs:
                   fi
 
                   # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP:80"
+                  NEW_CALLBACK_URL="https://leagueoftoken.online"
 
                   # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
@@ -541,7 +541,7 @@ jobs:
                     --data '{
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
+                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                     }' \
                     > /dev/null 2>&1
 
