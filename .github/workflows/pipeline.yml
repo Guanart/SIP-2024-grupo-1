@@ -338,12 +338,12 @@ jobs:
                       name: mercado-pago-config
                       namespace: argocd
                     data:
-                      MP_CLIENT_SECRET: ''
-                      MP_ACCESS_TOKEN: ''
-                      MP_APP_ID: ''
-                      APP_URL: ''
-                      REACT_APP_URL: ''
-                      MP_REDIRECT_URI: ''
+                      MP_CLIENT_SECRET: asd
+                      MP_ACCESS_TOKEN: asd
+                      MP_APP_ID: asd
+                      APP_URL: asd
+                      REACT_APP_URL: asd
+                      MP_REDIRECT_URI: asd
                     EOF
 
             - name: Deploy backend
