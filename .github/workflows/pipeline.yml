@@ -1,7 +1,7 @@
 name: LOT pipeline
 on:
     push:
-        branches: ['main']
+        branches: ['https-certificate']
 jobs:
     configure-backend:
         name: Configure backend for terraform state
@@ -254,6 +254,26 @@ jobs:
                     fi
                   done
 
+            - name: Install cert-manager
+              run: |
+                  helm repo add jetstack https://charts.jetstack.io --force-update
+                  helm install \
+                    cert-manager jetstack/cert-manager \
+                    --namespace cert-manager \
+                    --create-namespace \
+                    --version v1.15.0 \
+                    --set crds.enabled=true
+
+            - name: Create Cloudflare API Token Secret
+              env:
+                  CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+                  CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+              run: |
+                  kubectl create secret generic cloudflare-token-secret \
+                    --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
+                    --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
+                    --namespace cert-manager || echo " secret already exists"
+
             - name: Create infra services
               working-directory: kubernetes/argocd
               run: |
@@ -267,7 +287,7 @@ jobs:
                   while [ -z "$POSTGRES_READY" ]; do
                     RUNNING_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --field-selector=status.phase=Running --no-headers 2>/dev/null | grep -v "No resources found" | wc -l)
                     TOTAL_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --no-headers | wc -l)
-                    
+
                     echo "Running PostgreSQL pods: $RUNNING_COUNT, Total PostgreSQL pods: $TOTAL_COUNT"
 
                     if [ "$RUNNING_COUNT" -eq "$TOTAL_COUNT" ] && [ "$TOTAL_COUNT" -ne 0 ]; then
@@ -525,53 +545,58 @@ jobs:
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
                   EOF
 
-    # TODO: Fix selenium tests
-    # run-integration-tests:
-    #     name: Run integration tests
-    #     if: startsWith(github.event.head_commit.message, '(up)')
-    #     needs: configure-argo
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout code
-    #           uses: actions/checkout@v4.1.6
+            # TODO: Fix selenium tests
+            # run-integration-tests:
+            #     name: Run integration tests
+            #     if: startsWith(github.event.head_commit.message, '(up)')
+            #     needs: configure-argo
+            #     runs-on: ubuntu-latest
+            #     steps:
+            #         - name: Checkout code
+            #           uses: actions/checkout@v4.1.6
 
-    #         - name: GCP authentication
-    #           uses: google-github-actions/auth@v2
-    #           with:
-    #               credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+            #         - name: GCP authentication
+            #           uses: google-github-actions/auth@v2
+            #           with:
+            #               credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
 
-    #         - name: GCP kubectl plugin
-    #           uses: google-github-actions/setup-gcloud@v2
-    #           with:
-    #               version: '>= 363.0.0'
-    #               install_components: 'kubectl'
+            #         - name: GCP kubectl plugin
+            #           uses: google-github-actions/setup-gcloud@v2
+            #           with:
+            #               version: '>= 363.0.0'
+            #               install_components: 'kubectl'
 
-    #         - name: Get Kubernetes cluster credentials
-    #           run: |
-    #               REGION="us-east1-b"
-    #               gcloud container clusters get-credentials lot --region=${REGION}
+            #         - name: Get Kubernetes cluster credentials
+            #           run: |
+            #               REGION="us-east1-b"
+            #               gcloud container clusters get-credentials lot --region=${REGION}
 
-    #         - name: Get frontend LoadBalancer IP
-    #           id: get-frontend-ip
-    #           run: |
-    #               FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-    #               echo "::set-output name=frontend-ip::$FRONTEND_IP"
+            #         - name: Get frontend LoadBalancer IP
+            #           id: get-frontend-ip
+            #           run: |
+            #               FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            #               echo "::set-output name=frontend-ip::$FRONTEND_IP"
 
-    #         - name: Run Selenium integration tests
-    #           working-directory: selenium
-    #           run: |
-    #               pip install -r requirements.txt
-    #               FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
-    #               export FRONTEND_IP=$FRONTEND_IP
+            #         - name: Run Selenium integration tests
+            #           working-directory: selenium
+            #           run: |
+            #               pip install -r requirements.txt
+            #               FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
+            #               export FRONTEND_IP=$FRONTEND_IP
 
-    #               python3 login.py
-    #               python3 account-edit.py
-    #               python3 list-marketplace.py
-    #               python3 delete-marketplace-publication.py
-    #               python3 create-marketplace-publication.py
-    #               python3 list-fundraising.py
-    #               python3 update-fundraising.py
-    #               python3 start-fundraising.py
+            #               python3 login.py
+            #               python3 account-edit.py
+            #               python3 list-marketplace.py
+            #               python3 delete-marketplace-publication.py
+            #               python3 create-marketplace-publication.py
+            #               python3 list-fundraising.py
+            #               python3 update-fundraising.py
+            #               python3 start-fundraising.py
+
+            - name: Apply cluster-issuer
+              working-directory: ./kubernetes
+              run: |
+                  kubectl apply -f cluster-issuer.yaml
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
