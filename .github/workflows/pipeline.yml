@@ -429,9 +429,11 @@ jobs:
                   bash check-dependencies.sh
 
             - name: Generate TLS certificates
+              working-directory: frontend
               run: |
-                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > ./frontend/tls.crt
-                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > ./frontend/tls.key
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
+                  ls -lah
 
             - name: Build frontend image
               uses: docker/build-push-action@v5
