@@ -210,6 +210,15 @@ jobs:
                     rm credentials.json
                   fi
 
+            # - name: Create Cloudflare API Token Secret
+            #   env:
+            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            #   run: |
+            #       kubectl create secret generic cloudflare-token-secret \
+            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
+            #         --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
+            #         --namespace cert-manager || echo " secret already exists"
+
             - name: Install Argo CD CLI
               run: |
                   curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
@@ -256,23 +265,27 @@ jobs:
 
             - name: Install cert-manager
               run: |
-                  helm repo add jetstack https://charts.jetstack.io --force-update
-                  helm install \
-                    cert-manager jetstack/cert-manager \
-                    --namespace cert-manager \
-                    --create-namespace \
-                    --version v1.15.0 \
-                    --set crds.enabled=true
+                  if helm repo list | grep -q "jetstack"; then
+                    echo "El repositorio jetstack ya está agregado."
+                  else
+                    # Agregar el repositorio Jetstack
+                    helm repo add jetstack https://charts.jetstack.io --force-update
+                    echo "El repositorio jetstack ha sido agregado."
+                  fi
 
-            # - name: Create Cloudflare API Token Secret
-            #   env:
-            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
-            #       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-            #   run: |
-            #       kubectl create secret generic cloudflare-token-secret \
-            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN \
-            #         --from-literal=zone-id=$CLOUDFLARE_ZONE_ID \
-            #         --namespace cert-manager || echo " secret already exists"
+
+                  # Verificar si cert-manager ya está instalado en el namespace
+                  if helm list -n $NAMESPACE | grep -q "cert-manager"; then
+                    echo "cert-manager ya está instalado en el namespace $NAMESPACE."
+                  else
+                    # Instalar cert-manager
+                    helm install \
+                      cert-manager jetstack/cert-manager \
+                      --namespace $NAMESPACE \
+                      --create-namespace \
+                      --version v1.15.0 \
+                      --set crds.enabled=true
+                  fi
 
             - name: Create infra services
               working-directory: kubernetes/argocd
@@ -592,11 +605,6 @@ jobs:
             #               python3 list-fundraising.py
             #               python3 update-fundraising.py
             #               python3 start-fundraising.py
-
-            - name: Apply cluster-issuer
-              working-directory: ./kubernetes
-              run: |
-                  kubectl apply -f cluster-issuer.yaml
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
