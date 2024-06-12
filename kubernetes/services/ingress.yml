@@ -28,11 +28,11 @@ kind: Ingress
 metadata:
     name: main-ingress
     annotations:
-        cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+        cert-manager.io/cluster-issuer: 'letsencrypt-staging' # letsencrypt-prod
     namespace: argocd
 spec:
     rules:
-        - host: leagueoftoken.online
+        - host: frontend.leagueoftoken.online
           http:
               paths:
                   - path: /
@@ -51,9 +51,10 @@ spec:
                         service:
                             name: backend-service
                             port:
-                                number: 3000
+                                number: 3443
     tls:
         - hosts:
+              - leagueoftoken.online
               - frontend.leagueoftoken.online
               - api.leagueoftoken.online
           secretName: main-ingress-secret
