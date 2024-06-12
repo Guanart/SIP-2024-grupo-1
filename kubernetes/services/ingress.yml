@@ -13,12 +13,12 @@ spec:
                   - backend:
                         service:
                             port:
-                                number: 80
+                                number: 443
                             name: frontend-service
                     path: /
                     pathType: Prefix
     tls:
         - hosts:
               - leagueoftoken.online
-          secretName: helloworld-http-tls
+          secretName: frontend-tls
     ingressClassName: nginx
