@@ -478,11 +478,12 @@ jobs:
               with:
                   context: ./frontend
                   push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
 
             - name: Clean up generated TLS certificates
+              working-directory: frontend
               run: |
-                  rm -rf ./frontend/tls.crt ./frontend/tls.key
+                  rm -rf tls.crt tls.key
 
             - name: Deploy frontend
               working-directory: kubernetes/argocd

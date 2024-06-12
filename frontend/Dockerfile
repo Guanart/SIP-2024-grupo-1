@@ -12,8 +12,8 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 COPY --from=builder /app/dist .
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY tls.crt /etc/nginx/tls.crt
-COPY tls.key /etc/nginx/tls.key
+COPY tls.crt /etc/nginx/ssl/tls.crt
+COPY tls.key /etc/nginx/ssl/tls.key
 
 EXPOSE 80
 EXPOSE 443
