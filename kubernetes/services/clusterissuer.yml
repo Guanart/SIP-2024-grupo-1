@@ -7,8 +7,8 @@ metadata:
 spec:
     acme:
         email: matiasgimenez4299@gmail.com
-        # server: https://acme-staging-v02.api.letsencrypt.org/directory # Servidor de pruebas
         server: https://acme-v02.api.letsencrypt.org/directory
+        # server: https://acme-staging-v02.api.letsencrypt.org/directory # Servidor de pruebas
         privateKeySecretRef:
             name: cluster-issuer-account-key
         solvers:

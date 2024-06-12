@@ -1,4 +1,3 @@
-# Testing HTTPS
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15,11 +14,11 @@ spec:
                         service:
                             port:
                                 number: 443
-                            name: frontend
+                            name: frontend-service
                     path: /
                     pathType: Prefix
     tls:
         - hosts:
               - leagueoftoken.online
-          secretName: helloworld-http-tls
+          secretName: frontend-tls
     ingressClassName: nginx

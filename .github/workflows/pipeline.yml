@@ -1,7 +1,7 @@
 name: LOT pipeline
 on:
     push:
-        branches: ['main']
+        branches: ['https-certificate']
 jobs:
     configure-backend:
         name: Configure backend for terraform state
@@ -210,6 +210,13 @@ jobs:
                     rm credentials.json
                   fi
 
+            # - name: Create Cloudflare API Token Secret
+            #   env:
+            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            #   run: |
+            #       kubectl create secret generic cloudflare-token-secret \
+            #         --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN -n cert-manager
+
             - name: Install Argo CD CLI
               run: |
                   curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
@@ -254,6 +261,31 @@ jobs:
                     fi
                   done
 
+            - name: Install cert-manager
+              run: |
+                  if helm repo list | grep -q "jetstack"; then
+                    echo "El repositorio jetstack ya está agregado."
+                  else
+                    # Agregar el repositorio Jetstack
+                    helm repo add jetstack https://charts.jetstack.io --force-update
+                    echo "El repositorio jetstack ha sido agregado."
+                  fi
+
+                  NAMESPACE="cert-manager"
+
+                  # Verificar si cert-manager ya está instalado en el namespace
+                  if helm list -n $NAMESPACE | grep -q "cert-manager"; then
+                    echo "cert-manager ya está instalado en el namespace $NAMESPACE."
+                  else
+                    # Instalar cert-manager
+                    helm install \
+                      cert-manager jetstack/cert-manager \
+                      --namespace $NAMESPACE \
+                      --create-namespace \
+                      --version v1.15.0 \
+                      --set crds.enabled=true
+                  fi
+
             - name: Create infra services
               working-directory: kubernetes/argocd
               run: |
@@ -267,7 +299,7 @@ jobs:
                   while [ -z "$POSTGRES_READY" ]; do
                     RUNNING_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --field-selector=status.phase=Running --no-headers 2>/dev/null | grep -v "No resources found" | wc -l)
                     TOTAL_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --no-headers | wc -l)
-                    
+
                     echo "Running PostgreSQL pods: $RUNNING_COUNT, Total PostgreSQL pods: $TOTAL_COUNT"
 
                     if [ "$RUNNING_COUNT" -eq "$TOTAL_COUNT" ] && [ "$TOTAL_COUNT" -ne 0 ]; then
@@ -396,6 +428,13 @@ jobs:
                   npm install
                   bash check-dependencies.sh
 
+            - name: Generate TLS certificates
+              working-directory: frontend
+              run: |
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
+                  kubectl get secret frontend-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
+                  ls -lah
+
             - name: Build frontend image
               uses: docker/build-push-action@v5
               with:
@@ -439,7 +478,12 @@ jobs:
               with:
                   context: ./frontend
                   push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+
+            - name: Clean up generated TLS certificates
+              working-directory: frontend
+              run: |
+                  rm -rf tls.crt tls.key
 
             - name: Deploy frontend
               working-directory: kubernetes/argocd
@@ -484,8 +528,13 @@ jobs:
 
                   PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
+                  if [ -z "$PUBLIC_IP" ]; then
+                      echo "Failed to fetch frontend IP"
+                      exit 1
+                  fi
+
                   # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP:5173"
+                  NEW_CALLBACK_URL="https://leagueoftoken.online"
 
                   # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
@@ -495,9 +544,54 @@ jobs:
                     --data '{
                       "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                       "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
+                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
                     }' \
                     > /dev/null 2>&1
+
+            # - name: Update Cloudflare DNS
+            #   env:
+            #       CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+            #       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+            #   run: |
+            #       # Fetch the external IP of the frontend LoadBalancer service
+            #       PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+            #       if [ -z "$PUBLIC_IP" ]; then
+            #           echo "Failed to fetch frontend IP"
+            #           exit 1
+            #       fi
+
+            #       echo "getting RECORDS from Cloudflare"
+            #       # Fetch all A records from Cloudflare
+            #       RECORDS_JSON=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=A" \
+            #         -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+            #         -H "Content-Type: application/json")
+
+            #       # Parse JSON to get individual records and update them with the new IP
+            #       echo "$RECORDS_JSON" | jq -c '.result[] | {id, name, content}' | while read -r record; do
+            #           RECORD_ID=$(echo $record | jq -r '.id')
+            #           RECORD_NAME=$(echo $record | jq -r '.name')
+
+            #           echo "Updating DNS record $RECORD_NAME with IP $PUBLIC_IP"
+
+            #           # Update the DNS record
+            #           RESPONSE=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$RECORD_ID" \
+            #             -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+            #             -H "Content-Type: application/json" \
+            #             --data '{
+            #               "type": "A",
+            #               "name": "'"$RECORD_NAME"'",
+            #               "content": "'"$PUBLIC_IP"'",
+            #               "ttl": 1,
+            #               "proxied": false
+            #             }')
+
+            #           echo "Update response: $RESPONSE"
+            #           SUCCESS=$(echo $RESPONSE | jq -r '.success')
+            #           if [ "$SUCCESS" != "true" ]; then
+            #               echo "Failed to update DNS record $RECORD_NAME: $(echo $RESPONSE | jq -r '.errors[] .message')"
+            #           fi
+            #       done
 
             - name: Create Mercado Pago config
               env:
@@ -525,53 +619,53 @@ jobs:
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
                   EOF
 
-    # TODO: Fix selenium tests
-    # run-integration-tests:
-    #     name: Run integration tests
-    #     if: startsWith(github.event.head_commit.message, '(up)')
-    #     needs: configure-argo
-    #     runs-on: ubuntu-latest
-    #     steps:
-    #         - name: Checkout code
-    #           uses: actions/checkout@v4.1.6
+            # TODO: Fix selenium tests
+            # run-integration-tests:
+            #     name: Run integration tests
+            #     if: startsWith(github.event.head_commit.message, '(up)')
+            #     needs: configure-argo
+            #     runs-on: ubuntu-latest
+            #     steps:
+            #         - name: Checkout code
+            #           uses: actions/checkout@v4.1.6
 
-    #         - name: GCP authentication
-    #           uses: google-github-actions/auth@v2
-    #           with:
-    #               credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
+            #         - name: GCP authentication
+            #           uses: google-github-actions/auth@v2
+            #           with:
+            #               credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
 
-    #         - name: GCP kubectl plugin
-    #           uses: google-github-actions/setup-gcloud@v2
-    #           with:
-    #               version: '>= 363.0.0'
-    #               install_components: 'kubectl'
+            #         - name: GCP kubectl plugin
+            #           uses: google-github-actions/setup-gcloud@v2
+            #           with:
+            #               version: '>= 363.0.0'
+            #               install_components: 'kubectl'
 
-    #         - name: Get Kubernetes cluster credentials
-    #           run: |
-    #               REGION="us-east1-b"
-    #               gcloud container clusters get-credentials lot --region=${REGION}
+            #         - name: Get Kubernetes cluster credentials
+            #           run: |
+            #               REGION="us-east1-b"
+            #               gcloud container clusters get-credentials lot --region=${REGION}
 
-    #         - name: Get frontend LoadBalancer IP
-    #           id: get-frontend-ip
-    #           run: |
-    #               FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-    #               echo "::set-output name=frontend-ip::$FRONTEND_IP"
+            #         - name: Get frontend LoadBalancer IP
+            #           id: get-frontend-ip
+            #           run: |
+            #               FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            #               echo "::set-output name=frontend-ip::$FRONTEND_IP"
 
-    #         - name: Run Selenium integration tests
-    #           working-directory: selenium
-    #           run: |
-    #               pip install -r requirements.txt
-    #               FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
-    #               export FRONTEND_IP=$FRONTEND_IP
+            #         - name: Run Selenium integration tests
+            #           working-directory: selenium
+            #           run: |
+            #               pip install -r requirements.txt
+            #               FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
+            #               export FRONTEND_IP=$FRONTEND_IP
 
-    #               python3 login.py
-    #               python3 account-edit.py
-    #               python3 list-marketplace.py
-    #               python3 delete-marketplace-publication.py
-    #               python3 create-marketplace-publication.py
-    #               python3 list-fundraising.py
-    #               python3 update-fundraising.py
-    #               python3 start-fundraising.py
+            #               python3 login.py
+            #               python3 account-edit.py
+            #               python3 list-marketplace.py
+            #               python3 delete-marketplace-publication.py
+            #               python3 create-marketplace-publication.py
+            #               python3 list-fundraising.py
+            #               python3 update-fundraising.py
+            #               python3 start-fundraising.py
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
