@@ -328,23 +328,21 @@ jobs:
                   EOF
 
             - name: Create Mercado Pago with dummy values
-              env:
-                  MAILTRAP_PASSWORD: ${{ secrets.MAILTRAP_PASSWORD }}
               run: |
                   cat <<EOF | kubectl apply -f -
-                    apiVersion: v1
-                    kind: ConfigMap
-                    metadata:
-                      name: mercado-pago-config
-                      namespace: argocd
-                    data:
-                      MP_CLIENT_SECRET: asd
-                      MP_ACCESS_TOKEN: asd
-                      MP_APP_ID: asd
-                      APP_URL: asd
-                      REACT_APP_URL: asd
-                      MP_REDIRECT_URI: asd
-                    EOF
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: mercado-pago-config
+                    namespace: argocd
+                  data:
+                    MP_CLIENT_SECRET: a
+                    MP_ACCESS_TOKEN: b
+                    MP_APP_ID: c
+                    APP_URL: d
+                    REACT_APP_URL: e
+                    MP_REDIRECT_URI: f
+                  EOF
 
             - name: Deploy backend
               working-directory: kubernetes/argocd
