@@ -20,5 +20,5 @@ spec:
     tls:
         - hosts:
               - leagueoftoken.online
-          secretName: frontend-tls
+          secretName: frontend-ingress-secret
     ingressClassName: nginx
