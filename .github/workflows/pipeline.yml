@@ -400,7 +400,7 @@ jobs:
               with:
                   context: ./backend
                   push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:latest
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
 
             - name: Clean up generated TLS certificates
               working-directory: backend
@@ -495,8 +495,8 @@ jobs:
                   fi
 
                   # Escribir las variables de entorno en .env.prod
-                  echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
-                  echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
+                  echo "APP_BACKEND_HOST=https://api.leagueoftoken.online" > frontend/.env.prod
+                  echo "APP_BACKEND_PORT=3443" >> frontend/.env.prod
                   echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
                   echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
                   echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
