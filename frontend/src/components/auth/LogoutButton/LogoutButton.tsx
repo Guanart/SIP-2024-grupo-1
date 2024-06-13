@@ -10,7 +10,13 @@ export const LogoutButton = () => {
 			variant='contained'
 			color='secondary'
 			className='logout-button'
-			onClick={() => logout()}
+			onClick={() => {
+				logout({
+					logoutParams: {
+						returnTo: window.location.origin,
+					},
+				});
+			}}
 		>
 			Log out
 		</Button>
