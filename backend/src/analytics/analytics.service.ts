@@ -353,18 +353,74 @@ export class AnalyticsService {
     return countFundraisings;
   }
 
-  async getTokensAveragePrice() {
+  async getTokensAveragePrice(event_name?: string) {
     const collections = await this.prisma.collection.findMany({ where: {} });
-
-    let price = 0;
+    let total = 0;
+    let totalOfEvent = 0;
+    const eventEditions = {};
 
     collections.forEach((collection) => {
-      price += collection.current_price;
+      total += collection.current_price;
     });
 
-    const average = price / collections.length;
+    if (event_name) {
+      const collectionsByEvent = await this.prisma.collection.findMany({
+        where: { fundraising: { event: { name: event_name } } },
+        include: { fundraising: { include: { event: true } } },
+      });
+      console.log(collectionsByEvent);
 
-    return average;
+      collectionsByEvent.forEach((collection) => {
+        const id = collection.fundraising.event_id;
+        const date = collection.fundraising.event.start_date;
+        const price = collection.current_price;
+
+        if (eventEditions[id]) {
+          eventEditions[id]['total'] += price;
+          eventEditions[id]['collections']++;
+          eventEditions[id]['average'] = Math.round(
+            eventEditions[id]['total'] / eventEditions[id]['collections'],
+          );
+          if (collection.current_price > eventEditions[id]['max'])
+            eventEditions[id]['max'] = price;
+          if (collection.current_price < eventEditions[id]['min'])
+            eventEditions[id]['min'] = price;
+        } else {
+          eventEditions[id] = {
+            date,
+            average: price,
+            total: price,
+            collections: 1,
+            min: price,
+            max: price,
+          };
+        }
+        totalOfEvent += collection.current_price;
+      });
+
+      const averagePrice = Math.round(total / collections.length);
+      const eventAveragePrice = Math.round(
+        totalOfEvent / collectionsByEvent.length,
+      );
+
+      if (!collectionsByEvent.length) {
+        return {
+          averagePrice,
+          eventAveragePrice: null,
+          averagePriceByEdition: null,
+        };
+      }
+
+      return {
+        averagePrice,
+        eventAveragePrice,
+        averagePriceByEdition: eventEditions,
+      };
+    }
+
+    const averagePrice = Math.round(total / collections.length);
+
+    return averagePrice;
   }
 
   async getMorePopularEvents(game_id: number) {

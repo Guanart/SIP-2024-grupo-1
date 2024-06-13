@@ -879,6 +879,18 @@ export class SeedController {
         },
       });
 
+      const event2 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 335 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 2000000,
+          name: 'Supermagic',
+          game_id: game.id,
+          active: false,
+        },
+      });
+
       await this.prisma.event.create({
         data: {
           start_date: new Date(),
@@ -1030,22 +1042,45 @@ export class SeedController {
       await this.prisma.fundraising.create({
         data: {
           goal_amount: 25000,
-          current_amount: 25000,
+          current_amount: 125,
           prize_percentage: 40,
-          player_id: player3.id,
-          event_id: oldEvent.id,
+          player_id: player.id,
+          event_id: event2.id,
           risk_level: 'LOW',
-          active: false,
         },
       });
 
       await this.prisma.fundraising.create({
         data: {
           goal_amount: 50000,
-          current_amount: 25000,
+          current_amount: 50000,
+          prize_percentage: 40,
+          player_id: player.id,
+          event_id: event2.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      const oldFundraising1 = await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 20000,
+          current_amount: 15000,
           prize_percentage: 40,
           player_id: player2.id,
-          event_id: oldEvent2.id,
+          event_id: event2.id,
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      const oldFundraising2 = await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 50000,
+          current_amount: 25000,
+          prize_percentage: 60,
+          player_id: player2.id,
+          event_id: event2.id,
           risk_level: 'LOW',
           active: false,
         },
@@ -1084,6 +1119,30 @@ export class SeedController {
           previous_token_prize_percentage: 0.0004,
           fundraising_id: fundraising.id,
           amount_left: 995,
+        },
+      });
+
+      await this.prisma.collection.create({
+        data: {
+          previous_price: 50.0,
+          current_price: 50.0,
+          initial_amount: 1000,
+          token_prize_percentage: 0.0006,
+          previous_token_prize_percentage: 0.0006,
+          fundraising_id: oldFundraising2.id,
+          amount_left: 0,
+        },
+      });
+
+      await this.prisma.collection.create({
+        data: {
+          previous_price: 32.0,
+          current_price: 32.0,
+          initial_amount: 625,
+          token_prize_percentage: 0.00064,
+          previous_token_prize_percentage: 0.00064,
+          fundraising_id: oldFundraising1.id,
+          amount_left: 0,
         },
       });
 

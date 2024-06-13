@@ -15,9 +15,15 @@ import {
 	Typography,
 	Container,
 	Box,
+	TableContainer,
+	Table,
+	TableHead,
+	TableRow,
+	TableCell,
+	TableBody,
 } from '@mui/material';
 import { KeyboardBackspaceIcon } from '../../global/icons';
-import { Event, EventsAnalytics } from '../../types';
+import { Event, AverageTokenPriceAnalytics } from '../../types';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -37,9 +43,10 @@ export const StartFundraising = () => {
 	const [initialPrice, setInitialPrice] = useState<number | string>('');
 	const [prizePercentage, setPrizePercentage] = useState<number | string>('');
 	const [eventId, setEventId] = useState<number | string>('');
+	const [eventName, setEventName] = useState<string>('');
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
-	const [averageTokenPrice, setAverageTokenPrice] = useState<number>(0);
-	const [popularEvents, setPopularEvents] = useState<EventsAnalytics>();
+	const [averageTokenPrice, setAverageTokenPrice] =
+		useState<AverageTokenPriceAnalytics | null>(null);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -67,28 +74,6 @@ export const StartFundraising = () => {
 						setEvents(events);
 						setIsLoading(false);
 					}
-
-					response = await fetchWithAuth({
-						isAuthenticated,
-						accessToken,
-						url: `${HOST}:${PORT}/analytics/events/popular/${user.player.game.id}`,
-					});
-
-					if (response.ok) {
-						const { events } = await response.json();
-						setPopularEvents(events);
-					}
-
-					response = await fetchWithAuth({
-						isAuthenticated,
-						accessToken,
-						url: `${HOST}:${PORT}/analytics/token/average`,
-					});
-
-					if (response.ok) {
-						const { average } = await response.json();
-						setAverageTokenPrice(average);
-					}
 				}
 			} catch (error) {
 				navigate(`/error/500`);
@@ -100,6 +85,24 @@ export const StartFundraising = () => {
 
 		getEvents();
 	}, [accessToken, isAuthenticated, user, navigate]);
+
+	useEffect(() => {
+		const event = events.filter((event) => event.id === eventId);
+		if (!event.length) return;
+
+		const eventName = event[0]['name'];
+
+		fetchWithAuth({
+			isAuthenticated,
+			accessToken,
+			url: `${HOST}:${PORT}/analytics/token/average?event_name=${eventName}`,
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				setAverageTokenPrice(data.average);
+				setEventName(eventName);
+			});
+	}, [eventId, events, accessToken, isAuthenticated]);
 
 	async function handleStartFundraising(event: FormEvent) {
 		event.preventDefault();
@@ -123,9 +126,7 @@ export const StartFundraising = () => {
 			});
 
 			if (response.ok) {
-				const { message, fundraising } = await response.json();
-				console.log(message);
-				console.log(fundraising);
+				const { fundraising } = await response.json();
 				navigate(`/fundraising/${fundraising.id}`);
 			}
 		} catch (error) {
@@ -154,12 +155,12 @@ export const StartFundraising = () => {
 			{isLoading && <Loader />}
 			{!isLoading && (
 				<Stack
-					spacing={{ xs: 4, md: 8 }}
-					sx={{ mt: '16px', maxWidth: '1200px' }}
+					spacing={4}
+					sx={{ mt: '16px', maxWidth: '1400px' }}
 					justifyContent='center'
-					direction={{ xs: 'column-reverse', md: 'row' }}
+					direction={{ xs: 'column-reverse', lg: 'row' }}
 				>
-					<Container>
+					<Container sx={{ maxWidth: '400px !important' }}>
 						<Typography
 							color='secondary'
 							sx={{ fontWeight: 'bold', paddingBottom: '8px' }}
@@ -335,18 +336,6 @@ export const StartFundraising = () => {
 								}
 							}}
 						/>
-						{averageTokenPrice > 0 && (
-							<Typography sx={{ fontWeight: 'bold' }}>
-								Average token price:{' '}
-								<Typography
-									component='span'
-									color='secondary'
-									sx={{ fontWeight: 'bold' }}
-								>
-									U$D {averageTokenPrice}
-								</Typography>
-							</Typography>
-						)}
 						<Button
 							variant='contained'
 							color='secondary'
@@ -362,56 +351,215 @@ export const StartFundraising = () => {
 							Start fundraising
 						</Button>
 					</form>
-					{popularEvents && (
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								minWidth: '300px',
-								height: 'auto',
-								gap: '8px',
-							}}
-						>
-							<Typography
-								sx={{ fontWeight: 'bold' }}
-								color='secondary'
-								variant='h6'
+					<Stack direction='column' spacing={2}>
+						{averageTokenPrice && (
+							<Box
+								sx={{
+									display: 'flex',
+									flexDirection: 'column',
+									minWidth: '300px',
+									height: 'auto',
+									gap: '16px',
+								}}
 							>
-								{popularEvents.description}
-							</Typography>
-							<Typography sx={{ fontWeight: 'bold' }}>
-								U$D from token sales
-							</Typography>
-							{popularEvents.events.map((event, index) => {
-								return (
-									<Box>
-										<Typography
-											component='span'
-											sx={{ fontSize: '18px' }}
-										>
-											{index +
-												1 +
-												'. ' +
-												event.event_name}
+								<Typography
+									sx={{
+										fontWeight: 'bold',
+										textDecoration: 'underline',
+									}}
+									color='secondary'
+									variant='h6'
+								>
+									Average token price
+								</Typography>
+								<Box>
+									<Typography
+										sx={{
+											fontWeight: 'bold',
+											fontSize: '18px',
+										}}
+										color='secondary'
+									>
+										Global average token price
+									</Typography>
+									<Typography sx={{ fontWeight: 'bold' }}>
+										U$D {averageTokenPrice.averagePrice}
+									</Typography>
+								</Box>
+								<Box>
+									<Typography
+										sx={{
+											fontWeight: 'bold',
+											fontSize: '18px',
+										}}
+										color='secondary'
+									>
+										Event average token price
+									</Typography>
+									{averageTokenPrice.averagePriceByEdition && (
+										<Typography sx={{ fontWeight: 'bold' }}>
+											U$D{' '}
+											{
+												averageTokenPrice.eventAveragePrice
+											}
 										</Typography>
-										<Typography
-											component='span'
-											sx={{ marginLeft: '8px' }}
-										>
-											-
+									)}
+									{!averageTokenPrice.averagePriceByEdition && (
+										<Typography sx={{ fontSize: '14px' }}>
+											There is insufficient data to
+											provide a value
 										</Typography>
-										<Typography
-											component='span'
-											color='secondary'
-											sx={{ marginLeft: '8px' }}
+									)}
+								</Box>
+								<Box>
+									<Typography
+										sx={{
+											fontWeight: 'bold',
+											fontSize: '18px',
+										}}
+										color='secondary'
+									>
+										Last {eventName} editions
+									</Typography>
+									<Typography
+										sx={{ fontSize: '14px' }}
+									></Typography>
+									<TableContainer
+										sx={{
+											maxWidth: '400px',
+											minWidth: '350px',
+										}}
+									>
+										<Table
+											aria-label='a dense table'
+											size='small'
 										>
-											U$D {event.total}
+											<TableHead>
+												<TableRow>
+													<TableCell align='center'>
+														#
+													</TableCell>
+													<TableCell align='center'>
+														Date
+													</TableCell>
+													<TableCell
+														align='center'
+														sx={{
+															maxWidth: '80px',
+														}}
+													>
+														Min.
+													</TableCell>
+													<TableCell
+														align='center'
+														sx={{
+															maxWidth: '80px',
+														}}
+													>
+														Max.
+													</TableCell>
+													<TableCell
+														align='center'
+														sx={{
+															maxWidth: '80px',
+														}}
+													>
+														Avg.
+													</TableCell>
+												</TableRow>
+											</TableHead>
+											<TableBody>
+												{averageTokenPrice.eventAveragePrice &&
+													Object.entries(
+														averageTokenPrice.averagePriceByEdition
+													).map(([key, value]) => {
+														return (
+															<TableRow
+																sx={{
+																	'&:last-child td, &:last-child th':
+																		{
+																			border: 0,
+																		},
+																}}
+																key={value.date.toString()}
+															>
+																<TableCell
+																	align='center'
+																	component='th'
+																	scope='row'
+																>
+																	{key}
+																</TableCell>
+																<TableCell
+																	align='center'
+																	component='th'
+																	scope='row'
+																>
+																	{new Date(
+																		value.date
+																	).getUTCMonth() +
+																		1}
+																	/
+																	{new Date(
+																		value.date
+																	).getFullYear()}
+																</TableCell>
+																<TableCell
+																	align='center'
+																	sx={{
+																		fontWeight:
+																			'bold',
+																	}}
+																>
+																	U$D{' '}
+																	{value.min}
+																</TableCell>
+																<TableCell
+																	align='center'
+																	sx={{
+																		fontWeight:
+																			'bold',
+																	}}
+																>
+																	U$D{' '}
+																	{value.max}
+																</TableCell>
+																<TableCell
+																	align='center'
+																	sx={{
+																		fontWeight:
+																			'bold',
+																	}}
+																>
+																	<Typography
+																		color='secondary'
+																		sx={{
+																			fontWeight:
+																				'bold',
+																		}}
+																	>
+																		U$D{' '}
+																		{
+																			value.average
+																		}
+																	</Typography>
+																</TableCell>
+															</TableRow>
+														);
+													})}
+											</TableBody>
+										</Table>
+									</TableContainer>
+									{!averageTokenPrice.eventAveragePrice && (
+										<Typography sx={{ fontSize: '14px' }}>
+											There is insufficient data to
+											provide a value
 										</Typography>
-									</Box>
-								);
-							})}
-						</Box>
-					)}
+									)}
+								</Box>
+							</Box>
+						)}
+					</Stack>
 				</Stack>
 			)}
 		</PageLayout>

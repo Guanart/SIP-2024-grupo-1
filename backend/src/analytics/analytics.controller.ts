@@ -327,13 +327,16 @@ export class AnalyticsController {
   }
 
   @Get('/token/average')
-  async getTokensAveragePrice(): Promise<string> {
+  async getTokensAveragePrice(
+    @Query('event_name') eventName?: string,
+  ): Promise<string> {
     try {
-      const price = await this.analyticsService.getTokensAveragePrice();
+      const priceStats =
+        await this.analyticsService.getTokensAveragePrice(eventName);
 
       return JSON.stringify({
         description: 'Average token price',
-        average: price,
+        average: priceStats,
       });
     } catch (exception) {
       if (
