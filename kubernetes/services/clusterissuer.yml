@@ -6,7 +6,7 @@ metadata:
 spec:
     acme:
         email: matiasgimenez4299@gmail.com
-        server: https://acme-v02.api.letsencrypt.org/directory
+        server: https://acme-v02.api.letsencrypt.org/directory # Servidor de producción
         privateKeySecretRef:
             name: cluster-issuer-account-key
         solvers:
