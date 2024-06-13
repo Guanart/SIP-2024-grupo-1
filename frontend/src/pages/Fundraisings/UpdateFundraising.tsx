@@ -42,14 +42,14 @@ export const UpdateFundraising = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/fundraising/${fundraising_id}`,
+						url: `${HOST}:${PORT}/fundraising/${fundraising_id}`,
 					});
 
 					if (response.ok) {
@@ -99,7 +99,7 @@ export const UpdateFundraising = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/fundraising/${fundraising_id}`,
+				url: `${HOST}:${PORT}/fundraising/${fundraising_id}`,
 				method: 'PUT',
 				data: updatedFundraising,
 			});

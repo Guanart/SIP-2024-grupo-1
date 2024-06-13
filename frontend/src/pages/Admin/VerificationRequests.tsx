@@ -42,7 +42,7 @@ export const VerificationRequests = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/verification-request`,
+					url: `${HOST}:${PORT}/verification-request`,
 				});
 				if (response.ok) {
 					const data = await response.json();
@@ -60,7 +60,7 @@ export const VerificationRequests = () => {
 
 	const handleDownload = (id: number) => {
 		if (id) {
-			const url = `http://${HOST}:${PORT}/verification-request/file/${id}`;
+			const url = `${HOST}:${PORT}/verification-request/file/${id}`;
 			window.open(url, '_blank');
 		}
 	};
@@ -69,7 +69,7 @@ export const VerificationRequests = () => {
 		if (selectedRequestId !== null) {
 			try {
 				await axios.patch(
-					`http://${HOST}:${PORT}/verification-request/${selectedRequestId}`,
+					`${HOST}:${PORT}/verification-request/${selectedRequestId}`,
 					{ id: selectedRequestId, status: 'ACCEPTED' },
 					{
 						headers: {
@@ -96,7 +96,7 @@ export const VerificationRequests = () => {
 		if (selectedRequestId !== null) {
 			try {
 				await axios.patch(
-					`http://${HOST}:${PORT}/verification-request/${selectedRequestId}`,
+					`${HOST}:${PORT}/verification-request/${selectedRequestId}`,
 					{ id: selectedRequestId, status: 'REJECTED' },
 					{
 						headers: {

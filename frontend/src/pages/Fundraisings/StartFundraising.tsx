@@ -48,7 +48,7 @@ export const StartFundraising = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -59,7 +59,7 @@ export const StartFundraising = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/event/${user.player.game.id}`,
+						url: `${HOST}:${PORT}/event/${user.player.game.id}`,
 					});
 
 					if (response.ok) {
@@ -71,7 +71,7 @@ export const StartFundraising = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/analytics/events/popular/${user.player.game.id}`,
+						url: `${HOST}:${PORT}/analytics/events/popular/${user.player.game.id}`,
 					});
 
 					if (response.ok) {
@@ -82,7 +82,7 @@ export const StartFundraising = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/analytics/token/average`,
+						url: `${HOST}:${PORT}/analytics/token/average`,
 					});
 
 					if (response.ok) {
@@ -117,7 +117,7 @@ export const StartFundraising = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/fundraising`,
+				url: `${HOST}:${PORT}/fundraising`,
 				method: 'POST',
 				data: newFundraising,
 			});

@@ -39,7 +39,7 @@ export const Fundraisings = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/fundraising`,
+					url: `${HOST}:${PORT}/fundraising`,
 				});
 
 				if (response.ok) {
@@ -51,7 +51,7 @@ export const Fundraisings = () => {
 				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/analytics/player/wins`,
+					url: `${HOST}:${PORT}/analytics/player/wins`,
 				});
 
 				if (response.ok) {

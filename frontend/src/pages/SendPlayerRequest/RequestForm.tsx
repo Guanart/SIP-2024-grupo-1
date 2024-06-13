@@ -54,7 +54,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -70,7 +70,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/game`,
+					url: `${HOST}:${PORT}/game`,
 				});
 				if (response.ok) {
 					const { games } = await response.json();
@@ -85,7 +85,7 @@ export const RequestForm = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/rank`,
+					url: `${HOST}:${PORT}/rank`,
 				});
 				if (response.ok) {
 					const { ranks } = await response.json();
@@ -137,7 +137,7 @@ export const RequestForm = () => {
 				'verificationRequest',
 				JSON.stringify(newVerificationRequest)
 			);
-			const url = `http://${HOST}:${PORT}/verification-request`;
+			const url = `${HOST}:${PORT}/verification-request`;
 			const config = {
 				headers: {
 					'content-type': 'multipart/form-data',

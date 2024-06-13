@@ -56,7 +56,7 @@ export const Event = () => {
 			let response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event/details/${event_id}`,
+				url: `${HOST}:${PORT}/event/details/${event_id}`,
 			});
 
 			if (response.ok) {
@@ -69,7 +69,7 @@ export const Event = () => {
 				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/player/game/${data.event.game.id}`,
+					url: `${HOST}:${PORT}/player/game/${data.event.game.id}`,
 				});
 
 				if (response.ok) {
@@ -88,7 +88,7 @@ export const Event = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event/register`,
+				url: `${HOST}:${PORT}/event/register`,
 				method: 'POST',
 				data: { event_id: event?.id, player_id: playerId },
 			});
@@ -116,7 +116,7 @@ export const Event = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event/position`,
+				url: `${HOST}:${PORT}/event/position`,
 				method: 'POST',
 				data: {
 					event_id: event?.id,
@@ -155,7 +155,7 @@ export const Event = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event/unregister`,
+				url: `${HOST}:${PORT}/event/unregister`,
 				method: 'DELETE',
 				data: {
 					player_id,

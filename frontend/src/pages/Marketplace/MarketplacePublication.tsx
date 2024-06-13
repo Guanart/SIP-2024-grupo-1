@@ -14,7 +14,7 @@ import './Marketplace.css';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
-const REACT_APP_API_URL = `http://${HOST}:${PORT}/mercado-pago/create-preference`;
+const REACT_APP_API_URL = `${HOST}:${PORT}/mercado-pago/create-preference`;
 const REACT_APP_PREFERENCE_TYPE = 'marketplace';
 
 export const MarketplacePublication = () => {
@@ -32,7 +32,7 @@ export const MarketplacePublication = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/marketplace/${publication_id}`,
+					url: `${HOST}:${PORT}/marketplace/${publication_id}`,
 				});
 
 				if (response.ok) {
@@ -52,7 +52,10 @@ export const MarketplacePublication = () => {
 		getPublication();
 	}, [accessToken, isAuthenticated, user, publication_id, navigate]);
 
-	if (marketplacePublication && marketplacePublication.out_wallet.public_key) {
+	if (
+		marketplacePublication &&
+		marketplacePublication.out_wallet.public_key
+	) {
 		initMercadoPago(marketplacePublication.out_wallet.public_key, {
 			locale: 'es-AR',
 		});
@@ -60,19 +63,19 @@ export const MarketplacePublication = () => {
 	const createPreference = async () => {
 		try {
 			// Recupero wallet del usuario
-			let response = await fetchWithAuth({
+			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+				url: `${HOST}:${PORT}/user/${user?.sub}`,
 			});
 
 			let walletId;
 			if (response.ok) {
 				const { user } = await response.json();
-				walletId = user.wallet.id
+				walletId = user.wallet.id;
 				console.log('WalletID', user.wallet.id);
 			}
-			
+
 			// Creo Preference
 			if (marketplacePublication && walletId) {
 				const username =
@@ -105,7 +108,7 @@ export const MarketplacePublication = () => {
 		const response = await fetchWithAuth({
 			isAuthenticated,
 			accessToken,
-			url: `http://${HOST}:${PORT}/marketplace/${publication_id}`,
+			url: `${HOST}:${PORT}/marketplace/${publication_id}`,
 			method: 'DELETE',
 		});
 

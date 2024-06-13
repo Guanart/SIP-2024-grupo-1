@@ -24,7 +24,7 @@ export function Header() {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user.sub}`,
+					url: `${HOST}:${PORT}/user/${user.sub}`,
 				});
 
 				const data = await response.json();

@@ -57,7 +57,7 @@ export const Events = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event`,
+				url: `${HOST}:${PORT}/event`,
 				method: 'POST',
 				data: {
 					name,
@@ -96,7 +96,7 @@ export const Events = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/event`,
+				url: `${HOST}:${PORT}/event`,
 			});
 
 			if (response.ok) {
@@ -116,7 +116,7 @@ export const Events = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/game`,
+					url: `${HOST}:${PORT}/game`,
 				});
 
 				if (response.ok) {

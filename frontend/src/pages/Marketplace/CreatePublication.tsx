@@ -28,7 +28,7 @@ export const CreatePublication = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -39,7 +39,7 @@ export const CreatePublication = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/marketplace/token/${token_id}`,
+						url: `${HOST}:${PORT}/marketplace/token/${token_id}`,
 					});
 
 					if (response.ok) {
@@ -87,7 +87,7 @@ export const CreatePublication = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/marketplace`,
+				url: `${HOST}:${PORT}/marketplace`,
 				method: 'POST',
 				data: marketplacePublication,
 			});

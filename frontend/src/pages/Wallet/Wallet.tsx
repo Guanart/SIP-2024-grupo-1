@@ -41,7 +41,7 @@ export const Wallet = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -50,7 +50,7 @@ export const Wallet = () => {
 					if (user.player) {
 						setPlayer(user.player);
 					}
-					
+
 					if (user.wallet) {
 						console.log(user.wallet);
 						setTokens(user.wallet.token_wallet);

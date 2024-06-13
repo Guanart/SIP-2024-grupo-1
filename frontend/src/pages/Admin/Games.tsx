@@ -43,7 +43,7 @@ export const Games = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/game`,
+				url: `${HOST}:${PORT}/game`,
 				method: 'POST',
 				data: { name, icon },
 			});
@@ -71,7 +71,7 @@ export const Games = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/game`,
+				url: `${HOST}:${PORT}/game`,
 				method: 'DELETE',
 				data: { id: game_id },
 			});
@@ -96,7 +96,7 @@ export const Games = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/game`,
+				url: `${HOST}:${PORT}/game`,
 			});
 
 			if (response.ok) {
