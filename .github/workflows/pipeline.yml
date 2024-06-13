@@ -622,7 +622,7 @@ jobs:
                       "name": "frontend.leagueoftoken.online",
                       "content": "'"$FRONTEND_SERVICE_IP"'",
                       "ttl": 120,
-                      "proxied": true
+                      "proxied": false
                     }'
 
                   curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$BACKEND_DNS_RECORD_ID" \
@@ -633,7 +633,7 @@ jobs:
                       "name": "api.leagueoftoken.online",
                       "content": "'"$BACKEND_SERVICE_IP"'",
                       "ttl": 120,
-                      "proxied": true
+                      "proxied": false
                     }'
 
             - name: Create Mercado Pago config
