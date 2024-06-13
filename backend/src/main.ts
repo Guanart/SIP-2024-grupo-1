@@ -9,11 +9,6 @@ import * as express from 'express';
 import { ExpressAdapter } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const httpsOptions = {
-    key: readFileSync(__dirname + '/../tls.key', 'utf-8'),
-    cert: readFileSync(__dirname + '/../tls.crt', 'utf-8'),
-  };
-
   const server = express();
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 
@@ -44,8 +39,16 @@ async function bootstrap() {
 
   await app.init();
 
-  http.createServer(server).listen(process.env.PORT);
-  https.createServer(httpsOptions, server).listen(3443);
+  try {
+    const httpsOptions = {
+      key: readFileSync(__dirname + '/../tls.key', 'utf-8'),
+      cert: readFileSync(__dirname + '/../tls.crt', 'utf-8'),
+    };
+    https.createServer(httpsOptions, server).listen(3443);
+    http.createServer(server).listen(process.env.PORT);
+  } catch (exception) {
+    http.createServer(server).listen(process.env.PORT);
+  }
 }
 
 bootstrap();
