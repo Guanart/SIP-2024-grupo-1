@@ -363,16 +363,16 @@ jobs:
                     MP_REDIRECT_URI: f
                   EOF
 
-            # - name: Run vulnerability check on backend
-            #   working-directory: backend
-            #   run: |
-            #       bash check-dependencies.sh
+            - name: Run vulnerability check on backend
+              working-directory: backend
+              run: |
+                  bash check-dependencies.sh
 
-            # - name: Run backend unit tests
-            #   working-directory: backend
-            #   run: |
-            #       npm install
-            #       npm run test
+            - name: Run backend unit tests
+              working-directory: backend
+              run: |
+                  npm install
+                  npm run test
 
             - name: Generate TLS certificates for backend application
               working-directory: backend
@@ -381,19 +381,19 @@ jobs:
                   kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
                   ls -lah
 
-            # - name: Build backend image
-            #   uses: docker/build-push-action@v5
-            #   with:
-            #       context: ./backend
-            #       push: false
-            #       tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+            - name: Build backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
 
-            # - name: Scan backend image
-            #   uses: anchore/scan-action@v3
-            #   with:
-            #       image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-            #       fail-build: true
-            #       severity-cutoff: critical
+            - name: Scan backend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
 
             - name: Push backend image
               uses: docker/build-push-action@v5
@@ -420,41 +420,41 @@ jobs:
                     sleep 10
                   done
 
-            # - name: Load database seed
-            #   run: |
-            #       BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-            #       curl http://$BACKEND_SERVICE:3000/seed
+            - name: Load database seed
+              run: |
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  curl http://$BACKEND_SERVICE:3000/seed
 
-            # - name: Update Postman environments
-            #   run: |
-            #       BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-            #       jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
-            #       jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
-            #       mv postman/environment_temp.json postman/environment.json
+            - name: Update Postman environments
+              run: |
+                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
+                  jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
+                  mv postman/environment_temp.json postman/environment.json
 
-            # - name: Run Accounts API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/accounts.json
-            #       environment: postman/environment.json
+            - name: Run Accounts API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/accounts.json
+                  environment: postman/environment.json
 
-            # - name: Run Fundraisings API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/fundraisings.json
-            #       environment: postman/environment.json
+            - name: Run Fundraisings API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/fundraisings.json
+                  environment: postman/environment.json
 
-            # - name: Run Marketplace API test
-            #   uses: matt-ball/newman-action@master
-            #   with:
-            #       collection: postman/marketplace.json
-            #       environment: postman/environment.json
+            - name: Run Marketplace API test
+              uses: matt-ball/newman-action@master
+              with:
+                  collection: postman/marketplace.json
+                  environment: postman/environment.json
 
-            # - name: Run vulnerability check on frontend
-            #   working-directory: frontend
-            #   run: |
-            #       npm install
-            #       bash check-dependencies.sh
+            - name: Run vulnerability check on frontend
+              working-directory: frontend
+              run: |
+                  npm install
+                  bash check-dependencies.sh
 
             - name: Generate TLS certificates for frontend application
               working-directory: frontend
@@ -463,19 +463,19 @@ jobs:
                   kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
                   ls -lah
 
-            # - name: Build frontend image
-            #   uses: docker/build-push-action@v5
-            #   with:
-            #       context: ./frontend
-            #       push: false
-            #       tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+            - name: Build frontend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./frontend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
 
-            # - name: Scan frontend image
-            #   uses: anchore/scan-action@v3
-            #   with:
-            #       image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
-            #       fail-build: true
-            #       severity-cutoff: critical
+            - name: Scan frontend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
 
             - name: Generate .env.prod
               env:
@@ -555,8 +555,8 @@ jobs:
                   fi
 
                   # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL_HTTPS="https://leagueoftoken.online"
-                  NEW_CALLBACK_URL_HTTP="http://leagueoftoken.online"
+                  NEW_CALLBACK_URL_HTTPS="https://frontend.leagueoftoken.online"
+                  NEW_CALLBACK_URL_HTTP="http://frontend.leagueoftoken.online"
 
                   # Actualizar la configuración del cliente SPA en Auth0
                   curl --request PATCH \
@@ -622,8 +622,8 @@ jobs:
               run: |
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-                  APP_URL=http://$BACKEND_SERVICE:3000
-                  REACT_APP_URL=http://leagueoftoken.online
+                  APP_URL=https://api.leagueoftoken.online:3443
+                  REACT_APP_URL=https://frontend.leagueoftoken.online
 
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1
