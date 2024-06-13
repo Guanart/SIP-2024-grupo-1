@@ -16,6 +16,9 @@ import { User, useAuth0 } from '@auth0/auth0-react';
 import { CurrencyExchangeIcon, DoubleArrowIcon } from '../../global/icons';
 import { toast } from 'react-toastify';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const MostValuableTokensList = () => {
 	const [tokens, setTokens] = useState<Token[]>([]);
 	const { accessToken } = useAccessToken();
@@ -29,14 +32,14 @@ export const MostValuableTokensList = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user.sub}`,
+					url: `${HOST}:${PORT}/user/${user.sub}`,
 				});
 
 				if (response.ok) {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://localhost:3000/token/valuable/${auth0_id}`,
+						url: `${HOST}:${PORT}/token/valuable/${auth0_id}`,
 					});
 
 					if (response.ok) {
