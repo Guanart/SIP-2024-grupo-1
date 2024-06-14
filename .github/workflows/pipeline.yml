@@ -687,7 +687,10 @@ jobs:
             - name: Run Selenium tests
               working-directory: selenium
               run: |
-                  sleep 10
+                  echo $HOST
+                  echo $MIN_SLEEP
+                  echo $MAX_SLEEP
+
                   python3 login.py || echo "login.py failed"
                   python3 account-edit.py || echo "account-edit.py failed"
                   python3 list-marketplace.py || echo "list-marketplace.py failed"
