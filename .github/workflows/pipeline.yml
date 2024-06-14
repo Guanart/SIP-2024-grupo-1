@@ -680,14 +680,14 @@ jobs:
             - name: Set env. variables
               working-directory: selenium
               run: |
-                  export HOST=https://frontend.leagueoftoken.online
+                  export HOST=http://frontend.leagueoftoken.online
                   export MIN_SLEEP=10 
                   export MAX_SLEEP=30
 
             - name: Run Selenium tests
               working-directory: selenium
               run: |
-
+                  sleep 10
                   python3 login.py || echo "login.py failed"
                   python3 account-edit.py || echo "account-edit.py failed"
                   python3 list-marketplace.py || echo "list-marketplace.py failed"
