@@ -77,8 +77,9 @@ export const Wallet = () => {
 
 	// const CLIENT_ID = "3437331959866275"; // app cuenta real
 	const CLIENT_ID = '1517187722603608'; // app cuenta de prueba
-	const REDIRECT_URI =
-		'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
+	// const REDIRECT_URI =
+	// 	'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
+	const REDIRECT_URI = `https://${HOST}/mercado-pago/oauth`;
 
 	return (
 		<PageLayout title='Wallet'>
