@@ -6,6 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+print("Running create-marketplace-publication.py selenium test...")
+
+max_sleep = webdriver.get_max_sleep()
+min_sleep = webdriver.get_min_sleep()
+
 driver = webdriver.get()
 
 # Inicio sesión con un usuario de prueba
@@ -19,7 +24,7 @@ email_input.send_keys("ricardomilos@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
-time.sleep(2)
+time.sleep(min_sleep)
 
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
@@ -28,7 +33,8 @@ submit_button = driver.find_element(
 open_menu_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/button').click()
 
-time.sleep(2)  # Esto es para asegurarme que el menú carga correctamente
+# Esto es para asegurarme que el menú carga correctamente
+time.sleep(min_sleep)
 
 
 wallet_page_link = driver.find_element(
@@ -37,19 +43,19 @@ ActionChains(driver).move_to_element(wallet_page_link).perform()
 
 wallet_page_link.click()
 
-time.sleep(3)
+time.sleep(min_sleep)
 
 create_publication_page_link = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div[1]/ul/li[2]/div[3]/a[2]')
 ActionChains(driver).move_to_element(create_publication_page_link).perform()
 create_publication_page_link.click()
 
-time.sleep(5)
+time.sleep(max_sleep)
 
 email_input = driver.find_element(By.XPATH, '//*[@id="publication-price"]')
 email_input.send_keys("100")
 
-time.sleep(3)
+time.sleep(min_sleep)
 
 
 create_publication_button = driver.find_element(
@@ -57,5 +63,5 @@ create_publication_button = driver.find_element(
 
 create_publication_button.click()
 
-print("Done")
-time.sleep(10)
+print("create-marketplace-publication done.")
+time.sleep(max_sleep)
