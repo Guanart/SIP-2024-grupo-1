@@ -672,24 +672,15 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4.1.6
 
-            - name: Install dependencies
-              working-directory: selenium
-              run: |
-                  pip install -r requirements.txt
-
-            - name: Set env. variables
-              working-directory: selenium
-              run: |
-                  export HOST=http://frontend.leagueoftoken.online
-                  export MIN_SLEEP=10 
-                  export MAX_SLEEP=30
-
             - name: Run Selenium tests
               working-directory: selenium
               run: |
-                  echo $HOST
-                  echo $MIN_SLEEP
-                  echo $MAX_SLEEP
+                  pip install -r requirements.txt
+                  sleep 5
+
+                  export HOST=http://frontend.leagueoftoken.online
+                  export MIN_SLEEP=10 
+                  export MAX_SLEEP=30
 
                   python3 login.py || echo "login.py failed"
                   python3 account-edit.py || echo "account-edit.py failed"
