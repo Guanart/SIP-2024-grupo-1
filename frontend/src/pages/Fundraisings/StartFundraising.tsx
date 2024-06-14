@@ -405,7 +405,12 @@ export const StartFundraising = () => {
 										</Typography>
 									)}
 									{!averageTokenPrice.averagePriceByEdition && (
-										<Typography sx={{ fontSize: '14px' }}>
+										<Typography
+											sx={{
+												fontSize: '14px',
+												marginTop: '8px',
+											}}
+										>
 											There is insufficient data to
 											provide a value
 										</Typography>
@@ -472,67 +477,45 @@ export const StartFundraising = () => {
 												{averageTokenPrice.eventAveragePrice &&
 													Object.entries(
 														averageTokenPrice.averagePriceByEdition
-													).map(([key, value]) => {
-														return (
-															<TableRow
-																sx={{
-																	'&:last-child td, &:last-child th':
-																		{
-																			border: 0,
-																		},
-																}}
-																key={value.date.toString()}
-															>
-																<TableCell
-																	align='center'
-																	component='th'
-																	scope='row'
-																>
-																	{key}
-																</TableCell>
-																<TableCell
-																	align='center'
-																	component='th'
-																	scope='row'
-																>
-																	{new Date(
-																		value.date
-																	).getUTCMonth() +
-																		1}
-																	/
-																	{new Date(
-																		value.date
-																	).getFullYear()}
-																</TableCell>
-																<TableCell
-																	align='center'
+													).map(
+														(
+															[key, value],
+															index
+														) => {
+															return (
+																<TableRow
 																	sx={{
-																		fontWeight:
-																			'bold',
+																		'&:last-child td, &:last-child th':
+																			{
+																				border: 0,
+																			},
 																	}}
+																	key={key}
 																>
-																	U$D{' '}
-																	{value.min}
-																</TableCell>
-																<TableCell
-																	align='center'
-																	sx={{
-																		fontWeight:
-																			'bold',
-																	}}
-																>
-																	U$D{' '}
-																	{value.max}
-																</TableCell>
-																<TableCell
-																	align='center'
-																	sx={{
-																		fontWeight:
-																			'bold',
-																	}}
-																>
-																	<Typography
-																		color='secondary'
+																	<TableCell
+																		align='center'
+																		component='th'
+																		scope='row'
+																	>
+																		{index +
+																			1}
+																	</TableCell>
+																	<TableCell
+																		align='center'
+																		component='th'
+																		scope='row'
+																	>
+																		{new Date(
+																			value.date
+																		).getUTCMonth() +
+																			1}
+																		/
+																		{new Date(
+																			value.date
+																		).getFullYear()}
+																	</TableCell>
+																	<TableCell
+																		align='center'
 																		sx={{
 																			fontWeight:
 																				'bold',
@@ -540,18 +523,56 @@ export const StartFundraising = () => {
 																	>
 																		U$D{' '}
 																		{
-																			value.average
+																			value.min
 																		}
-																	</Typography>
-																</TableCell>
-															</TableRow>
-														);
-													})}
+																	</TableCell>
+																	<TableCell
+																		align='center'
+																		sx={{
+																			fontWeight:
+																				'bold',
+																		}}
+																	>
+																		U$D{' '}
+																		{
+																			value.max
+																		}
+																	</TableCell>
+																	<TableCell
+																		align='center'
+																		sx={{
+																			fontWeight:
+																				'bold',
+																		}}
+																	>
+																		<Typography
+																			color='secondary'
+																			sx={{
+																				fontWeight:
+																					'bold',
+																			}}
+																		>
+																			U$D{' '}
+																			{
+																				value.average
+																			}
+																		</Typography>
+																	</TableCell>
+																</TableRow>
+															);
+														}
+													)}
 											</TableBody>
 										</Table>
 									</TableContainer>
 									{!averageTokenPrice.eventAveragePrice && (
-										<Typography sx={{ fontSize: '14px' }}>
+										<Typography
+											sx={{
+												fontSize: '14px',
+												marginTop: '8px',
+												textAlign: 'center',
+											}}
+										>
 											There is insufficient data to
 											provide a value
 										</Typography>
