@@ -77,9 +77,14 @@ export const Wallet = () => {
 
 	// const CLIENT_ID = "3437331959866275"; // app cuenta real
 	const CLIENT_ID = '1517187722603608'; // app cuenta de prueba
-	// const REDIRECT_URI =
-	// 	'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
-	const REDIRECT_URI = `${HOST}/mercado-pago/oauth`;
+	let REDIRECT_URI =
+		'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
+
+	if (HOST.includes('api.leagueoftoken.online')) {
+		REDIRECT_URI = `${HOST}:3443/mercado-pago/oauth`;
+	}
+
+	console.log(REDIRECT_URI);
 
 	return (
 		<PageLayout title='Wallet'>
