@@ -188,34 +188,35 @@ export class AnalyticsController {
 
   @Get('/player/fundraisings/:id_player')
   async getFundraisingsByPlayer(
-    @Param("id_player") idPlayer: number,
+    @Param('id_player') idPlayer: number,
     @Query('dateFrom') dateFrom?: Date,
     @Query('dateTo') dateTo?: Date,
   ): Promise<string> {
     try {
-      const data = await this.analyticsService.getFundraisingsByPlayer(idPlayer, dateFrom, dateTo);
-      if (!data){
+      const data = await this.analyticsService.getFundraisingsByPlayer(
+        idPlayer,
+        dateFrom,
+        dateTo,
+      );
+      if (!data) {
         throw new BadRequestException();
       }
       const cantFundraisings = data.length;
       let cantWon = 0;
-      data.forEach(fundraising => {
+      data.forEach((fundraising) => {
         if (fundraising.event.player_event[0].position === 1) {
           cantWon++;
         }
       });
-      
+
       let summaryTokenPrize = 0;
-      let winnedFundraisings = 0;
-      data.forEach(fundraising => {
+      data.forEach((fundraising) => {
         if (fundraising.collection) {
-          summaryTokenPrize = summaryTokenPrize + fundraising.collection.token_prize_percentage;
-        }
-        if (fundraising.event.player_event[0].position == 1) {
-          winnedFundraisings++
+          summaryTokenPrize =
+            summaryTokenPrize + fundraising.collection.token_prize_percentage;
         }
       });
-      
+
       return JSON.stringify({
         description: 'Fundraisings by player',
         fundraisings: data,
@@ -223,13 +224,12 @@ export class AnalyticsController {
           cantFundraisings: cantFundraisings,
           cantWon: cantWon,
           winPercentage: cantWon / cantFundraisings,
-          averageTokenPrizePercentage: summaryTokenPrize / cantFundraisings
-        }
+          averageTokenPrizePercentage: summaryTokenPrize / cantFundraisings,
+        },
       });
-    } catch (exception){
+    } catch (exception) {
       console.log(exception);
       if (
-        
         exception instanceof NotFoundException ||
         exception instanceof BadRequestException
       ) {
@@ -262,28 +262,52 @@ export class AnalyticsController {
 
   @Get('/player/wins')
   async getPlayerWithMoreWins(
-    @Query('nPlayers') nPlayers?: number,
+    @Query('count') count?: number,
+    @Query('from') from?: Date,
+    @Query('to') to?: Date,
   ): Promise<string> {
     try {
-      if (nPlayers == null || isNaN(nPlayers) ) {
-        nPlayers = 3;
+      // Si no se especifica tamaño del top, setea 3 por defecto
+      if (!count || isNaN(count)) {
+        count = 3;
       }
-      
-      const data = await this.analyticsService.getNPlayersWithMoreWins(nPlayers);
+
+      // Si no se especifican fechas, setea un rango por defecto que abarque todos los eventos
+      if (!to) {
+        to = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      }
+
+      if (!from) {
+        from = new Date(2000, 1, 1);
+      }
+
+      from = new Date(from);
+      to = new Date(to);
+
+      if (to < from) {
+        throw new BadRequestException(
+          'FROM date can only be earlier than TO date',
+        );
+      }
+
+      const data = await this.analyticsService.getNPlayersWithMoreWins(
+        count,
+        from,
+        to,
+      );
 
       const resultPlayers = [];
       const resultWins = [];
 
-      for (let i = 0; i < nPlayers; i++) {
+      for (let i = 0; i < data.length; i++) {
         // playerID del jugador nro i de la lista
         const player = data[i];
         const wins = data[i].wins;
-        if (player){
+        if (player) {
           resultPlayers.push(player);
           resultWins.push(`${wins} events`);
         }
       }
-      
 
       return JSON.stringify({
         description: 'Player with the most events won',
@@ -303,13 +327,16 @@ export class AnalyticsController {
   }
 
   @Get('/token/average')
-  async getTokensAveragePrice(): Promise<string> {
+  async getTokensAveragePrice(
+    @Query('event_name') eventName?: string,
+  ): Promise<string> {
     try {
-      const price = await this.analyticsService.getTokensAveragePrice();
+      const priceStats =
+        await this.analyticsService.getTokensAveragePrice(eventName);
 
       return JSON.stringify({
         description: 'Average token price',
-        average: price,
+        average: priceStats,
       });
     } catch (exception) {
       if (

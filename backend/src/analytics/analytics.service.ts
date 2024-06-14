@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { Fundraising } from 'src/fundraising/fundraising.entity';
 
 @Injectable()
 export class AnalyticsService {
@@ -55,20 +54,31 @@ export class AnalyticsService {
           player,
           wins,
         };
-      })
+      }),
     );
 
     return playersWithWins;
   }
 
   // Misma funcion que la de arriba, solo que parametrizada para poder filtrar la cantidad de jugadores del top
-  async getNPlayersWithMoreWins(nPlayers: number) {
+  async getNPlayersWithMoreWins(count: number, from: Date, to: Date) {
+    console.log(from);
+    console.log(to);
     const player_event: {
       player_id: number;
       event_id: number;
       position: number;
     }[] = await this.prisma.player_event.findMany({
-      where: { position: 1 },
+      where: {
+        position: 1,
+        event: {
+          end_date: {
+            gte: from,
+            lte: to,
+          },
+        },
+      },
+      include: { event: true },
     });
 
     if (!player_event) return null;
@@ -93,8 +103,11 @@ export class AnalyticsService {
     // Ordenar el array en orden descendente por el número de victorias
     playerCountArray.sort((a, b) => b[1] - a[1]);
 
-    const topPlayers = playerCountArray.slice(0, nPlayers);
-    
+    const topPlayers =
+      playerCountArray.length > count
+        ? playerCountArray.slice(0, count)
+        : playerCountArray;
+
     const results = [];
 
     for (let i = 0; i < topPlayers.length; i++) {
@@ -109,8 +122,8 @@ export class AnalyticsService {
 
       if (player) {
         results.push({
-            player,
-            wins,
+          player,
+          wins,
         });
       }
     }
@@ -126,7 +139,7 @@ export class AnalyticsService {
         AND: [
           dateFrom ? { createdAt: { gte: dateFrom } } : {},
           dateTo ? { createdAt: { lte: dateTo } } : {},
-        ]
+        ],
       },
       include: {
         collection: true,
@@ -135,13 +148,12 @@ export class AnalyticsService {
             player_event: {
               where: {
                 player_id: id,
-              }
-            }
-            }
+              },
+            },
           },
         },
       },
-    )
+    });
     return fundraisings;
   }
 
@@ -341,18 +353,74 @@ export class AnalyticsService {
     return countFundraisings;
   }
 
-  async getTokensAveragePrice() {
+  async getTokensAveragePrice(event_name?: string) {
     const collections = await this.prisma.collection.findMany({ where: {} });
-
-    let price = 0;
+    let total = 0;
+    let totalOfEvent = 0;
+    const eventEditions = {};
 
     collections.forEach((collection) => {
-      price += collection.current_price;
+      total += collection.current_price;
     });
 
-    const average = price / collections.length;
+    if (event_name) {
+      const collectionsByEvent = await this.prisma.collection.findMany({
+        where: { fundraising: { event: { name: event_name } } },
+        include: { fundraising: { include: { event: true } } },
+      });
+      console.log(collectionsByEvent);
 
-    return average;
+      collectionsByEvent.forEach((collection) => {
+        const id = collection.fundraising.event_id;
+        const date = collection.fundraising.event.start_date;
+        const price = collection.current_price;
+
+        if (eventEditions[id]) {
+          eventEditions[id]['total'] += price;
+          eventEditions[id]['collections']++;
+          eventEditions[id]['average'] = Math.round(
+            eventEditions[id]['total'] / eventEditions[id]['collections'],
+          );
+          if (collection.current_price > eventEditions[id]['max'])
+            eventEditions[id]['max'] = price;
+          if (collection.current_price < eventEditions[id]['min'])
+            eventEditions[id]['min'] = price;
+        } else {
+          eventEditions[id] = {
+            date,
+            average: price,
+            total: price,
+            collections: 1,
+            min: price,
+            max: price,
+          };
+        }
+        totalOfEvent += collection.current_price;
+      });
+
+      const averagePrice = Math.round(total / collections.length);
+      const eventAveragePrice = Math.round(
+        totalOfEvent / collectionsByEvent.length,
+      );
+
+      if (!collectionsByEvent.length) {
+        return {
+          averagePrice,
+          eventAveragePrice: null,
+          averagePriceByEdition: null,
+        };
+      }
+
+      return {
+        averagePrice,
+        eventAveragePrice,
+        averagePriceByEdition: eventEditions,
+      };
+    }
+
+    const averagePrice = Math.round(total / collections.length);
+
+    return averagePrice;
   }
 
   async getMorePopularEvents(game_id: number) {

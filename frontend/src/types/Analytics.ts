@@ -45,3 +45,18 @@ export type Analytics = {
 	successPublications: number;
 	averageTokenPrice: number;
 };
+
+export type AverageTokenPriceAnalytics = {
+	averagePrice: number;
+	eventAveragePrice: number;
+	averagePriceByEdition: {
+		string: {
+			date: Date;
+			average: number;
+			editions: number;
+			total: number;
+			min: number;
+			max: number;
+		};
+	};
+};

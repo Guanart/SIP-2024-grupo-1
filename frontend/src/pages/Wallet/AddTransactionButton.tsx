@@ -21,7 +21,7 @@ const AddTransactionButton: React.FC<AddTransactionButtonProps> = ({
 		const response = await fetchWithAuth({
 			isAuthenticated: true,
 			accessToken,
-			url: `http://${HOST}:${PORT}:3000/transaction`, // Endpoint de tu backend para crear transacciones
+			url: `${HOST}:${PORT}:3000/transaction`, // Endpoint de tu backend para crear transacciones
 			method: 'POST',
 			data: {
 				wallet_id: walletId,

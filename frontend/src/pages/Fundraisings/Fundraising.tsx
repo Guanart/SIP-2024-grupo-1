@@ -20,7 +20,7 @@ import { KeyboardBackspaceIcon } from '../../global/icons';
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
 
-const REACT_APP_API_URL = `http://${HOST}:${PORT}/mercado-pago/create-preference`;
+const REACT_APP_API_URL = `${HOST}:${PORT}/mercado-pago/create-preference`;
 const REACT_APP_PREFERENCE_TYPE = 'fundraising';
 
 export const Fundraising = () => {
@@ -38,7 +38,7 @@ export const Fundraising = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/fundraising/${id}`,
+					url: `${HOST}:${PORT}/fundraising/${id}`,
 				});
 
 				if (response.ok) {
@@ -79,7 +79,7 @@ export const Fundraising = () => {
 			const response = await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+				url: `${HOST}:${PORT}/user/${user?.sub}`,
 			});
 
 			let walletId;
@@ -249,7 +249,12 @@ export const Fundraising = () => {
 							</Typography>
 							<Typography component='div' variant='h6'>
 								Token details
-								<Stack sx={{ paddingLeft: '8px' }}>
+								<Stack
+									sx={{
+										paddingLeft: '8px',
+										marginBottom: '16px',
+									}}
+								>
 									<Typography component='div' variant='body2'>
 										Collection ID
 										<Typography

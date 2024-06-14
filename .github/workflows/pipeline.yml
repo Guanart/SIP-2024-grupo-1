@@ -147,6 +147,12 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v4.1.6
 
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
+                  password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
             # Configuración CLI Google Cloud.
             - name: GCP authentication
               uses: google-github-actions/auth@v2
@@ -163,52 +169,6 @@ jobs:
               run: |
                   REGION="us-east1-b"
                   gcloud container clusters get-credentials lot --region=${REGION}
-
-            - name: Login to Docker Hub
-              uses: docker/login-action@v3
-              with:
-                  username: ${{ secrets.DOCKER_HUB_USERNAME }}
-                  password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-            - name: Run vulnerability check on backend
-              working-directory: backend
-              run: |
-                  bash check-dependencies.sh
-
-            - name: Run backend unit tests
-              working-directory: backend
-              run: |
-                  npm install
-                  npm run test
-
-            - name: Build backend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./backend
-                  push: false
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-
-            - name: Scan backend image
-              uses: anchore/scan-action@v3
-              with:
-                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-                  fail-build: true
-                  severity-cutoff: critical
-
-            - name: Push backend image
-              uses: docker/build-push-action@v5
-              with:
-                  context: ./backend
-                  push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
-
-            - name: Create secret with GCP credentials
-              run: |
-                  if ! kubectl get secret gcp-credentials -n argocd > /dev/null 2>&1; then
-                    echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
-                    kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
-                    rm credentials.json
-                  fi
 
             - name: Install Argo CD CLI
               run: |
@@ -232,6 +192,26 @@ jobs:
               env:
                   ARGOCD_PWD: ${{ env.ARGOCD_PWD }}
 
+            - name: Create secret with GCP credentials
+              run: |
+                  if ! kubectl get secret gcp-credentials -n argocd > /dev/null 2>&1; then
+                    echo '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}' > credentials.json
+                    kubectl create secret generic gcp-credentials -n argocd --from-file=credentials.json
+                    rm credentials.json
+                  fi
+
+            - name: Create cert-manager namespace
+              run: |
+                  kubectl create namespace cert-manager || echo "cert-manager namespace already exists"
+
+            - name: Create Cloudflare API Token Secret
+              env:
+                  CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+              run: |
+
+                  kubectl create secret generic cloudflare-token-secret \
+                    --from-literal=cloudflare-token=$CLOUDFLARE_TOKEN -n cert-manager || echo "Cloudflare token secret already exists"
+
             - name: Install cloud-native operator
               run: |
                   if ! kubectl get deployment -n cnpg-system cnpg-controller-manager > /dev/null 2>&1; then
@@ -254,20 +234,63 @@ jobs:
                     fi
                   done
 
+            - name: Install cert-manager
+              run: |
+                  if helm repo list | grep -q "jetstack"; then
+                    echo "The jetstack repository is already added"
+                  else
+                    helm repo add jetstack https://charts.jetstack.io --force-update
+                    echo "The jetstack repository has been added"
+                  fi
+
+                  NAMESPACE="cert-manager"
+
+                  # Verificar si cert-manager ya está instalado en el namespace
+                  if helm list -n $NAMESPACE | grep -q "cert-manager"; then
+                    echo "cert-manager is already installed in namespace $NAMESPACE."
+                  else
+                    # Instalar cert-manager
+                    helm install \
+                      cert-manager jetstack/cert-manager \
+                      --namespace $NAMESPACE \
+                      --create-namespace \
+                      --version v1.15.0 \
+                      --set crds.enabled=true
+                  fi
+
             - name: Create infra services
               working-directory: kubernetes/argocd
               run: |
                   kubectl apply -f services-project.yml
                   kubectl apply -f services.yml
+                  sleep 30
+
+            - name: Wait for certificate to be ready
+              run: |
+                  CERTIFICATE_NAME="certificate"
+                  NAMESPACE="cert-manager"
+                  CERTIFICATE_READY=""
+
+                  while [ -z "$CERTIFICATE_READY" ]; do
+                    STATUS=$(kubectl get certificate $CERTIFICATE_NAME -n $NAMESPACE -o jsonpath="{.status.conditions[?(@.type=='Ready')].status}")
+                    if [ "$STATUS" == "True" ]; then
+                      CERTIFICATE_READY=true
+                    fi
+                    echo "Waiting for certificate to be ready..."
+                    sleep 10
+                  done
 
             - name: Wait for PostgreSQL to be running
               run: |
+                  POSTGRES_READY=""
                   echo "Waiting for PostgreSQL to be running..."
                   while [ -z "$POSTGRES_READY" ]; do
-                    RUNNING_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --field-selector=status.phase=Running --no-headers | wc -l)
+                    RUNNING_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --field-selector=status.phase=Running --no-headers 2>/dev/null | grep -v "No resources found" | wc -l)
                     TOTAL_COUNT=$(kubectl get pods -n argocd -l cnpg.io/cluster=postgres-cluster --no-headers | wc -l)
-                    
-                    if [ "$RUNNING_COUNT" -eq "$TOTAL_COUNT" ]; then
+
+                    echo "Running PostgreSQL pods: $RUNNING_COUNT, Total PostgreSQL pods: $TOTAL_COUNT"
+
+                    if [ "$RUNNING_COUNT" -eq "$TOTAL_COUNT" ] && [ "$TOTAL_COUNT" -ne 0 ]; then
                       POSTGRES_READY=true
                     else
                       echo "PostgreSQL is not ready yet. Waiting for 10 seconds..."
@@ -327,6 +350,67 @@ jobs:
                     MAILTRAP_PASSWORD: $MAILTRAP_PASSWORD
                   EOF
 
+            - name: Create Mercado Pago with dummy values
+              run: |
+                  cat <<EOF | kubectl apply -f -
+                  apiVersion: v1
+                  kind: ConfigMap
+                  metadata:
+                    name: mercado-pago-config
+                    namespace: argocd
+                  data:
+                    MP_CLIENT_SECRET: a
+                    MP_ACCESS_TOKEN: b
+                    MP_APP_ID: c
+                    APP_URL: d
+                    REACT_APP_URL: e
+                    MP_REDIRECT_URI: f
+                  EOF
+
+            - name: Run vulnerability check on backend
+              working-directory: backend
+              run: |
+                  bash check-dependencies.sh
+
+            - name: Run backend unit tests
+              working-directory: backend
+              run: |
+                  npm install
+                  npm run test
+
+            - name: Generate TLS certificates for backend application
+              working-directory: backend
+              run: |
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
+                  ls -lah
+
+            - name: Build backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: false
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+
+            - name: Scan backend image
+              uses: anchore/scan-action@v3
+              with:
+                  image: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+                  fail-build: true
+                  severity-cutoff: critical
+
+            - name: Push backend image
+              uses: docker/build-push-action@v5
+              with:
+                  context: ./backend
+                  push: true
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-backend:1.0.0
+
+            - name: Clean up generated TLS certificates
+              working-directory: backend
+              run: |
+                  rm -rf tls.crt tls.key
+
             - name: Deploy backend
               working-directory: kubernetes/argocd
               run: |
@@ -376,6 +460,13 @@ jobs:
                   npm install
                   bash check-dependencies.sh
 
+            - name: Generate TLS certificates for frontend application
+              working-directory: frontend
+              run: |
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.crt}' | base64 -d > tls.crt
+                  kubectl get secret certificate-tls -n cert-manager -o=jsonpath='{.data.tls\.key}' | base64 -d > tls.key
+                  ls -lah
+
             - name: Build frontend image
               uses: docker/build-push-action@v5
               with:
@@ -408,8 +499,8 @@ jobs:
                   fi
 
                   # Escribir las variables de entorno en .env.prod
-                  echo "APP_BACKEND_HOST=$BACKEND_SERVICE" > frontend/.env.prod
-                  echo "APP_BACKEND_PORT=3000" >> frontend/.env.prod
+                  echo "APP_BACKEND_HOST=https://api.leagueoftoken.online" > frontend/.env.prod
+                  echo "APP_BACKEND_PORT=3443" >> frontend/.env.prod
                   echo "APP_AUTH0_AUDIENCE=$AUDIENCE" >> frontend/.env.prod
                   echo "APP_AUTH0_CLIENT_ID=$SPA_CLIENT_ID" >> frontend/.env.prod
                   echo "APP_AUTH0_DOMAIN=$AUTH0_DOMAIN" >> frontend/.env.prod
@@ -420,6 +511,11 @@ jobs:
                   context: ./frontend
                   push: true
                   tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
+
+            - name: Clean up generated TLS certificates
+              working-directory: frontend
+              run: |
+                  rm -rf tls.crt tls.key
 
             - name: Deploy frontend
               working-directory: kubernetes/argocd
@@ -434,61 +530,15 @@ jobs:
                     sleep 10
                   done
 
-            - name: Update Auth0 callbacks
-              env:
-                  AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-                  CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
-                  CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
-                  SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
-              run: |
-                  # Obtener el token de acceso de Auth0
-                  RESPONSE=$(curl --silent --request POST \
-                                  --url "https://$AUTH0_DOMAIN/oauth/token" \
-                                  --header 'content-type: application/json' \
-                                  --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"https://$AUTH0_DOMAIN/api/v2/\",\"grant_type\":\"client_credentials\"}")
-
-                  # Verificar errores en la solicitud cURL
-                  if [ $? -ne 0 ]; then
-                    echo "Failed to obtain Access Token."
-                    exit 1
-                  fi
-
-                  # Extraer Access Token de la respuesta JSON
-                  ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
-
-                  # Verificar si Access Token está vacío
-                  if [ -z "$ACCESS_TOKEN" ]; then
-                    echo "Failed to extract Access Token from the response."
-                    exit 1
-                  fi
-
-                  PUBLIC_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-                  # Actualizar la URL de retorno con la IP pública y el puerto correcto
-                  NEW_CALLBACK_URL="http://$PUBLIC_IP:5173"
-
-                  # Actualizar la configuración del cliente SPA en Auth0
-                  curl --request PATCH \
-                    --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPA_CLIENT_ID" \
-                    --header "authorization: Bearer $ACCESS_TOKEN" \
-                    --header 'content-type: application/json' \
-                    --data '{
-                      "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"],
-                      "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL"'"]
-                    }' \
-                    > /dev/null 2>&1
-
             - name: Create Mercado Pago config
               env:
                   MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
                   MP_CLIENT_SECRET: ${{ secrets.MP_CLIENT_SECRET }}
               run: |
-                  FRONTEND_SERVICE=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
 
-                  APP_URL=http://$BACKEND_SERVICE:3000
-                  REACT_APP_URL=http://$FRONTEND_SERVICE:5173
+                  APP_URL=https://api.leagueoftoken.online:3443
+                  REACT_APP_URL=https://frontend.leagueoftoken.online
 
                   cat <<EOF | kubectl apply -f -
                   apiVersion: v1
@@ -505,7 +555,114 @@ jobs:
                     MP_REDIRECT_URI: ${APP_URL}/mercado-pago/oauth
                   EOF
 
-    # TODO: Fix selenium tests
+            ##### Esto ya no es necesario, ya que Auth0 tiene configurada las URLs con el nombre de dominio (p/ http y https)
+            # - name: Update Auth0 callbacks
+            #   env:
+            #       AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+            #       CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+            #       CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+            #       SPA_CLIENT_ID: ${{ secrets.AUTH0_SPA_CLIENT_ID }}
+            #   run: |
+            #       # Obtener el token de acceso de Auth0
+            #       RESPONSE=$(curl --silent --request POST \
+            #                       --url "https://$AUTH0_DOMAIN/oauth/token" \
+            #                       --header 'content-type: application/json' \
+            #                       --data "{\"client_id\":\"$CLIENT_ID\",\"client_secret\":\"$CLIENT_SECRET\",\"audience\":\"https://$AUTH0_DOMAIN/api/v2/\",\"grant_type\":\"client_credentials\"}")
+            #
+            #       # Verificar errores en la solicitud cURL
+            #       if [ $? -ne 0 ]; then
+            #         echo "Failed to obtain Access Token."
+            #         exit 1
+            #       fi
+            #
+            #       # Extraer Access Token de la respuesta JSON
+            #       ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+            #
+            #       # Verificar si Access Token está vacío
+            #       if [ -z "$ACCESS_TOKEN" ]; then
+            #         echo "Failed to extract Access Token from the response."
+            #         exit 1
+            #       fi
+            #
+            #       FRONTEND_SERVICE_IP=$(kubectl get svc frontend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            #
+            #       NEW_CALLBACK_URL="http://$FRONTEND_SERVICE_IP"
+            #       NEW_CALLBACK_URL_HTTPS="https://frontend.leagueoftoken.online"
+            #       NEW_CALLBACK_URL_HTTP="http://frontend.leagueoftoken.online"
+            #
+            #       # Actualizar la configuración del cliente SPA en Auth0
+            #       curl --request PATCH \
+            #         --url "https://$AUTH0_DOMAIN/api/v2/clients/$SPA_CLIENT_ID" \
+            #         --header "authorization: Bearer $ACCESS_TOKEN" \
+            #         --header 'content-type: application/json' \
+            #         --data '{
+            #           "callbacks": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'", "'"$NEW_CALLBACK_URL"'"],
+            #           "allowed_logout_urls": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'", "'"$NEW_CALLBACK_URL"'"],
+            #           "web_origins": ["http://localhost:5173", "http://127.0.0.1:5173", "'"$NEW_CALLBACK_URL_HTTPS"'", "'"$NEW_CALLBACK_URL_HTTP"'", "'"$NEW_CALLBACK_URL"'"],
+            #         }' \
+            #         > /dev/null 2>&1
+            ######
+
+            - name: Update Cloudflare DNS records
+              env:
+                  CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
+                  CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+              run: |
+                  # Fetch the external IP of the frontend LoadBalancer service
+                  FRONTEND_SERVICE_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+                  BACKEND_SERVICE_IP=$(kubectl get svc backend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+                  if [ -z "$FRONTEND_SERVICE_IP" ]; then
+                      echo "Failed to fetch frontend IP"
+                      exit 1
+                  fi
+
+                  if [ -z "$BACKEND_SERVICE_IP" ]; then
+                      echo "Failed to fetch backend IP"
+                      exit 1
+                  fi
+
+                  get_dns_record_id() {
+                    local record_name="$1"
+                    local zone_id="$2"
+                    local token="$3"
+
+                    local api_url="https://api.cloudflare.com/client/v4/zones/$zone_id/dns_records?type=A&name=$record_name"
+                    local response=$(curl -s -X GET "$api_url" \
+                      -H "Authorization: Bearer $token" \
+                      -H "Content-Type: application/json")
+
+                    local record_id=$(echo "$response" | jq -r '.result[0].id')
+
+                    echo "$record_id"
+                  }
+
+                  # Obtener dinámicamente los IDs de los registros A
+                  BACKEND_DNS_RECORD_ID=$(get_dns_record_id "api.leagueoftoken.online" "$CLOUDFLARE_ZONE_ID" "$CLOUDFLARE_TOKEN")
+                  FRONTEND_DNS_RECORD_ID=$(get_dns_record_id "frontend.leagueoftoken.online" "$CLOUDFLARE_ZONE_ID" "$CLOUDFLARE_TOKEN")
+
+                  curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$FRONTEND_DNS_RECORD_ID" \
+                    -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    --data '{
+                      "type": "A",
+                      "name": "frontend.leagueoftoken.online",
+                      "content": "'"$FRONTEND_SERVICE_IP"'",
+                      "ttl": 120,
+                      "proxied": false
+                    }'
+
+                  curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$BACKEND_DNS_RECORD_ID" \
+                    -H "Authorization: Bearer $CLOUDFLARE_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    --data '{
+                      "type": "A",
+                      "name": "api.leagueoftoken.online",
+                      "content": "'"$BACKEND_SERVICE_IP"'",
+                      "ttl": 120,
+                      "proxied": false
+                    }'
+
     # run-integration-tests:
     #     name: Run integration tests
     #     if: startsWith(github.event.head_commit.message, '(up)')
@@ -515,43 +672,24 @@ jobs:
     #         - name: Checkout code
     #           uses: actions/checkout@v4.1.6
 
-    #         - name: GCP authentication
-    #           uses: google-github-actions/auth@v2
-    #           with:
-    #               credentials_json: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
-
-    #         - name: GCP kubectl plugin
-    #           uses: google-github-actions/setup-gcloud@v2
-    #           with:
-    #               version: '>= 363.0.0'
-    #               install_components: 'kubectl'
-
-    #         - name: Get Kubernetes cluster credentials
-    #           run: |
-    #               REGION="us-east1-b"
-    #               gcloud container clusters get-credentials lot --region=${REGION}
-
-    #         - name: Get frontend LoadBalancer IP
-    #           id: get-frontend-ip
-    #           run: |
-    #               FRONTEND_IP=$(kubectl get svc frontend-service -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-    #               echo "::set-output name=frontend-ip::$FRONTEND_IP"
-
-    #         - name: Run Selenium integration tests
+    #         - name: Run Selenium tests
     #           working-directory: selenium
     #           run: |
     #               pip install -r requirements.txt
-    #               FRONTEND_IP=${{ steps.get-frontend-ip.outputs.frontend-ip }}
-    #               export FRONTEND_IP=$FRONTEND_IP
+    #               sleep 5
 
-    #               python3 login.py
-    #               python3 account-edit.py
-    #               python3 list-marketplace.py
-    #               python3 delete-marketplace-publication.py
-    #               python3 create-marketplace-publication.py
-    #               python3 list-fundraising.py
-    #               python3 update-fundraising.py
-    #               python3 start-fundraising.py
+    #               export HOST=http://frontend.leagueoftoken.online
+    #               export MIN_SLEEP=20
+    #               export MAX_SLEEP=40
+
+    #               python3 login.py || echo "login.py failed"
+    #               python3 account-edit.py || echo "account-edit.py failed"
+    #               python3 list-marketplace.py || echo "list-marketplace.py failed"
+    #               python3 delete-marketplace-publication.py || echo "delete-marketplace-publication.py failed"
+    #               python3 create-marketplace-publication.py || echo "create-marketplace-publication.py failed"
+    #               python3 list-fundraising.py  || echo "list-fundraising.py failed"
+    #               python3 update-fundraising.py  || echo "update-fundraising.py failed"
+    #               python3 start-fundraising.py || echo "start-fundraising.py failed"
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure

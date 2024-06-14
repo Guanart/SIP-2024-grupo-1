@@ -7,6 +7,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { User, useAuth0 } from '@auth0/auth0-react';
 import { MarketplaceCard } from '../marketplace/MarketplaceCard';
 
+const HOST = import.meta.env.APP_BACKEND_HOST;
+const PORT = import.meta.env.APP_BACKEND_PORT;
+
 export const PublicationList = () => {
 	const [publications, setPublications] = useState<MarketplacePublication[]>(
 		[]
@@ -22,7 +25,7 @@ export const PublicationList = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://localhost:3000/user/${user.sub}`,
+					url: `${HOST}:${PORT}/user/${user.sub}`,
 				});
 
 				if (response.ok) {
@@ -31,7 +34,7 @@ export const PublicationList = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://localhost:3000/marketplace/user/${user.wallet.id}`,
+						url: `${HOST}:${PORT}/marketplace/user/${user.wallet.id}`,
 					});
 
 					if (response.ok) {

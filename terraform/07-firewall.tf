@@ -22,3 +22,15 @@ resource "google_compute_firewall" "allow-3000" {
 
   source_ranges = ["0.0.0.0/0"]
 }
+
+resource "google_compute_firewall" "allow-3443" {
+  name    = "allow-3443"
+  network = google_compute_network.mainnet.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["3443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}

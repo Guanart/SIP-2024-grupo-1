@@ -31,7 +31,7 @@ export const Marketplace = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/marketplace`,
+					url: `${HOST}:${PORT}/marketplace`,
 				});
 
 				if (response.ok) {

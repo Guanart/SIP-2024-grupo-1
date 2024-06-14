@@ -1,12 +1,17 @@
 import time
 
+
 import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 
+print("Running account-edit.py selenium test...")
+
 driver = webdriver.get()
+max_sleep = webdriver.get_max_sleep()
+min_sleep = webdriver.get_min_sleep()
 
 # Inicio sesión con un usuario de prueba
 login_button = driver.find_element(
@@ -19,7 +24,7 @@ email_input.send_keys("johndoe@lot.com")
 password_input = driver.find_element(By.XPATH, '//*[@id="password"]')
 password_input.send_keys("Admin123")
 
-time.sleep(2)
+time.sleep(min_sleep)
 
 submit_button = driver.find_element(
     By.XPATH, '/html/body/div/main/section/div/div[2]/div/form/div[2]/button').click()
@@ -27,7 +32,8 @@ submit_button = driver.find_element(
 # Abro el menú de navegación
 open_menu_button = driver.find_element(
     By.XPATH, '//*[@id="root"]/header/div/button').click()
-time.sleep(2)  # Esto es para asegurarme que el menú carga correctamente
+# Esto es para asegurarme que el menú carga correctamente
+time.sleep(min_sleep)
 
 # Navego a la página de perfil del usuario
 account_page_link = driver.find_element(
@@ -35,7 +41,7 @@ account_page_link = driver.find_element(
 ActionChains(driver).move_to_element(account_page_link).perform()
 account_page_link.click()
 
-time.sleep(2)
+time.sleep(min_sleep)
 
 # Actualizo el username
 edit_profile_button = driver.find_element(
@@ -54,15 +60,16 @@ username_input.send_keys("Mariano")
 biography_input.send_keys(
     "Profesor de Seminario de Integración Profesional en la UNLu")
 
-time.sleep(2)
+time.sleep(min_sleep)
 
 save_changes_button = driver.find_element(
     By.XPATH, '/html/body/div[2]/div[3]/form/div[5]/button[1]').click()
 
-time.sleep(2)  # Esto es para asegurarme que los cambios carguen correctamente
+# Esto es para asegurarme que los cambios carguen correctamente
+time.sleep(min_sleep)
 
 username_element = driver.find_element(
     By.XPATH, '//*[@id="root"]/main/div[1]/div/div/div/div/div[2]/h3')
 
-print("Done")
-time.sleep(10)
+print("account-edit.py done.")
+time.sleep(max_sleep)

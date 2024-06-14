@@ -43,7 +43,7 @@ export const Administration = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/admin`,
+					url: `${HOST}:${PORT}/admin`,
 				});
 
 				if (response.ok) {
@@ -56,7 +56,7 @@ export const Administration = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/analytics/fundraisings/percentage/${minPercentageLimit}/${maxPercentageLimit}`,
+						url: `${HOST}:${PORT}/analytics/fundraisings/percentage/${minPercentageLimit}/${maxPercentageLimit}`,
 					});
 
 					if (response.ok) {
@@ -67,7 +67,7 @@ export const Administration = () => {
 					response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/analytics/games/popular`,
+						url: `${HOST}:${PORT}/analytics/games/popular`,
 					});
 
 					if (response.ok) {

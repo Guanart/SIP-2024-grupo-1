@@ -9,7 +9,12 @@ import {
 	Card,
 	CardMedia,
 	CardContent,
+	Slider,
+	InputLabel,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import dayjs, { Dayjs } from 'dayjs';
 import { useAccessToken } from '../../hooks';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect, useState } from 'react';
@@ -17,6 +22,9 @@ import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { Fundraising, PlayersAnalytics } from '../../types';
 import { Loader } from '../../components';
 import { Link } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -30,8 +38,11 @@ export const Fundraisings = () => {
 	>([]);
 	const [filter, setFilter] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-
+	const [rankingCount, setRankingCount] = useState<number>(3);
+	const [fromDate, setFromDate] = useState<Dayjs>(dayjs('2024-01-01'));
+	const [toDate, setToDate] = useState<Dayjs>(dayjs('2025-01-01'));
 	const { user, isAuthenticated } = useAuth0();
+	const matches = useMediaQuery('(min-width:600px)');
 
 	useEffect(() => {
 		async function getFundraisings() {
@@ -39,7 +50,7 @@ export const Fundraisings = () => {
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/fundraising`,
+					url: `${HOST}:${PORT}/fundraising`,
 				});
 
 				if (response.ok) {
@@ -51,7 +62,7 @@ export const Fundraisings = () => {
 				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/analytics/player/wins`,
+					url: `${HOST}:${PORT}/analytics/player/wins?count=${rankingCount}&from=${fromDate.toDate()}&to=${toDate.toDate()}`,
 				});
 
 				if (response.ok) {
@@ -69,7 +80,7 @@ export const Fundraisings = () => {
 		if (!accessToken) return;
 
 		getFundraisings();
-	}, [accessToken, isAuthenticated, user]);
+	}, [accessToken, isAuthenticated, user, rankingCount, fromDate, toDate]);
 
 	useEffect(() => {
 		if (filter) {
@@ -99,82 +110,215 @@ export const Fundraisings = () => {
 			{!isLoading && (
 				<>
 					{analytics && (
-						<Stack
-							sx={{ marginTop: '8px' }}
-							direction={{ xs: 'column', md: 'row' }}
-							spacing={2}
-						>
-							{analytics.players.map(({ player }, index) => {
-								return (
-									<Card
-										key={player.id}
+						<Box sx={{ width: '100%', marginTop: '16px' }}>
+							<Typography
+								color='secondary'
+								sx={{ fontWeight: 'bold', fontSize: '18px' }}
+							>
+								Ranking filters
+							</Typography>
+							<Stack
+								sx={{
+									minHeight: '100px',
+									gap: '24px',
+									marginTop: '8px',
+								}}
+								direction={{ xs: 'column', md: 'row' }}
+							>
+								<Box>
+									<InputLabel id='players-wins-ranking-size'>
+										Size
+									</InputLabel>
+									<Slider
+										onChange={(_, value) => {
+											setRankingCount(value as number);
+										}}
+										value={rankingCount}
+										defaultValue={3}
+										valueLabelDisplay='auto'
+										step={1}
+										max={10}
+										min={1}
 										sx={{
-											display: 'flex',
-											marginTop: '8px',
-											marginBottom: '16px',
-											padding: '8px',
+											minWidth: '300px',
+											maxWidth: '300px',
+										}}
+									/>
+								</Box>
+								<LocalizationProvider
+									dateAdapter={AdapterDayjs}
+								>
+									<DemoContainer
+										components={['DatePicker']}
+										sx={{
+											maxWidth: '300px',
+											minWidth: '300px',
+											overflowX: 'hidden',
 										}}
 									>
-										<CardMedia
-											component='img'
-											sx={{ width: 151 }}
-											image={player.user.avatar}
-											alt={`${player.user.username} avatar`}
-										/>
-										<Box
+										<DatePicker
 											sx={{
-												display: 'flex',
-												flexDirection: 'column',
+												maxWidth: '300px',
+												width: '100%',
 											}}
-										>
-											<CardContent
-												sx={{ flex: '1 0 auto' }}
-											>
-												<Typography
-													gutterBottom
-													variant='h5'
-													component='div'
-												>
-													Most winning players
-												</Typography>
-												<Typography
-													variant='h6'
-													color='secondary'
-												>
-													{player.user.username}
-												</Typography>
-												<Typography
-													sx={{ fontWeight: 'bold' }}
-												>
-													{analytics.data[index]}
-												</Typography>
-											</CardContent>
-											<Box
-												sx={{
-													display: 'flex',
-													alignItems: 'center',
-													pl: 1,
-													pb: 1,
-												}}
-											>
-												<Button
-													size='small'
-													color='secondary'
-													onClick={() => {
-														setFilter(
-															player.user
-																.username ?? ''
-														);
+											label='From'
+											value={fromDate}
+											onChange={(date) =>
+												setFromDate(dayjs(date))
+											}
+											slotProps={{
+												textField: {
+													error: false,
+												},
+											}}
+										/>
+									</DemoContainer>
+								</LocalizationProvider>
+								<LocalizationProvider
+									dateAdapter={AdapterDayjs}
+								>
+									<DemoContainer
+										components={['DatePicker']}
+										sx={{
+											maxWidth: '300px',
+											minWidth: '300px',
+											overflowX: 'hidden',
+										}}
+									>
+										<DatePicker
+											sx={{
+												maxWidth: '300px',
+												width: '100%',
+											}}
+											label='To'
+											value={toDate}
+											onChange={(date) =>
+												setToDate(dayjs(date))
+											}
+											slotProps={{
+												textField: {
+													error: false,
+												},
+											}}
+										/>
+									</DemoContainer>
+								</LocalizationProvider>
+							</Stack>
+							<Stack
+								sx={{
+									marginTop: '8px',
+									gap: '8px',
+								}}
+								direction={{ xs: 'column', lg: 'row' }}
+							>
+								{analytics.players.length > 0 ? (
+									analytics.players.map(
+										({ player }, index) => {
+											return (
+												<Card
+													key={player.id}
+													sx={{
+														minWidth: '320px',
+														width: '90%',
+														display: 'flex',
+														marginTop: '8px',
+														marginBottom: '16px',
+														padding: '8px',
+														maxWidth: `${
+															matches
+																? '800px'
+																: '400px'
+														}`,
 													}}
 												>
-													Search his/her tokens
-												</Button>
-											</Box>
-										</Box>
-									</Card>
-								);
-							})}
-						</Stack>
+													<CardMedia
+														component='img'
+														sx={{ width: 151 }}
+														image={
+															player.user.avatar
+														}
+														alt={`${player.user.username} avatar`}
+													/>
+													<Box
+														sx={{
+															display: 'flex',
+															flexDirection:
+																'column',
+														}}
+													>
+														<CardContent
+															sx={{
+																flex: '1 0 auto',
+															}}
+														>
+															<Typography
+																gutterBottom
+																variant='h5'
+																component='div'
+															>
+																Most winning
+																players
+															</Typography>
+															<Typography
+																variant='h6'
+																color='secondary'
+															>
+																{
+																	player.user
+																		.username
+																}
+															</Typography>
+															<Typography
+																sx={{
+																	fontWeight:
+																		'bold',
+																}}
+															>
+																{
+																	analytics
+																		.data[
+																		index
+																	]
+																}
+															</Typography>
+														</CardContent>
+														<Box
+															sx={{
+																display: 'flex',
+																alignItems:
+																	'center',
+																pl: 1,
+																pb: 1,
+															}}
+														>
+															<Button
+																size='small'
+																color='secondary'
+																onClick={() => {
+																	setFilter(
+																		player
+																			.user
+																			.username ??
+																			''
+																	);
+																}}
+															>
+																Search his/her
+																tokens
+															</Button>
+														</Box>
+													</Box>
+												</Card>
+											);
+										}
+									)
+								) : (
+									<Typography sx={{ fontWeight: 'bold' }}>
+										No players match the filter
+									</Typography>
+								)}
+							</Stack>
+						</Box>
 					)}
 					<Stack spacing={2} mt={4}>
 						<Stack

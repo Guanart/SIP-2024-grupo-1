@@ -46,7 +46,7 @@ export const Account = () => {
 		fetchWithAuth({
 			isAuthenticated,
 			accessToken,
-			url: `http://${HOST}:${PORT}/user/${auth0_id}`,
+			url: `${HOST}:${PORT}/user/${auth0_id}`,
 			method: 'GET',
 		})
 			.then((response) => {
@@ -87,7 +87,7 @@ export const Account = () => {
 			await fetchWithAuth({
 				isAuthenticated,
 				accessToken,
-				url: `http://${HOST}:${PORT}/user`,
+				url: `${HOST}:${PORT}/user`,
 				method: 'PUT',
 				data: updatedUser,
 			});
@@ -97,7 +97,7 @@ export const Account = () => {
 					const response = await fetchWithAuth({
 						isAuthenticated,
 						accessToken,
-						url: `http://${HOST}:${PORT}/player`,
+						url: `${HOST}:${PORT}/player`,
 						method: 'PUT',
 						data: {
 							player_id: currentUser?.player?.id,
@@ -134,7 +134,7 @@ export const Account = () => {
 		const response = await fetchWithAuth({
 			isAuthenticated,
 			accessToken,
-			url: `http://${HOST}:${PORT}/user`,
+			url: `${HOST}:${PORT}/user`,
 			method: 'DELETE',
 			data: {
 				auth0_id: user?.sub,

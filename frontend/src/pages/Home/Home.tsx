@@ -23,7 +23,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user.sub}`,
+					url: `${HOST}:${PORT}/user/${user.sub}`,
 				});
 			} catch (error) {
 				const account = {
@@ -36,7 +36,7 @@ export const Home = () => {
 				await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/`,
+					url: `${HOST}:${PORT}/user/`,
 					method: 'POST',
 					data: account,
 				});

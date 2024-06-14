@@ -41,7 +41,7 @@ export const Wallet = () => {
 				const response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
-					url: `http://${HOST}:${PORT}/user/${user?.sub}`,
+					url: `${HOST}:${PORT}/user/${user?.sub}`,
 				});
 
 				if (response.ok) {
@@ -50,7 +50,7 @@ export const Wallet = () => {
 					if (user.player) {
 						setPlayer(user.player);
 					}
-					
+
 					if (user.wallet) {
 						console.log(user.wallet);
 						setTokens(user.wallet.token_wallet);
@@ -77,8 +77,14 @@ export const Wallet = () => {
 
 	// const CLIENT_ID = "3437331959866275"; // app cuenta real
 	const CLIENT_ID = '1517187722603608'; // app cuenta de prueba
-	const REDIRECT_URI =
+	let REDIRECT_URI =
 		'https://sharp-slightly-cardinal.ngrok-free.app/mercado-pago/oauth';
+
+	if (HOST.includes('api.leagueoftoken.online')) {
+		REDIRECT_URI = `${HOST}:3443/mercado-pago/oauth`;
+	}
+
+	console.log(REDIRECT_URI);
 
 	return (
 		<PageLayout title='Wallet'>

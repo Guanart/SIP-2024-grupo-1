@@ -8,6 +8,11 @@ spec:
     selector:
         app: backend
     ports:
-        - protocol: TCP
+        - name: https
+          protocol: TCP
+          port: 3443
+          targetPort: 3443
+        - name: http
+          protocol: TCP
           port: 3000
           targetPort: 3000

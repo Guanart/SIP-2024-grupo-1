@@ -27,6 +27,9 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package*.json ./
 # Ensure Prisma schema is included
 COPY --from=build /app/prisma ./prisma
+COPY tls.crt ./
+COPY tls.key ./
 
 EXPOSE 3000
+EXPOSE 3443
 CMD ["npm", "run", "start:prod"]
