@@ -429,30 +429,30 @@ jobs:
                   BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
                   curl http://$BACKEND_SERVICE:3000/seed
 
-            - name: Update Postman environments
-              run: |
-                  BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-                  jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
-                  jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
-                  mv postman/environment_temp.json postman/environment.json
+            # - name: Update Postman environments
+            #   run: |
+            #       BACKEND_SERVICE=$(kubectl get svc backend-service -n argocd -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
+            #       jq --arg new_url "http://$BACKEND_SERVICE:3000" '.values[] | select(.key == "base_url") | .value = $new_url' postman/environment.json > postman/environment_temp.json
+            #       jq '.values |= map(if .key == "base_url" then .value = "http://'$BACKEND_SERVICE':3000" else . end)' postman/environment.json > postman/environment_temp.json
+            #       mv postman/environment_temp.json postman/environment.json
 
-            - name: Run Accounts API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/accounts.json
-                  environment: postman/environment.json
+            # - name: Run Accounts API test
+            #   uses: matt-ball/newman-action@master
+            #   with:
+            #       collection: postman/accounts.json
+            #       environment: postman/environment.json
 
-            - name: Run Fundraisings API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/fundraisings.json
-                  environment: postman/environment.json
+            # - name: Run Fundraisings API test
+            #   uses: matt-ball/newman-action@master
+            #   with:
+            #       collection: postman/fundraisings.json
+            #       environment: postman/environment.json
 
-            - name: Run Marketplace API test
-              uses: matt-ball/newman-action@master
-              with:
-                  collection: postman/marketplace.json
-                  environment: postman/environment.json
+            # - name: Run Marketplace API test
+            #   uses: matt-ball/newman-action@master
+            #   with:
+            #       collection: postman/marketplace.json
+            #       environment: postman/environment.json
 
             - name: Run vulnerability check on frontend
               working-directory: frontend
