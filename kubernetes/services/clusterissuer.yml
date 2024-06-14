@@ -44,7 +44,7 @@ metadata:
 spec:
     secretName: certificate-tls
     issuerRef:
-        name: letsencrypt-staging
+        name: letsencrypt-prod # letsencrypt-staging
         kind: ClusterIssuer
     commonName: 'leagueoftoken.online'
     dnsNames:

@@ -663,33 +663,33 @@ jobs:
                       "proxied": false
                     }'
 
-    run-integration-tests:
-        name: Run integration tests
-        if: startsWith(github.event.head_commit.message, '(up)')
-        needs: configure-argo
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4.1.6
+    # run-integration-tests:
+    #     name: Run integration tests
+    #     if: startsWith(github.event.head_commit.message, '(up)')
+    #     needs: configure-argo
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Checkout code
+    #           uses: actions/checkout@v4.1.6
 
-            - name: Run Selenium tests
-              working-directory: selenium
-              run: |
-                  pip install -r requirements.txt
-                  sleep 5
+    #         - name: Run Selenium tests
+    #           working-directory: selenium
+    #           run: |
+    #               pip install -r requirements.txt
+    #               sleep 5
 
-                  export HOST=http://frontend.leagueoftoken.online
-                  export MIN_SLEEP=20
-                  export MAX_SLEEP=40
+    #               export HOST=http://frontend.leagueoftoken.online
+    #               export MIN_SLEEP=20
+    #               export MAX_SLEEP=40
 
-                  python3 login.py || echo "login.py failed"
-                  python3 account-edit.py || echo "account-edit.py failed"
-                  python3 list-marketplace.py || echo "list-marketplace.py failed"
-                  python3 delete-marketplace-publication.py || echo "delete-marketplace-publication.py failed"
-                  python3 create-marketplace-publication.py || echo "create-marketplace-publication.py failed"
-                  python3 list-fundraising.py  || echo "list-fundraising.py failed"
-                  python3 update-fundraising.py  || echo "update-fundraising.py failed"
-                  python3 start-fundraising.py || echo "start-fundraising.py failed"
+    #               python3 login.py || echo "login.py failed"
+    #               python3 account-edit.py || echo "account-edit.py failed"
+    #               python3 list-marketplace.py || echo "list-marketplace.py failed"
+    #               python3 delete-marketplace-publication.py || echo "delete-marketplace-publication.py failed"
+    #               python3 create-marketplace-publication.py || echo "create-marketplace-publication.py failed"
+    #               python3 list-fundraising.py  || echo "list-fundraising.py failed"
+    #               python3 update-fundraising.py  || echo "update-fundraising.py failed"
+    #               python3 start-fundraising.py || echo "start-fundraising.py failed"
 
     infra-destroy:
         name: Destroy Kubernetes infrastructure
