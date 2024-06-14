@@ -679,7 +679,7 @@ jobs:
                   sleep 5
 
                   export HOST=http://frontend.leagueoftoken.online
-                  export MIN_SLEEP=10 
+                  export MIN_SLEEP=10
                   export MAX_SLEEP=30
 
                   python3 login.py || echo "login.py failed"

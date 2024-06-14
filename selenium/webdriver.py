@@ -6,12 +6,13 @@ from selenium.webdriver.chrome.options import Options
 
 def get_min_sleep():
     min_sleep = os.getenv('MIN_SLEEP', 3)
-    return min_sleep
+
+    return int(min_sleep)
 
 
 def get_max_sleep():
     max_sleep = os.getenv('MAX_SLEEP', 15)
-    return max_sleep
+    return int(max_sleep)
 
 
 def get():
