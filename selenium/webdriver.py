@@ -21,9 +21,8 @@ def get():
     chrome_options = Options()
     chrome_options.add_argument('--headless=new')
 
-    if ("http" in host):
-        chrome_options.add_argument(
-            f"--unsafely-treat-insecure-origin-as-secure={host}")
+    chrome_options.add_argument(
+        f"--unsafely-treat-insecure-origin-as-secure={host}")
 
     driver = webdriver.Chrome(options=chrome_options)
     driver.get(host)
