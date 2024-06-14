@@ -249,7 +249,12 @@ export const Fundraising = () => {
 							</Typography>
 							<Typography component='div' variant='h6'>
 								Token details
-								<Stack sx={{ paddingLeft: '8px' }}>
+								<Stack
+									sx={{
+										paddingLeft: '8px',
+										marginBottom: '16px',
+									}}
+								>
 									<Typography component='div' variant='body2'>
 										Collection ID
 										<Typography
