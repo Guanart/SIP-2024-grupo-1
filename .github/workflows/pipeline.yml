@@ -510,7 +510,7 @@ jobs:
               with:
                   context: ./frontend
                   push: true
-                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:latest
+                  tags: ${{ secrets.DOCKER_HUB_USERNAME }}/lot-frontend:1.0.0
 
             - name: Clean up generated TLS certificates
               working-directory: frontend
