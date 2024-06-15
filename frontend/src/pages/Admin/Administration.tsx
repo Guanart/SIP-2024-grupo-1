@@ -236,8 +236,8 @@ export const Administration = () => {
 											<DemoContainer
 												components={['DatePicker']}
 												sx={{
-													maxWidth: '250px',
-													minWidth: '250px',
+													maxWidth: '240px',
+													minWidth: '240px',
 													overflowX: 'hidden',
 												}}
 											>
@@ -250,7 +250,6 @@ export const Administration = () => {
 													value={fromDate}
 													onChange={(date) => {
 														if (!date) return;
-
 														if (date > toDate) {
 															setFromDate(
 																dayjs(toDate)
@@ -275,8 +274,8 @@ export const Administration = () => {
 											<DemoContainer
 												components={['DatePicker']}
 												sx={{
-													maxWidth: '250px',
-													minWidth: '250px',
+													maxWidth: '240px',
+													minWidth: '240px',
 													overflowX: 'hidden',
 												}}
 											>
@@ -319,7 +318,10 @@ export const Administration = () => {
 									>
 										<TableHead>
 											<TableRow>
-												<TableCell align='center'>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
 													From
 												</TableCell>
 												<TableCell
@@ -355,17 +357,17 @@ export const Administration = () => {
 													scope='row'
 												>
 													{fromDate
-														.toISOString()
-														.slice(0, 10)}
+														.toString()
+														.slice(0, 16)}
 												</TableCell>
 												<TableCell
 													align='center'
 													component='th'
 													scope='row'
 												>
-													{toDate
-														.toISOString()
-														.slice(0, 10)}
+													{fromDate
+														.toString()
+														.slice(0, 16)}
 												</TableCell>
 												<TableCell
 													align='center'
@@ -384,9 +386,7 @@ export const Administration = () => {
 													}}
 												>
 													U$D{' '}
-													{
-														earningsFromTransactions?.earnings
-													}
+													{earningsFromTransactions?.earnings.toLocaleString()}
 												</TableCell>
 											</TableRow>
 										</TableBody>
