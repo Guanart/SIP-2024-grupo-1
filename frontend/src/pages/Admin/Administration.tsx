@@ -124,6 +124,8 @@ export const Administration = () => {
 	useEffect(() => {
 		async function getAnalytics() {
 			try {
+				if (toDate < fromDate) return;
+
 				let response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
@@ -246,9 +248,19 @@ export const Administration = () => {
 													}}
 													label='From'
 													value={fromDate}
-													onChange={(date) =>
-														setFromDate(dayjs(date))
-													}
+													onChange={(date) => {
+														if (!date) return;
+
+														if (date > toDate) {
+															setFromDate(
+																dayjs(toDate)
+															);
+														} else {
+															setFromDate(
+																dayjs(date)
+															);
+														}
+													}}
 													slotProps={{
 														textField: {
 															error: false,
@@ -275,9 +287,19 @@ export const Administration = () => {
 													}}
 													label='To'
 													value={toDate}
-													onChange={(date) =>
-														setToDate(dayjs(date))
-													}
+													onChange={(date) => {
+														if (!date) return;
+
+														if (date < fromDate) {
+															setToDate(
+																dayjs(fromDate)
+															);
+														} else {
+															setToDate(
+																dayjs(date)
+															);
+														}
+													}}
 													slotProps={{
 														textField: {
 															error: false,
@@ -298,19 +320,19 @@ export const Administration = () => {
 										<TableHead>
 											<TableRow>
 												<TableCell align='center'>
+													From
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													To
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
 													Total
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{ maxWidth: '80px' }}
-												>
-													BUY
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{ maxWidth: '80px' }}
-												>
-													SELL
 												</TableCell>
 												<TableCell
 													align='center'
@@ -332,7 +354,18 @@ export const Administration = () => {
 													component='th'
 													scope='row'
 												>
-													{earningsFromTransactions?.transactions.toLocaleString()}
+													{fromDate
+														.toISOString()
+														.slice(0, 10)}
+												</TableCell>
+												<TableCell
+													align='center'
+													component='th'
+													scope='row'
+												>
+													{toDate
+														.toISOString()
+														.slice(0, 10)}
 												</TableCell>
 												<TableCell
 													align='center'
@@ -340,15 +373,9 @@ export const Administration = () => {
 														fontWeight: 'bold',
 													}}
 												>
-													{earningsFromTransactions?.buy.toLocaleString()}
-												</TableCell>
-												<TableCell
-													align='center'
-													sx={{
-														fontWeight: 'bold',
-													}}
-												>
-													{earningsFromTransactions?.sell.toLocaleString()}
+													{
+														earningsFromTransactions?.transactions
+													}
 												</TableCell>
 												<TableCell
 													align='center'
@@ -357,7 +384,9 @@ export const Administration = () => {
 													}}
 												>
 													U$D{' '}
-													{earningsFromTransactions?.earnings.toLocaleString()}
+													{
+														earningsFromTransactions?.earnings
+													}
 												</TableCell>
 											</TableRow>
 										</TableBody>

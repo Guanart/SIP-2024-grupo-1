@@ -59,6 +59,8 @@ export const Fundraisings = () => {
 					setCurrentFundraisings(fundraisings);
 				}
 
+				if (toDate < fromDate) return;
+
 				response = await fetchWithAuth({
 					isAuthenticated,
 					accessToken,
@@ -163,9 +165,15 @@ export const Fundraisings = () => {
 											}}
 											label='From'
 											value={fromDate}
-											onChange={(date) =>
-												setFromDate(dayjs(date))
-											}
+											onChange={(date) => {
+												if (!date) return;
+
+												if (date > toDate) {
+													setFromDate(dayjs(toDate));
+												} else {
+													setToDate(dayjs(date));
+												}
+											}}
 											slotProps={{
 												textField: {
 													error: false,
@@ -192,9 +200,15 @@ export const Fundraisings = () => {
 											}}
 											label='To'
 											value={toDate}
-											onChange={(date) =>
-												setToDate(dayjs(date))
-											}
+											onChange={(date) => {
+												if (!date) return;
+
+												if (date < fromDate) {
+													setToDate(dayjs(fromDate));
+												} else {
+													setToDate(dayjs(date));
+												}
+											}}
 											slotProps={{
 												textField: {
 													error: false,
