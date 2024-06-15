@@ -9,6 +9,7 @@ import { RegisterPlayerDto } from './dto/register-player.dto';
 import { SetFinalPositionDto } from './dto/set-final-position.dto';
 import { CollectionService } from 'src/collection/collection.service';
 import { MarketplacePublicationService } from 'src/marketplace/marketplace-publication.service';
+import { MercadoPagoService } from 'src/mercado-pago/mercado-pago.service';
 
 @Injectable()
 export class EventService {
@@ -17,6 +18,7 @@ export class EventService {
     private fundraisingService: FundraisingService,
     private collectionService: CollectionService,
     private marketplaceService: MarketplacePublicationService,
+    private mercadoPagoService: MercadoPagoService
   ) {}
 
   async getEvents() {
@@ -259,6 +261,8 @@ export class EventService {
         }),
       );
 
+      this.mercadoPagoService.distributeFundraisingEarnings(fundraising, amountOfMoneyPerWallet);
+      
       await this.prisma.event.update({
         where: { id: event.id },
         data: {
@@ -278,7 +282,7 @@ export class EventService {
   }
 
   // Se ejecuta todos los días a las 23:30
-  @Cron('30 23 * * *')
+  @Cron('38 12 * * *')
   async handleCron2() {
     await this.checkFinishedEvents(); //? Checkea eventos finalizados para calcular los premios x token
   }
