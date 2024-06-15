@@ -19,6 +19,7 @@ const REACT_APP_PREFERENCE_TYPE = 'marketplace';
 
 export const MarketplacePublication = () => {
 	const [preferenceId, setPreferenceId] = useState(null); // Estado para guardar la preferenceId que me traigo del server
+	const [paymentStatus, setPaymentStatus] = useState<string>(''); // Estado para guardar el estado de pago
 	const { accessToken, role } = useAccessToken();
 	const [marketplacePublication, setMarketplacePublication] =
 		useState<MarketplacePublicationType>();
@@ -118,6 +119,40 @@ export const MarketplacePublication = () => {
 			navigate('/error');
 		}
 	};
+
+	// Verificación de los parámetros de la URL para mostrar mensaje de compra exitosa o de error
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const collectionStatus = params.get('collection_status');
+		const paymentId = params.get('payment_id');
+
+		if (collectionStatus === 'approved' && paymentId) {
+			setPaymentStatus('success');
+		} else if (collectionStatus === 'rejected') {
+			setPaymentStatus('error');
+		}
+	}, []);
+
+	// Mostrar mensaje de compra exitosa o de error
+	if (paymentStatus === 'success') {
+		return (
+			<PageLayout title='Purchase Successful'>
+				<Typography variant='h4'>Purchase Successful!</Typography>
+				<Button component={Link} to='/marketplace' variant='contained' color='primary' sx={{ mt: 2 }}>
+					Back to Marketplace
+				</Button>
+			</PageLayout>
+		);
+	} else if (paymentStatus === 'error') {
+		return (
+			<PageLayout title='Purchase Error'>
+				<Typography variant='h4'>Purchase Error!</Typography>
+				<Button component={Link} to='/marketplace' variant='contained' color='primary' sx={{ mt: 2 }}>
+					Back to Marketplace
+				</Button>
+			</PageLayout>
+		);
+	}
 
 	return (
 		<PageLayout title='Marketplace publication'>

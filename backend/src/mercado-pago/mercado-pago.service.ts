@@ -76,6 +76,10 @@ export class MercadoPagoService {
     const preference = new Preference(config);
 
     try {
+      const back_url = items.type === 'marketplace'
+        ? `${process.env.REACT_APP_URL}/marketplace/publication/${items.id}`
+        : `${process.env.REACT_APP_URL}/fundraising/${items.id}`;
+
       const body = {
         expires: false,
         items: [
@@ -89,9 +93,9 @@ export class MercadoPagoService {
           },
         ],
         back_urls: {
-          success: process.env.REACT_APP_URL + '/' + items.type + '/',
-          pending: process.env.REACT_APP_URL + '/' + items.type + '/',
-          failure: process.env.REACT_APP_URL + '/' + items.type + '/',
+          success: back_url,
+          pending: back_url,
+          failure: back_url,
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
