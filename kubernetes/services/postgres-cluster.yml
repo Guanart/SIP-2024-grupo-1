@@ -31,7 +31,7 @@ metadata:
     name: postgres-cluster-scheduled-backup
     namespace: argocd
 spec:
-    schedule: '0 2 * * *' # Se ejecuta 2 AM todos los días
+    schedule: '*/30 * * * *' # Cada media hora y '0 2 * * *' Se ejecuta 2 AM todos los días
     backupOwnerReference: self
     cluster:
         name: postgres-cluster
