@@ -39,8 +39,8 @@ export const Fundraisings = () => {
 	const [filter, setFilter] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [rankingCount, setRankingCount] = useState<number>(3);
-	const [fromDate, setFromDate] = useState<Dayjs>(dayjs('2024-01-01'));
-	const [toDate, setToDate] = useState<Dayjs>(dayjs('2025-01-01'));
+	const [fromDate, setFromDate] = useState<Dayjs>(dayjs());
+	const [toDate, setToDate] = useState<Dayjs>(dayjs().add(1, 'year'));
 	const { user, isAuthenticated } = useAuth0();
 	const matches = useMediaQuery('(min-width:600px)');
 

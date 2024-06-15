@@ -326,6 +326,51 @@ export class AnalyticsController {
     }
   }
 
+  @Get('/earnings')
+  async getEarningsFromTransactions(
+    @Query('from') from?: Date,
+    @Query('to') to?: Date,
+  ): Promise<string> {
+    try {
+      // Si no se especifican fechas, setea un rango por defecto que abarque todos los eventos
+      if (!to) {
+        to = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      }
+
+      if (!from) {
+        from = new Date(2000, 1, 1);
+      }
+
+      from = new Date(from);
+      to = new Date(to);
+
+      if (to < from) {
+        throw new BadRequestException(
+          'FROM date can only be earlier than TO date',
+        );
+      }
+
+      const data = await this.analyticsService.getEarningsFromTransactions(
+        from,
+        to,
+      );
+
+      return JSON.stringify({
+        description: 'Earnings from transactions',
+        earnings: data,
+      });
+    } catch (exception) {
+      if (
+        exception instanceof NotFoundException ||
+        exception instanceof BadRequestException
+      ) {
+        throw exception;
+      } else {
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+    }
+  }
+
   @Get('/token/average')
   async getTokensAveragePrice(
     @Query('event_name') eventName?: string,

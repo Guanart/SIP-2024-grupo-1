@@ -62,8 +62,6 @@ export class AnalyticsService {
 
   // Misma funcion que la de arriba, solo que parametrizada para poder filtrar la cantidad de jugadores del top
   async getNPlayersWithMoreWins(count: number, from: Date, to: Date) {
-    console.log(from);
-    console.log(to);
     const player_event: {
       player_id: number;
       event_id: number;
@@ -131,6 +129,63 @@ export class AnalyticsService {
     return results;
   }
 
+  async getEarningsFromTransactions(from: Date, to: Date) {
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        timestamp: {
+          gte: from,
+          lte: to,
+        },
+      },
+    });
+
+    if (!transactions) return null;
+
+    return {
+      transactions: 1000,
+      buy: 500,
+      sell: 500,
+      earnings: 7000,
+      transactionsByDay: [
+        {
+          date: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 200,
+        },
+        {
+          date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 1500,
+        },
+        {
+          date: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 500,
+        },
+        {
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 1800,
+        },
+        {
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 300,
+        },
+        {
+          date: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          amount: 100,
+          earnings: 1700,
+        },
+        {
+          date: new Date(Date.now()),
+          amount: 100,
+          earnings: 1000,
+        },
+      ],
+    };
+  }
+
   async getFundraisingsByPlayer(id: number, dateFrom?: Date, dateTo?: Date) {
     const fundraisings = await this.prisma.fundraising.findMany({
       where: {
@@ -156,12 +211,6 @@ export class AnalyticsService {
     });
     return fundraisings;
   }
-
-  /*
-  async getEventsByName(name: string) {
-    
-  }
-  */
 
   async getPlayerWithMoreTokensSold() {
     const collections = await this.prisma.collection.findMany({

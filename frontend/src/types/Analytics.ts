@@ -60,3 +60,15 @@ export type AverageTokenPriceAnalytics = {
 		};
 	};
 };
+
+export type EarningsAnalytics = {
+	transactions: number;
+	buy: number;
+	sell: number;
+	earnings: number;
+	transactionsByDay: {
+		date: Date;
+		amount: number;
+		earnings: number;
+	}[];
+};

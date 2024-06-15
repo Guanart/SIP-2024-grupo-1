@@ -13,15 +13,25 @@ import {
 	Divider,
 	InputLabel,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { PageLayout } from '../../layouts/PageLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { useAccessToken } from '../../hooks/useAccessToken';
-import { PieChart, BarChart } from '@mui/x-charts';
+import { PieChart, BarChart, SparkLineChart } from '@mui/x-charts';
 import { Loader } from '../../components';
-import { Analytics, PlayerAnalytic, GameAnalytics } from '../../types';
+import {
+	Analytics,
+	PlayerAnalytic,
+	GameAnalytics,
+	EarningsAnalytics,
+} from '../../types';
+import dayjs, { Dayjs } from 'dayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const HOST = import.meta.env.APP_BACKEND_HOST;
 const PORT = import.meta.env.APP_BACKEND_PORT;
@@ -33,9 +43,13 @@ export const Administration = () => {
 	const [analytics, setAnalytics] = useState<Analytics>();
 	const [gameAnalytics, setGameAnalytics] = useState<GameAnalytics[]>();
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [fundraisingsCount, setFunraisingsCount] = useState<number>(0);
+	const [fundraisingsCount, setFundraisingsCount] = useState<number>(0);
 	const [minPercentageLimit, setMinPercentageLimit] = useState<number>(0);
 	const [maxPercentageLimit, setMaxPercentageLimit] = useState<number>(100);
+	const [earningsFromTransactions, setEarningsFromTransactions] =
+		useState<EarningsAnalytics>();
+	const [fromDate, setFromDate] = useState<Dayjs>(dayjs());
+	const [toDate, setToDate] = useState<Dayjs>(dayjs().add(1, 'year'));
 
 	useEffect(() => {
 		async function getAnalytics() {
@@ -49,20 +63,9 @@ export const Administration = () => {
 				if (response.ok) {
 					const { data } = await response.json();
 
-					if (data) {
-						setAnalytics(data);
-					}
+					if (!data) return;
 
-					response = await fetchWithAuth({
-						isAuthenticated,
-						accessToken,
-						url: `${HOST}:${PORT}/analytics/fundraisings/percentage/${minPercentageLimit}/${maxPercentageLimit}`,
-					});
-
-					if (response.ok) {
-						const { count } = await response.json();
-						setFunraisingsCount(count);
-					}
+					setAnalytics(data);
 
 					response = await fetchWithAuth({
 						isAuthenticated,
@@ -85,6 +88,30 @@ export const Administration = () => {
 		if (!accessToken) return;
 
 		getAnalytics();
+	}, [accessToken, isAuthenticated, user, navigate]);
+
+	useEffect(() => {
+		async function getAnalytics() {
+			try {
+				const response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `${HOST}:${PORT}/analytics/fundraisings/percentage/${minPercentageLimit}/${maxPercentageLimit}`,
+				});
+
+				if (response.ok) {
+					const { count } = await response.json();
+					setFundraisingsCount(count);
+				}
+			} catch (error) {
+				navigate('/error/500');
+			}
+		}
+
+		if (!user) return;
+		if (!accessToken) return;
+
+		getAnalytics();
 	}, [
 		accessToken,
 		isAuthenticated,
@@ -93,6 +120,44 @@ export const Administration = () => {
 		maxPercentageLimit,
 		minPercentageLimit,
 	]);
+
+	useEffect(() => {
+		async function getAnalytics() {
+			try {
+				let response = await fetchWithAuth({
+					isAuthenticated,
+					accessToken,
+					url: `${HOST}:${PORT}/admin`,
+				});
+
+				if (response.ok) {
+					const { data } = await response.json();
+
+					if (data) {
+						setAnalytics(data);
+					}
+
+					response = await fetchWithAuth({
+						isAuthenticated,
+						accessToken,
+						url: `${HOST}:${PORT}/analytics/earnings?from=${fromDate}&to=${toDate}`,
+					});
+
+					if (response.ok) {
+						const { earnings } = await response.json();
+						setEarningsFromTransactions(earnings);
+					}
+				}
+			} catch (error) {
+				navigate('/error/500');
+			}
+		}
+
+		if (!user) return;
+		if (!accessToken) return;
+
+		getAnalytics();
+	}, [accessToken, isAuthenticated, user, navigate, fromDate, toDate]);
 
 	return (
 		<PageLayout title='Administration panel'>
@@ -139,119 +204,212 @@ export const Administration = () => {
 						gap: '62px',
 					}}
 				>
-					<Box sx={{ maxWidth: '1200px' }}>
-						<Typography variant='h5' color='secondary'>
-							Transactions
-						</Typography>
-						<Box>
-							<Typography variant='h6' color='error'>
-								Agregar acá filtro de fechas
+					{earningsFromTransactions && (
+						<Box sx={{ maxWidth: '1400px' }}>
+							<Typography variant='h5' color='secondary'>
+								Transactions
 							</Typography>
-						</Box>
-						<Stack
-							direction={{ xs: 'column', md: 'row' }}
-							spacing={6}
-						>
-							<TableContainer
-								sx={{
-									paddingTop: '16px',
-									maxWidth: '600px',
-									minWidth: '400px',
-								}}
+
+							<Stack
+								direction={{ xs: 'column', lg: 'row' }}
+								spacing={6}
 							>
-								<Table aria-label='a dense table' size='small'>
-									<TableHead>
-										<TableRow>
-											<TableCell align='center'>
-												Total
-											</TableCell>
-											<TableCell
-												align='center'
-												sx={{ maxWidth: '80px' }}
-											>
-												BUY
-											</TableCell>
-											<TableCell
-												align='center'
-												sx={{ maxWidth: '80px' }}
-											>
-												SELL
-											</TableCell>
-											<TableCell
-												align='center'
-												sx={{ maxWidth: '80px' }}
-											>
-												Earnings
-											</TableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										<TableRow
-											sx={{
-												'&:last-child td, &:last-child th':
-													{ border: 0 },
-											}}
+								<TableContainer
+									sx={{
+										paddingTop: '16px',
+										maxWidth: '600px',
+										minWidth: '500px',
+									}}
+								>
+									<Stack
+										sx={{
+											marginTop: '8px',
+										}}
+										direction={{ xd: 'column', md: 'row' }}
+										spacing={1}
+									>
+										<LocalizationProvider
+											dateAdapter={AdapterDayjs}
 										>
-											<TableCell
-												align='center'
-												component='th'
-												scope='row'
-											>
-												1000
-											</TableCell>
-											<TableCell
-												align='center'
+											<DemoContainer
+												components={['DatePicker']}
 												sx={{
-													fontWeight: 'bold',
+													maxWidth: '250px',
+													minWidth: '250px',
+													overflowX: 'hidden',
 												}}
 											>
-												500
-											</TableCell>
-											<TableCell
-												align='center'
+												<DatePicker
+													sx={{
+														maxWidth: '300px',
+														width: '100%',
+													}}
+													label='From'
+													value={fromDate}
+													onChange={(date) =>
+														setFromDate(dayjs(date))
+													}
+													slotProps={{
+														textField: {
+															error: false,
+														},
+													}}
+												/>
+											</DemoContainer>
+										</LocalizationProvider>
+										<LocalizationProvider
+											dateAdapter={AdapterDayjs}
+										>
+											<DemoContainer
+												components={['DatePicker']}
 												sx={{
-													fontWeight: 'bold',
+													maxWidth: '250px',
+													minWidth: '250px',
+													overflowX: 'hidden',
 												}}
 											>
-												500
-											</TableCell>
-											<TableCell
-												align='center'
+												<DatePicker
+													sx={{
+														maxWidth: '300px',
+														width: '100%',
+													}}
+													label='To'
+													value={toDate}
+													onChange={(date) =>
+														setToDate(dayjs(date))
+													}
+													slotProps={{
+														textField: {
+															error: false,
+														},
+													}}
+												/>
+											</DemoContainer>
+										</LocalizationProvider>
+									</Stack>
+									<Table
+										aria-label='a dense table'
+										size='small'
+										sx={{
+											maxWidth: '500px',
+											marginTop: '16px',
+										}}
+									>
+										<TableHead>
+											<TableRow>
+												<TableCell align='center'>
+													Total
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													BUY
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													SELL
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{ maxWidth: '80px' }}
+												>
+													Earnings
+												</TableCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow
 												sx={{
-													fontWeight: 'bold',
+													'&:last-child td, &:last-child th':
+														{ border: 0 },
 												}}
 											>
-												U$D 100.000
-											</TableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
-							</TableContainer>
-							<Box
-								sx={{
-									display: 'flex',
-									flexDirection: 'column',
-									marginTop: '8px',
-								}}
-							>
-								<Typography
-									sx={{ fontWeight: 'bold' }}
-									color='secondary'
-									variant='h6'
+												<TableCell
+													align='center'
+													component='th'
+													scope='row'
+												>
+													{earningsFromTransactions?.transactions.toLocaleString()}
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													{earningsFromTransactions?.buy.toLocaleString()}
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													{earningsFromTransactions?.sell.toLocaleString()}
+												</TableCell>
+												<TableCell
+													align='center'
+													sx={{
+														fontWeight: 'bold',
+													}}
+												>
+													U$D{' '}
+													{earningsFromTransactions?.earnings.toLocaleString()}
+												</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
+								<Box
+									sx={{
+										display: 'flex',
+										flexDirection: 'column',
+										padding: '24px',
+										border: '2px solid gray',
+										borderRadius: '8px',
+										maxWidth: '700px',
+									}}
 								>
-									{analytics.transactions} transactions
-								</Typography>
-								<Typography
-									sx={{ fontWeight: 'bold' }}
-									color='error'
-									variant='h6'
-								>
-									Acá mostrar un gráfico adecuado a los datos
-									de transacciones
-								</Typography>
-							</Box>
-						</Stack>
-					</Box>
+									<Typography
+										sx={{
+											fontSize: '14px',
+											fontWeight: 'bold',
+										}}
+										color='secondary'
+									>
+										Last week earnings from transactions
+									</Typography>
+
+									<SparkLineChart
+										data={earningsFromTransactions.transactionsByDay.map(
+											({ earnings }) => earnings
+										)}
+										xAxis={{
+											scaleType: 'time',
+											data: earningsFromTransactions.transactionsByDay.map(
+												({ date }) => new Date(date)
+											),
+											valueFormatter: (value) =>
+												value
+													.toISOString()
+													.slice(0, 10),
+										}}
+										valueFormatter={(
+											value: number | null
+										) => `U$D ${value?.toLocaleString()}`}
+										height={250}
+										width={600}
+										showTooltip
+										colors={['#02B2AF']}
+										showHighlight
+									/>
+								</Box>
+							</Stack>
+						</Box>
+					)}
 					<Divider />
 					<Box sx={{ maxWidth: '1200px' }}>
 						<Box>
