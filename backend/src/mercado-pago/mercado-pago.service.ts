@@ -8,6 +8,8 @@ import { Items } from 'mercadopago/dist/clients/commonTypes';
 import { PaymentResponse } from 'mercadopago/dist/clients/payment/commonTypes';
 import { FundraisingService } from 'src/fundraising/fundraising.service';
 
+const MP_COMMISSION = 0.05; // 5%
+
 @Injectable()
 export class MercadoPagoService {
   private readonly client: MercadoPagoConfig;
@@ -87,16 +89,13 @@ export class MercadoPagoService {
           },
         ],
         back_urls: {
-          // success: process.env.APP_URL + '/' + items.type + '/',
-          // pending: process.env.APP_URL + '/' + items.type,
-          // failure: process.env.APP_URL + '/' + items.type,
-          success: 'http://localhost:5173/' + items.type + '/',
-          pending: 'http://localhost:5173/' + items.type + '/',
-          failure: 'http://localhost:5173/' + items.type + '/',
+          success: process.env.REACT_APP_URL + '/' + items.type + '/',
+          pending: process.env.REACT_APP_URL + '/' + items.type + '/',
+          failure: process.env.REACT_APP_URL + '/' + items.type + '/',
         },
         auto_return: 'approved',
         marketplace: process.env.MP_APP_ID,
-        marketplace_fee: 10, // TODO: Cambiar por el porcentaje que se quiera cobrar
+        marketplace_fee: (items.quantity * items.unit_price) * MP_COMMISSION
         // notification_url: process.env.APP_URL + `/mercado-pago/webhook?type=${items.type}&comprador=${}`,
       };
 
@@ -226,11 +225,15 @@ export class MercadoPagoService {
       return `\nFundraising with id ${fundraisingId} doesn't have any token\n`;
     }
     // Persist transaction in buyer's wallet and associate the token with the wallet using token_wallet
+
+    const commission = data.fee_details.find(detail => detail.type === 'application_fee')?.amount;
+
     const transaction = await this.prisma.transaction.create({
       data: {
         wallet_id: Number(buyer_wallet_id),
         token_id: token.id,
         type: TransactionType.BUY,
+        commission: commission,
       },
     });
 

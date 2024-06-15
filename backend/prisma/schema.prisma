@@ -69,6 +69,7 @@ model Transaction {
   wallet    Wallet          @relation(fields: [wallet_id], references: [id])
   token_id  Int
   type      TransactionType
+  commission Float          @default(0)
   timestamp DateTime        @default(now())
 }
 
