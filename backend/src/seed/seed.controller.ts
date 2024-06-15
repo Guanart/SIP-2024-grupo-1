@@ -1113,4 +1113,897 @@ export class SeedController {
       return 'Failed to seed database with test data. Please try again later';
     }
   }
+
+
+
+
+
+
+  //https://thispersondoesnotexist.com/
+  @Get('/seeder2')
+  async seeder(): Promise<string> {
+    try {
+
+      const user1 = await this.prisma.user.create({
+        data: {
+          email: 'bobsmith@lot.com',
+          auth0_id: 'auth0|667b2c4e5d2c9a8745a1d8e2',
+          username: 'Bob Smith',
+          avatar:
+            'https://randomuser.me/api/portraits/men/45.jpg',
+        },
+      });
+      
+      const user2 = await this.prisma.user.create({
+        data: {
+          email: 'charliedavis@lot.com',
+          auth0_id: 'auth0|668c3d4f6e3c8b9756a2e9f3',
+          username: 'Charlie Davis',
+          avatar:
+            'https://randomuser.me/api/portraits/men/46.jpg',
+        },
+      });
+      
+      const user3 = await this.prisma.user.create({
+        data: {
+          email: 'dianaross@lot.com',
+          auth0_id: 'auth0|669d4e5f7f4c9c0767a3f0a4',
+          username: 'Diana Ross',
+          avatar:
+            'https://randomuser.me/api/portraits/women/47.jpg',
+        },
+      });
+      
+      const user4 = await this.prisma.user.create({
+        data: {
+          email: 'edwardjones@lot.com',
+          auth0_id: 'auth0|670e5f6f8f5c9d1878a4f1b5',
+          username: 'Edward Jones',
+          avatar:
+            'https://randomuser.me/api/portraits/men/48.jpg',
+        },
+      });
+      
+      const user5 = await this.prisma.user.create({
+        data: {
+          email: 'fionagreen@lot.com',
+          auth0_id: 'auth0|671f6a7f9f6c9e2989b5f2c6',
+          username: 'Fiona Green',
+          avatar:
+            'https://randomuser.me/api/portraits/women/49.jpg',
+        },
+      });
+      
+      const user6 = await this.prisma.user.create({
+        data: {
+          email: 'georgewhite@lot.com',
+          auth0_id: 'auth0|672g7b8f0g7c9f3a9b6f3d7e',
+          username: 'George White',
+          avatar:
+            'https://randomuser.me/api/portraits/men/50.jpg',
+        },
+      });
+      
+      const user7 = await this.prisma.user.create({
+        data: {
+          email: 'hannahblack@lot.com',
+          auth0_id: 'auth0|673h8c9f1h8c0a4b9c7f4e8f',
+          username: 'Hannah Black',
+          avatar:
+            'https://randomuser.me/api/portraits/women/51.jpg',
+        },
+      });
+      
+      const user8 = await this.prisma.user.create({
+        data: {
+          email: 'ianbrown@lot.com',
+          auth0_id: 'auth0|674i9d0f2i9c1b5c9d8f5f9g',
+          username: 'Ian Brown',
+          avatar:
+            'https://randomuser.me/api/portraits/men/52.jpg',
+        },
+      });
+      
+      const user9 = await this.prisma.user.create({
+        data: {
+          email: 'julieclark@lot.com',
+          auth0_id: 'auth0|675j0e1f3j0c2c6d9e9f6g0h',
+          username: 'Julie Clark',
+          avatar:
+            'https://randomuser.me/api/portraits/women/53.jpg',
+        },
+      });
+      
+      const user10 = await this.prisma.user.create({
+        data: {
+          email: 'karladavis@lot.com',
+          auth0_id: 'auth0|676k1f2f4k1c3d7e0f0f7h1i',
+          username: 'Karla Davis',
+          avatar:
+            'https://randomuser.me/api/portraits/women/54.jpg',
+        },
+      });
+      
+
+      const wallet1 = await this.prisma.wallet.create({
+        data: {
+          user_id: user1.id,
+        },
+      });
+
+      const wallet2 = await this.prisma.wallet.create({
+        data: {
+          user_id: user2.id,
+        },
+      });
+
+      const wallet3 = await this.prisma.wallet.create({
+        data: {
+          user_id: user3.id,
+        },
+      });
+
+      const wallet4 = await this.prisma.wallet.create({
+        data: {
+          user_id: user4.id,
+        },
+      });
+      
+      const wallet5 = await this.prisma.wallet.create({
+        data: {
+          user_id: user5.id,
+        },
+      });
+
+      const wallet6 = await this.prisma.wallet.create({
+        data: {
+          user_id: user6.id,
+        },
+      });
+
+      const wallet7 = await this.prisma.wallet.create({
+        data: {
+          user_id: user7.id,
+        },
+      });
+
+      const wallet8 = await this.prisma.wallet.create({
+        data: {
+          user_id: user8.id,
+        },
+      });
+
+      const wallet9 = await this.prisma.wallet.create({
+        data: {
+          user_id: user9.id,
+        },
+      });
+      
+      const wallet10 = await this.prisma.wallet.create({
+        data: {
+          user_id: user10.id,
+        },
+      });
+
+      
+      const user11 = await this.prisma.user.create({
+        data: {
+          email: 'elitegamer@lot.com',
+          auth0_id: 'auth0|677j1k2l3m4n5o6p7q8r9s0t',
+          username: 'EliteGamer',
+          avatar: 'https://randomuser.me/api/portraits/men/63.jpg',
+        },
+      });
+      
+      const user12 = await this.prisma.user.create({
+        data: {
+          email: 'shadowmaster@lot.com',
+          auth0_id: 'auth0|677k1l2m3n4o5p6q7r8s9t0u',
+          username: 'ShadowMaster',
+          avatar: 'https://randomuser.me/api/portraits/men/64.jpg',
+        },
+      });
+      
+      const user13 = await this.prisma.user.create({
+        data: {
+          email: 'dragonslayer@lot.com',
+          auth0_id: 'auth0|677l1m2n3o4p5q6r7s8t9u0v',
+          username: 'DragonSlayer',
+          avatar: 'https://randomuser.me/api/portraits/women/56.jpg',
+        },
+      });
+      
+      const user14 = await this.prisma.user.create({
+        data: {
+          email: 'nightstalker@lot.com',
+          auth0_id: 'auth0|677m1n2o3p4q5r6s7t8u9v0w',
+          username: 'NightStalker',
+          avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+        },
+      });
+      
+      const user15 = await this.prisma.user.create({
+        data: {
+          email: 'phantomknight@lot.com',
+          auth0_id: 'auth0|677n1o2p3q4r5s6t7u8v9w0x',
+          username: 'PhantomKnight',
+          avatar: 'https://randomuser.me/api/portraits/women/57.jpg',
+        },
+      });
+      
+      const user16 = await this.prisma.user.create({
+        data: {
+          email: 'stormbringer@lot.com',
+          auth0_id: 'auth0|677o1p2q3r4s5t6u7v8w9x0y',
+          username: 'StormBringer',
+          avatar: 'https://randomuser.me/api/portraits/men/66.jpg',
+        },
+      });
+      
+      const user17 = await this.prisma.user.create({
+        data: {
+          email: 'blazehunter@lot.com',
+          auth0_id: 'auth0|677p1q2r3s4t5u6v7w8x9y0z',
+          username: 'BlazeHunter',
+          avatar: 'https://randomuser.me/api/portraits/women/58.jpg',
+        },
+      });
+      
+      const user18 = await this.prisma.user.create({
+        data: {
+          email: 'ironfist@lot.com',
+          auth0_id: 'auth0|677q1r2s3t4u5v6w7x8y9z0a',
+          username: 'IronFist',
+          avatar: 'https://randomuser.me/api/portraits/men/67.jpg',
+        },
+      });
+      
+      const user19 = await this.prisma.user.create({
+        data: {
+          email: 'venomstrike@lot.com',
+          auth0_id: 'auth0|677r1s2t3u4v5w6x7y8z9a0b',
+          username: 'VenomStrike',
+          avatar: 'https://randomuser.me/api/portraits/women/59.jpg',
+        },
+      });
+      
+      const user20 = await this.prisma.user.create({
+        data: {
+          email: 'cyberwarrior@lot.com',
+          auth0_id: 'auth0|677s1t2u3v4w5x6y7z8a9b0c',
+          username: 'CyberWarrior',
+          avatar: 'https://randomuser.me/api/portraits/men/68.jpg',
+        },
+      });
+  
+
+      const wallet11 = await this.prisma.wallet.create({
+        data: {
+          user_id: user11.id,
+        },
+      });
+      
+      const wallet12 = await this.prisma.wallet.create({
+        data: {
+          user_id: user12.id,
+        },
+      });
+      
+      const wallet13 = await this.prisma.wallet.create({
+        data: {
+          user_id: user13.id,
+        },
+      });
+      
+      const wallet14 = await this.prisma.wallet.create({
+        data: {
+          user_id: user14.id,
+        },
+      });
+      
+      const wallet15 = await this.prisma.wallet.create({
+        data: {
+          user_id: user15.id,
+        },
+      });
+      
+      const wallet16 = await this.prisma.wallet.create({
+        data: {
+          user_id: user16.id,
+        },
+      });
+      
+      const wallet17 = await this.prisma.wallet.create({
+        data: {
+          user_id: user17.id,
+        },
+      });
+      
+      const wallet18 = await this.prisma.wallet.create({
+        data: {
+          user_id: user18.id,
+        },
+      });
+      
+      const wallet19 = await this.prisma.wallet.create({
+        data: {
+          user_id: user19.id,
+        },
+      });
+      
+      const wallet20 = await this.prisma.wallet.create({
+        data: {
+          user_id: user20.id,
+        },
+      });
+      
+
+      const games = await this.prisma.game.findMany({where:{}});
+      const ranks = await this.prisma.rank.findMany({where:{}});
+      function getRandomIntegerInRange(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      const player1 = await this.prisma.player.create({
+        data: {
+          user_id: user11.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[0].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player2 = await this.prisma.player.create({
+        data: {
+          user_id: user12.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[0].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player3 = await this.prisma.player.create({
+        data: {
+          user_id: user13.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[1].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player4 = await this.prisma.player.create({
+        data: {
+          user_id: user14.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[1].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player5 = await this.prisma.player.create({
+        data: {
+          user_id: user15.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[2].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player6 = await this.prisma.player.create({
+        data: {
+          user_id: user16.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[2].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player7 = await this.prisma.player.create({
+        data: {
+          user_id: user17.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[3].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player8 = await this.prisma.player.create({
+        data: {
+          user_id: user18.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[3].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player9 = await this.prisma.player.create({
+        data: {
+          user_id: user19.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[4].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+      const player10 = await this.prisma.player.create({
+        data: {
+          user_id: user20.id,
+          biography:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed consectetur arcu non libero',
+          rank_id: ranks[getRandomIntegerInRange(0,(ranks.length - 1))].id,
+          game_id: games[5].id,
+          public_key: '',
+          access_token: '',
+        },
+      });
+
+
+      const oldEvent1 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 8,
+          prize: 1500000,
+          name: 'Golden Championship',
+          game_id: games[0].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent2 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 1800000,
+          name: 'Diamond Clash',
+          game_id: games[1].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      // Repite este patrón para los otros juegos
+      const oldEvent3 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 12,
+          prize: 2000000,
+          name: 'Epic Showdown',
+          game_id: games[2].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent4 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 8,
+          prize: 1600000,
+          name: 'Legendary Quest',
+          game_id: games[3].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent5 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 1900000,
+          name: 'Mystic Rumble',
+          game_id: games[4].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+      const oldEvent6 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          end_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          max_players: 12,
+          prize: 2100000,
+          name: 'Royal Arena',
+          game_id: games[5].id,
+          checked: true,
+          active: false,
+        },
+      });
+
+
+
+      const event1 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 8,
+          prize: 1600000,
+          name: 'Magic Mayhem',
+          game_id: games[0].id,
+        },
+      });
+
+      const event2 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 1900000,
+          name: 'Legend League',
+          game_id: games[1].id,
+        },
+      });
+
+      const event3 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 12,
+          prize: 2100000,
+          name: 'Eternal Tournament',
+          game_id: games[2].id,
+        },
+      });
+
+      const event4 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 8,
+          prize: 1500000,
+          name: 'Galactic Showdown',
+          game_id: games[3].id,
+        },
+      });
+
+      const event5 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 10,
+          prize: 1800000,
+          name: 'Heroic Clash',
+          game_id: games[4].id,
+        },
+      });
+
+      const event6 = await this.prisma.event.create({
+        data: {
+          start_date: new Date(),
+          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          max_players: 12,
+          prize: 2000000,
+          name: 'Divine Duel',
+          game_id: games[5].id,
+        },
+      });
+
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player1.game_id}})[0],
+          player_id: player1.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player2.game_id}})[0],
+          player_id: player2.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player3.game_id}})[0],
+          player_id: player3.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player4.game_id}})[0],
+          player_id: player4.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player5.game_id}})[0],
+          player_id: player5.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player6.game_id}})[0],
+          player_id: player6.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player7.game_id}})[0],
+          player_id: player7.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player8.game_id}})[0],
+          player_id: player8.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player9.game_id}})[0],
+          player_id: player9.id,
+          position: 1,
+        },
+      });
+
+      await this.prisma.player_event.create({
+        data: {
+          event_id: this.prisma.event.findMany({where:{game_id:player10.game_id}})[0],
+          player_id: player10.id,
+          position: 1,
+        },
+      });
+      
+
+
+      
+      const fundraising = await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 25000,
+          current_amount: 125,
+          prize_percentage: 40,
+          player_id: player1.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player1.game_id}})[0],
+          risk_level: 'LOW',
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 25000,
+          current_amount: 25000,
+          prize_percentage: 40,
+          player_id: player2.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player2.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 50000,
+          current_amount: 25000,
+          prize_percentage: 40,
+          player_id: player3.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player3.game_id}})[0],
+          risk_level: 'HIGH',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 150000,
+          current_amount: 50000,
+          prize_percentage: 40,
+          player_id: player4.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player4.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 1000,
+          current_amount: 50000,
+          prize_percentage: 30,
+          player_id: player5.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player5.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+      
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 75000,
+          current_amount: 70000,
+          prize_percentage: 10,
+          player_id: player6.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player6.game_id}})[0],
+          risk_level: 'HIGH',
+          active: false,
+        },
+      });
+
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 75000,
+          current_amount: 70000,
+          prize_percentage: 20,
+          player_id: player7.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player7.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 60000,
+          current_amount: 60000,
+          prize_percentage: 25,
+          player_id: player8.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player8.game_id}})[0],
+          risk_level: 'HIGH',
+          active: false,
+        },
+      });
+
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 80000,
+          current_amount: 70000,
+          prize_percentage: 15,
+          player_id: player9.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player9.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+
+      await this.prisma.fundraising.create({
+        data: {
+          goal_amount: 75000,
+          current_amount: 70000,
+          prize_percentage: 30,
+          player_id: player10.id,
+          event_id: this.prisma.event.findMany({where:{game_id:player10.game_id}})[0],
+          risk_level: 'LOW',
+          active: false,
+        },
+      });
+
+
+      // FALTA DE ACÁ PARA ABAJO:
+
+      const events = await this.prisma.event.findMany({where:{}});
+      const collection = await this.prisma.collection.create({
+        data: {
+          previous_price: 25.0,
+          current_price: 25.0,
+          initial_amount: 1000,
+          token_prize_percentage: 0.0004,
+          previous_token_prize_percentage: 0.0004,
+          fundraising_id: events[getRandomIntegerInRange(0,(events.length - 1))].id,
+          amount_left: 995,
+        },
+      });
+      
+      
+      const data = Array.from({ length: 1000 }, () => ({
+        price: collection.current_price,
+        collection_id: collection.id,
+      }));
+
+      await this.prisma.token.createMany({ data });
+
+      const tokens = await this.prisma.token.findMany({
+        where: {
+          collection_id: collection.id,
+        },
+        take: 5,
+      });
+
+
+      for (let i = 0; i < 4; i++) {
+        const token = tokens[i];
+        await this.prisma.token_wallet.create({
+          data: {
+            token_id: token.id,
+            wallet_id: wallet2.id,
+          },
+        });
+
+        await this.prisma.transaction.create({
+          data: {
+            wallet_id: wallet2.id,
+            token_id: token.id,
+            type: TransactionType.BUY,
+          },
+        });
+      }
+
+      await this.prisma.token_wallet.create({
+        data: {
+          token_id: tokens[4].id,
+          wallet_id: wallet3.id,
+        },
+      });
+
+      await this.prisma.transaction.create({
+        data: {
+          token_id: tokens[4].id,
+          wallet_id: wallet3.id,
+          type: TransactionType.BUY,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[0].id,
+          price: 25.0,
+          out_wallet_id: wallet2.id,
+        },
+      });
+
+      await this.prisma.marketplace_publication.create({
+        data: {
+          token_id: tokens[4].id,
+          price: 50.0,
+          out_wallet_id: wallet3.id,
+        },
+      });
+      
+      return 'Database loaded successfully with test data';
+    } catch (exception) {
+      console.log(exception);
+      return 'Failed to seed database with test data. Please try again later';
+    }
+  }
 }
