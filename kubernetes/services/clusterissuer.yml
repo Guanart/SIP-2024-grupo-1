@@ -5,14 +5,14 @@ metadata:
     namespace: cert-manager
 spec:
     acme:
-        email: matiasgimenez4299@gmail.com
+        email: johndoe@gmail.com
         server: https://acme-v02.api.letsencrypt.org/directory # Servidor de producción
         privateKeySecretRef:
             name: cluster-issuer-account-key
         solvers:
             - dns01:
                   cloudflare:
-                      email: matiasgimenez4299@gmail.com
+                      email: johndoe@gmail.com
                       apiTokenSecretRef:
                           name: cloudflare-token-secret
                           key: cloudflare-token
@@ -24,14 +24,14 @@ metadata:
     namespace: cert-manager
 spec:
     acme:
-        email: matiasgimenez4299@gmail.com
+        email: johndoe@gmail.com
         server: https://acme-staging-v02.api.letsencrypt.org/directory # Servidor de pruebas
         privateKeySecretRef:
             name: cluster-issuer-account-key
         solvers:
             - dns01:
                   cloudflare:
-                      email: matiasgimenez4299@gmail.com
+                      email: johndoe@gmail.com
                       apiTokenSecretRef:
                           name: cloudflare-token-secret
                           key: cloudflare-token
